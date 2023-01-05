@@ -1,18 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using CityGame.Graphics;
+using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace CityGame
@@ -35,12 +26,12 @@ namespace CityGame
             DispatcherTimer timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(300);
             timer.Tick += Timer_Tick;
-            timer.Start();
+            // timer.Start();
         }
 
         private void Timer_Tick(object? sender, EventArgs e)
         {
-            for (int i = 0; i < 100* 100; i++)
+            for (int i = 0; i < 100 * 100; i++)
             {
                 x++;
                 if (x > 100)
@@ -57,22 +48,22 @@ namespace CityGame
                 if (images[x, y] == null)
                 {
                     images[x, y] = new Image();
-                    images[x, y].Margin = new Thickness(x * 64, y * 64, 0, 0);
-                    images[x, y].Width = 64;
-                    images[x, y].Height = 64;
+                    images[x, y].Margin = new Thickness(x * 32, y * 32, 0, 0);
+                    images[x, y].Width = 32;
+                    images[x, y].Height = 32;
                     images[x, y].VerticalAlignment = VerticalAlignment.Top;
                     images[x, y].HorizontalAlignment = HorizontalAlignment.Left;
                     images[x, y].Stretch = Stretch.Uniform;
 
-                    
+
                     LandingImage.Children.Add(images[x, y]);
                 }
 
                 int ix = r.Next(40);
                 int iy = r.Next(40);
-                if (icon[ ix, iy] == null)
+                if (icon[ix, iy] == null)
                 {
-                    icon[ix, iy] = Icons.GetIcon(r.Next(20), r.Next(20));
+                    icon[ix, iy] = ResourcesManager.GetBlock(r.Next(20), r.Next(20));
                 }
                 images[x, y].Source = icon[ix, iy];
 
@@ -86,5 +77,9 @@ namespace CityGame
 
         }
 
+        private void ResourceExplorerButton_Click(object sender, RoutedEventArgs e)
+        {
+            new ResourceExplorer().Show();
+        }
     }
 }

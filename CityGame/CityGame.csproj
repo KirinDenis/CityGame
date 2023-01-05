@@ -8,14 +8,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\resources.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\resources.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
     <PackageReference Include="System.Drawing.Primitives" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Resources\sourceObjects.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <Compile Update="Graphics\ResourcesManager.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
   </ItemGroup>
 
 </Project>

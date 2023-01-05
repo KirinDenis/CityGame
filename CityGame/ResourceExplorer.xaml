@@ -1,0 +1,20 @@
+﻿<Window x:Class="CityGame.ResourceExplorer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CityGame"
+        mc:Ignorable="d"
+        Title="Resource Explorer" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="729*"/>
+            <ColumnDefinition Width="128"/>
+        </Grid.ColumnDefinitions>
+        <Image x:Name="ResourceImage" Source="/Resources/resources.png" MouseMove="ResourceImage_MouseMove" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+        <StackPanel Grid.Column="1">
+            <Image x:Name="PreviewImage"  Source="/Resources/resources.png" Height="128" Width="128" VerticalAlignment="Top" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+          <TextBlock x:Name="CoordTextBlock" Text="123"/>
+        </StackPanel>
+    </Grid>
+</Window>

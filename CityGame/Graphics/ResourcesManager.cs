@@ -45,9 +45,9 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Media.Imaging;
 
-namespace CityGame
+namespace CityGame.Graphics
 {
-    public class Icons
+    public class ResourcesManager
     {
         /// <summary>
         /// Size of one icon at icon's image
@@ -62,7 +62,7 @@ namespace CityGame
         /// <summary>
         /// Путь к файлу с иконками
         /// </summary>
-        public static string iconsImageFilePath = @"\Resources\sourceObjects.png";
+        public static string iconsImageFilePath = @"\Resources\resources.png";
         private static Bitmap source = null;
 
         private static readonly Dictionary<Point, BitmapImage> bufferBitmaps = new Dictionary<Point, BitmapImage>();
@@ -74,7 +74,7 @@ namespace CityGame
         /// <param name="x">номер иконки по X от 0..iconsCountByX</param>
         /// <param name="y">номер иконки по Y от 0..NULL POINTER EXCEPTION</param>
         /// <returns></returns>
-        public static BitmapImage GetIcon(int x, int y)
+        public static BitmapImage GetBlock(int x, int y)
         {
             BitmapImage bitmapimage = null;
 
@@ -94,7 +94,7 @@ namespace CityGame
                 using (MemoryStream memory = new MemoryStream())
                 {
 
-                    source.Clone(new System.Drawing.Rectangle(x * iconsSizeInPixels, y * iconsSizeInPixels, iconsSizeInPixels, iconsSizeInPixels), source.PixelFormat).Save(memory, System.Drawing.Imaging.ImageFormat.Png);
+                    source.Clone(new Rectangle(x * iconsSizeInPixels, y * iconsSizeInPixels, iconsSizeInPixels, iconsSizeInPixels), source.PixelFormat).Save(memory, System.Drawing.Imaging.ImageFormat.Png);
                     memory.Position = 0;
                     bitmapimage = new BitmapImage();
 
@@ -118,11 +118,11 @@ namespace CityGame
         /// </summary>
         /// <param name="number">номер иконки от 0..OUT OF RANGE</param>
         /// <returns></returns>
-        public static BitmapImage GetIcon(int number)
+        public static BitmapImage GetBlock(int number)
         {
-            int x = number - (number / iconsCountByX) * iconsCountByX;
+            int x = number - number / iconsCountByX * iconsCountByX;
             int y = number / iconsCountByX;
-            return GetIcon(x, y);
+            return GetBlock(x, y);
         }
     }
 }

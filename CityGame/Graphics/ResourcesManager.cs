@@ -57,7 +57,34 @@ namespace CityGame.Graphics
         /// <summary>
         /// icon's count at row 
         /// </summary>
-        public static int iconsCountByX = 50;
+        private static int _iconsCountByX = -1;
+
+        private static int _iconsCountByY = -1;
+
+        public static int iconsCountByX
+        {
+            get
+            {
+                if (_iconsCountByX == -1)
+                {
+                    CalcCounters();
+                }
+                return _iconsCountByX;
+            }
+        }
+
+        public static int iconsCountByY
+        {
+            get
+            {
+                if (_iconsCountByY == -1)
+                {
+                    CalcCounters();
+                }
+                return _iconsCountByY;
+            }
+        }
+
 
         /// <summary>
         /// Путь к файлу с иконками
@@ -66,6 +93,17 @@ namespace CityGame.Graphics
         private static Bitmap source = null;
 
         private static readonly Dictionary<Point, BitmapImage> bufferBitmaps = new Dictionary<Point, BitmapImage>();
+
+        private static void CalcCounters()
+        {
+            if (source == null)
+            {
+                source = new Bitmap(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + iconsImageFilePath);
+            }
+
+            _iconsCountByX = source.Width / iconsSizeInPixels;
+            _iconsCountByY = source.Height / iconsSizeInPixels;
+        }
 
         /// <summary>
         /// Получить иконку по относительным координатом внутри картинки с иконками

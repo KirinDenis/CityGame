@@ -5,16 +5,36 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CityGame"
         mc:Ignorable="d"
-        Title="Resource Explorer" Height="450" Width="800">
+        Title="Resource Explorer" Height="450" Width="570" Background="#FFF6F6F6" >
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="16"/>
+            <RowDefinition Height="395*"/>
+            <RowDefinition Height="16"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="729*"/>
+            <ColumnDefinition Width="16"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="16"/>
             <ColumnDefinition Width="128"/>
+            <ColumnDefinition Width="16"/>
         </Grid.ColumnDefinitions>
-        <Image x:Name="ResourceImage" Source="/Resources/resources.png" MouseMove="ResourceImage_MouseMove" RenderOptions.BitmapScalingMode="NearestNeighbor" />
-        <StackPanel Grid.Column="1">
-            <Image x:Name="PreviewImage"  Source="/Resources/resources.png" Height="128" Width="128" VerticalAlignment="Top" RenderOptions.BitmapScalingMode="NearestNeighbor" />
-          <TextBlock x:Name="CoordTextBlock" Text="123"/>
-        </StackPanel>
+        <Image x:Name="ResourceImage" Source="/Resources/resources.png" MouseMove="ResourceImage_MouseMove" RenderOptions.BitmapScalingMode="NearestNeighbor" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" />
+
+        <Grid Grid.Column="3" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="183*"/>
+                <RowDefinition Height="150"/>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.RowSpan="2" >
+                <Image x:Name="PreviewImage"  Source="/Resources/resources.png" Height="128" Width="128" VerticalAlignment="Top" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+                <TextBlock x:Name="CoordTextBlock" Text="123"/>
+            </StackPanel>
+            <StackPanel Grid.Row="1" VerticalAlignment="Bottom">
+                <TextBlock x:Name="SourceImageInfoTextBlock" Text="Image 1000x1000 " FontWeight="Bold"/>
+                <TextBlock x:Name="SourceBlockInfoTextBlock" Text="Block 16x16" Foreground="#FF3B4F81"/>
+                <TextBlock x:Name="SourceCountsInfoTextBlock" Text="Counts 16x16" Foreground="#FF3B4F81"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>

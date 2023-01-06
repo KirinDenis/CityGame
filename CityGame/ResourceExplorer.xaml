@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CityGame"
         mc:Ignorable="d"
-        Title="Resource Explorer" Height="450" Width="570" Background="#FFF6F6F6" >
+        Title="Resource Explorer" Height="450" Width="700" Background="#FFF6F6F6" >
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="16"/>
@@ -18,6 +18,8 @@
             <ColumnDefinition Width="16"/>
             <ColumnDefinition Width="128"/>
             <ColumnDefinition Width="16"/>
+            <ColumnDefinition Width="128"/>
+            <ColumnDefinition Width="16"/>
         </Grid.ColumnDefinitions>
         <Image x:Name="ResourceImage" Source="/Resources/resources.png" MouseMove="ResourceImage_MouseMove" RenderOptions.BitmapScalingMode="NearestNeighbor" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" />
 
@@ -26,7 +28,7 @@
                 <RowDefinition Height="183*"/>
                 <RowDefinition Height="150"/>
             </Grid.RowDefinitions>
-            <StackPanel Grid.RowSpan="2" >
+            <StackPanel>
                 <Image x:Name="PreviewImage"  Source="/Resources/resources.png" Height="128" Width="128" VerticalAlignment="Top" RenderOptions.BitmapScalingMode="NearestNeighbor" />
                 <TextBlock x:Name="CoordTextBlock" Text="123"/>
             </StackPanel>
@@ -36,5 +38,74 @@
                 <TextBlock x:Name="SourceCountsInfoTextBlock" Text="Counts 16x16" Foreground="#FF3B4F81"/>
             </StackPanel>
         </Grid>
+
+        <StackPanel Grid.Column="5" Grid.Row="1">
+            <ListBox x:Name="BlocksListBox" Height="128"/>
+            <Image x:Name="BlockPreviewImage"  Source="/Resources/resources.png" Height="128" Width="128" VerticalAlignment="Top" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+
+        </StackPanel>
+
+        <Grid Grid.ColumnSpan="10" Grid.RowSpan="10" Background="#99000000">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="128"/>
+                <ColumnDefinition Width="547*"/>
+                <ColumnDefinition Width="128"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100"/>
+                <RowDefinition Height="19*"/>
+                <RowDefinition Height="100"/>
+            </Grid.RowDefinitions>
+            <Grid Width="400" Height="200" Background="#FFF6F6F6" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="3" Grid.RowSpan="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="128"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="16"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="32"/>
+                    <RowDefinition Height="128"/>
+                    <RowDefinition Height="32"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Selected block information" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" FontWeight="Bold"/>
+                <Image x:Name="BlcokInfoImage" Grid.Column="1" Grid.Row="1"  Source="/Resources/resources.png" Height="128" Width="128" VerticalAlignment="Top" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+                <Grid Grid.Column="2" Grid.Row="1" Margin="16,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50*"/>
+                        <ColumnDefinition Width="50*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="32"/>
+                        <RowDefinition Height="32"/>
+                        <RowDefinition Height="32"/>
+                        <RowDefinition Height="32"/>
+                        <RowDefinition Height="32"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Position" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" />
+                    <TextBlock x:Name="BlockInfoPositionTextBox" Text="1:1" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" />
+                    
+                    <TextBlock Text="Name" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" />
+                    <TextBox x:Name="BlockInfoNameTextBox" Text="BlockInfoNameTextBox" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" />
+
+                    <TextBlock Text="Group" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" />
+                    <ComboBox x:Name="BlockInfoGroupComboBox" Text="BlockInfoNameTextBox" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" />
+
+                    <TextBlock Text="Grop position" Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" />
+                    <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="3" VerticalAlignment="Center">
+                        <TextBlock Text="X " VerticalAlignment="Center" />
+                        
+                    <ComboBox x:Name="BlockInfoGroupPositionXComboBox" Text="BlockInfoNameTextBox" />
+                        <TextBlock Text="Y " VerticalAlignment="Center" />
+                    <ComboBox x:Name="BlockInfoGroupPositionYComboBox" Text="BlockInfoNameTextBox" />
+                    </StackPanel>
+
+
+                </Grid>
+            </Grid>
+        </Grid>
+
     </Grid>
 </Window>

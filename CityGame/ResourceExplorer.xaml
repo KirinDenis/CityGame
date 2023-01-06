@@ -21,7 +21,7 @@
             <ColumnDefinition Width="128"/>
             <ColumnDefinition Width="16"/>
         </Grid.ColumnDefinitions>
-        <Image x:Name="ResourceImage" Source="/Resources/resources.png" MouseMove="ResourceImage_MouseMove" RenderOptions.BitmapScalingMode="NearestNeighbor" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" />
+        <Image x:Name="ResourceImage" Source="/Resources/resources.png" MouseMove="ResourceImage_MouseMove" RenderOptions.BitmapScalingMode="NearestNeighbor" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" MouseDown="ResourceImage_MouseDown" />
 
         <Grid Grid.Column="3" Grid.Row="1">
             <Grid.RowDefinitions>
@@ -45,7 +45,7 @@
 
         </StackPanel>
 
-        <Grid Grid.ColumnSpan="10" Grid.RowSpan="10" Background="#99000000">
+        <Grid x:Name="BlockInfoGrid" Grid.ColumnSpan="10" Grid.RowSpan="10" Background="#99000000" Visibility="Hidden" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="128"/>
                 <ColumnDefinition Width="547*"/>
@@ -69,7 +69,7 @@
                     <RowDefinition Height="32"/>
                 </Grid.RowDefinitions>
                 <TextBlock Text="Selected block information" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" FontWeight="Bold"/>
-                <Image x:Name="BlcokInfoImage" Grid.Column="1" Grid.Row="1"  Source="/Resources/resources.png" Height="128" Width="128" VerticalAlignment="Top" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+                <Image x:Name="BlockInfoImage" Grid.Column="1" Grid.Row="1"  Source="/Resources/resources.png" Height="128" Width="128" VerticalAlignment="Top" RenderOptions.BitmapScalingMode="NearestNeighbor" />
                 <Grid Grid.Column="2" Grid.Row="1" Margin="16,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="50*"/>
@@ -85,7 +85,7 @@
                     </Grid.RowDefinitions>
 
                     <TextBlock Text="Position" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" />
-                    <TextBlock x:Name="BlockInfoPositionTextBox" Text="1:1" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" />
+                    <TextBlock x:Name="BlockInfoPositionTextBlock" Text="1:1" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" />
                     
                     <TextBlock Text="Name" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" />
                     <TextBox x:Name="BlockInfoNameTextBox" Text="BlockInfoNameTextBox" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" />
@@ -104,6 +104,7 @@
 
 
                 </Grid>
+                <Button x:Name="BlockEditOKButton" Content="OK" Grid.Column="2" Grid.Row="2" Click="BlockEditOKButton_Click" />
             </Grid>
         </Grid>
 

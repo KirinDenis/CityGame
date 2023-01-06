@@ -2,6 +2,7 @@
 using CityGame.Graphics;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Input;
 
 namespace CityGame
@@ -21,6 +22,16 @@ namespace CityGame
             SourceCountsInfoTextBlock.Text = string.Format("Counts {0}x{1}", ResourcesManager.iconsCountByX, ResourcesManager.iconsCountByY);
         }
 
+        private BlockPoint GetBlockPositionByMouse(MouseEventArgs e)
+        {
+            Point mousePosition = e.GetPosition(ResourceImage);
+            return new BlockPoint()
+            {
+                x = (int)(mousePosition.X / (ResourceImage.ActualWidth / ResourceImage.Source.Width)) / ResourcesManager.iconsSizeInPixels,
+                y = (int)(mousePosition.Y / (ResourceImage.ActualHeight / ResourceImage.Source.Height)) / ResourcesManager.iconsSizeInPixels
+            };
+        }
+
         /// <summary>
         /// Select block by mouse move over source image
         /// </summary>
@@ -28,19 +39,41 @@ namespace CityGame
         /// <param name="e"></param>
         private void ResourceImage_MouseMove(object sender, MouseEventArgs e)
         {
-            Point position = e.GetPosition(ResourceImage);
-            //Calculate destination block location
-            int blockX = (int)(position.X / (ResourceImage.ActualWidth / ResourceImage.Source.Width)) / ResourcesManager.iconsSizeInPixels;
-            int blockY = (int)(position.Y / (ResourceImage.ActualHeight / ResourceImage.Source.Height)) / ResourcesManager.iconsSizeInPixels;
+            BlockPoint position = GetBlockPositionByMouse(e);
+            BlockItemModel block = blocksManager.GetBlockInfoByPosition(GetBlockPositionByMouse(e));
 
-            CoordTextBlock.Text = string.Format("{0}:{1}", blockX, blockY);
-            PreviewImage.Source = ResourcesManager.GetBlock(blockX, blockY);
+            CoordTextBlock.Text = string.Format("{0}:{1} {2}", position.x, position.y, block.name);
+            PreviewImage.Source = ResourcesManager.GetBlock(position.x, position.y);
         }
 
         private void RefreshBlocksList()
+        {            
+            BlocksListBox.Items.Add(blocksManager.blocks);
+        }
+
+        private void ResourceImage_MouseDown(object sender, MouseButtonEventArgs e)
+        {            
+            BlockInfoGrid.Visibility = Visibility.Visible;
+
+            BlockPoint position = GetBlockPositionByMouse(e);
+
+            BlockItemModel block = blocksManager.GetBlockInfoByPosition(GetBlockPositionByMouse(e));
+
+            BlockInfoGrid.Tag = block;
+
+            BlockInfoImage.Source = ResourcesManager.GetBlock(block.position.x, block.position.y);
+            BlockInfoPositionTextBlock.Text = string.Format("{0}:{1}", block.position.x, block.position.y);
+
+            BlockInfoNameTextBox.Text = block.name;
+        }
+
+        private void BlockEditOKButton_Click(object sender, RoutedEventArgs e)
         {
-            List<BlockItemModel> blocks = blocksManager.GetBlocks();
-            BlocksListBox.Items.Add(blocks);
+            BlockItemModel block = (BlockItemModel)BlockInfoGrid.Tag;
+            block.name = BlockInfoNameTextBox.Text;
+            blocksManager.SetBlocks();
+
+            BlockInfoGrid.Visibility = Visibility.Hidden;
         }
     }
 }

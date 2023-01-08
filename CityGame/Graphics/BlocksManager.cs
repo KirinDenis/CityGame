@@ -1,13 +1,8 @@
 ﻿using CityGame.DataModels;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Documents;
 
 namespace CityGame.Graphics
 {
@@ -25,17 +20,17 @@ namespace CityGame.Graphics
         public List<BlockItemModel> blocks
         {
             get
-            {                
+            {
                 if (File.Exists(blocksFile))
                 {
-                    _blocks = JsonConvert.DeserializeObject<List<BlockItemModel>>(File.ReadAllText(blocksFile));                                                     
+                    _blocks = JsonConvert.DeserializeObject<List<BlockItemModel>>(File.ReadAllText(blocksFile));
                 }
                 if (_blocks == null)
                 {
                     return new List<BlockItemModel>();
-                }    
+                }
                 return _blocks;
-            }            
+            }
         }
 
         private List<string>? _groups;
@@ -62,15 +57,9 @@ namespace CityGame.Graphics
             _groups = groups;
         }
 
-        public void SetBlocks(BlockItemModel block = null)
+        public void SetBlocks()
         {
-            if (block != null)
-            {
-                BlockItemModel existBlock = GetBlockByPosition(block.position);
-                existBlock = block;
-            }
-
-           File.WriteAllText(blocksFile, JsonConvert.SerializeObject(_blocks));
+            File.WriteAllText(blocksFile, JsonConvert.SerializeObject(_blocks));
 #if DEBUG
             File.WriteAllText(developmnetBlocksFile, JsonConvert.SerializeObject(_blocks));
 #endif
@@ -86,7 +75,7 @@ namespace CityGame.Graphics
 
         public BlockItemModel GetBlockByPosition(BlockPoint position)
         {
-            BlockItemModel? block = blocks.FirstOrDefault(p => p.position.x == position.x && p.position.y == position.y);
+            BlockItemModel? block = _blocks.FirstOrDefault(p => p.position.x == position.x && p.position.y == position.y);
 
             if (block == null)
             {
@@ -100,8 +89,8 @@ namespace CityGame.Graphics
         public List<BlockItemModel> GetBlockByGroupIndex(int gorupId)
         {
             if (gorupId > 0)
-            {                
-                return blocks.FindAll(p => p.groupId == gorupId);
+            {
+                return _blocks.FindAll(p => p.groupId == gorupId);
             }
 
             return new List<BlockItemModel>();

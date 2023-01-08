@@ -23,6 +23,8 @@ namespace CityGame
         {
             InitializeComponent();
 
+            new ResourceExplorer().Show();
+
             DispatcherTimer timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(300);
             timer.Tick += Timer_Tick;

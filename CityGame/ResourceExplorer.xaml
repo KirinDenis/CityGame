@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CityGame"
         mc:Ignorable="d"
-        Title="Resource Explorer" Height="450" Width="900" Background="#FFF6F6F6" >
+        Title="Resource Explorer" Height="450" Width="994" Background="#FFF6F6F6" >
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="16"/>
@@ -18,7 +18,7 @@
             <ColumnDefinition Width="16"/>
             <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="16"/>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="250"/>
             <ColumnDefinition Width="16"/>
         </Grid.ColumnDefinitions>
         <Image x:Name="ResourceImage" Source="/Resources/resources.png" MouseMove="ResourceImage_MouseMove" RenderOptions.BitmapScalingMode="NearestNeighbor" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" MouseDown="ResourceImage_MouseDown" />
@@ -60,35 +60,11 @@
                     <TextBox x:Name="BlockInfoNameTextBox" Text="BlockInfoNameTextBox" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" />
 
                     <TextBlock Text="Group" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" />
-                    <ComboBox x:Name="BlockInfoGroupComboBox" Text="BlockInfoNameTextBox" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" IsEditable="True" />
+                    <ComboBox x:Name="BlockInfoGroupComboBox" Text="BlockInfoNameTextBox" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" IsEditable="True" SelectionChanged="BlockInfoGroupComboBox_SelectionChanged" />
 
                     <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="3" VerticalAlignment="Center">
                         <Button x:Name="NewBlock" Content="New" Click="NewBlock_Click" />
                         <Button x:Name="DeleteBlock" Content="Del" />
-                    </StackPanel>
-                    
-                    <TextBlock Text="Grop position" Grid.Column="0" Grid.Row="4" VerticalAlignment="Center" />
-                    <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="4" VerticalAlignment="Center">
-                        <TextBlock Text="X " VerticalAlignment="Center" />
-                        
-                        <ComboBox x:Name="BlockInfoGroupPositionXComboBox" Text="BlockInfoNameTextBox" SelectedIndex="0" SelectionChanged="BlockInfoGroupPositionComboBox_SelectionChanged">
-                            <ComboBoxItem>-1</ComboBoxItem>
-                            <ComboBoxItem>0</ComboBoxItem>
-                            <ComboBoxItem>1</ComboBoxItem>
-                            <ComboBoxItem>2</ComboBoxItem>
-                            <ComboBoxItem>3</ComboBoxItem>
-                            <ComboBoxItem>4</ComboBoxItem>
-                        </ComboBox>
-                        <TextBlock Text="Y " VerticalAlignment="Center" />
-                        <ComboBox x:Name="BlockInfoGroupPositionYComboBox" Text="BlockInfoNameTextBox" SelectedIndex="0" SelectionChanged="BlockInfoGroupPositionComboBox_SelectionChanged">
-                            <ComboBoxItem>-1</ComboBoxItem>
-                            <ComboBoxItem>0</ComboBoxItem>
-                            <ComboBoxItem>1</ComboBoxItem>
-                            <ComboBoxItem>2</ComboBoxItem>
-                            <ComboBoxItem>3</ComboBoxItem>
-                            <ComboBoxItem>4</ComboBoxItem>
-                        </ComboBox>
-
                     </StackPanel>
 
                     <Button x:Name="SaveBlocksButton" Content="Save" Grid.Column="1" Grid.Row="5" Click="SaveBlocksButton_Click" />

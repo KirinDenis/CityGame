@@ -38,21 +38,44 @@ namespace CityGame
                     groupsPreviewImages[x, y].SetValue(Grid.RowProperty, y);
 
                     groupsPreviewImages[x, y].Width = groupsPreviewImages[x, y].Height = 50;
-                    GroupViewGrid.Children.Add(groupsPreviewImages[x, y]);   
-                    
+
+                    GroupViewGrid.Children.Add(groupsPreviewImages[x, y]);
+
                     TextBlock textBlock = new TextBlock();
                     textBlock.SetValue(Grid.ColumnProperty, x);
                     textBlock.SetValue(Grid.RowProperty, y);
 
-                    textBlock.VerticalAlignment = VerticalAlignment.Center;
-                    textBlock.HorizontalAlignment = HorizontalAlignment.Center;
+                    textBlock.VerticalAlignment = VerticalAlignment.Stretch;
+                    textBlock.HorizontalAlignment = HorizontalAlignment.Stretch;
 
                     textBlock.Text = string.Format("{0}:{1}", x, y);
+
+                    textBlock.Tag = new BlockPoint()
+                    {
+                        x = x,
+                        y = y
+                    };
+                    textBlock.MouseDown += ResourceExplorer_MouseDown;
+
                     GroupViewGrid.Children.Add(textBlock);
 
                 }
             }
         }
+
+        private void ResourceExplorer_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            BlockItemModel block = (BlockItemModel)PreviewImage.Tag;
+
+            if (block != null)
+            {
+                block.groupPosition = (BlockPoint)((TextBlock)sender).Tag;
+                blocksManager.SetBlocks();
+                RefreshGroupImages(block);
+            }
+
+
+    }
 
         private BlockPoint GetBlockPositionByMouse(MouseEventArgs e)
         {
@@ -81,26 +104,26 @@ namespace CityGame
 
                 BlockInfoPositionTextBlock.Text = string.Format("{0}:{1}", block.position.x, block.position.y);
 
-                BlockInfoNameTextBox.Text = block.name;                
+                BlockInfoNameTextBox.Text = block.name;
 
-                BlockInfoGroupComboBox.SelectedIndex = block.groupId;                
+                BlockInfoGroupComboBox.SelectedIndex = block.groupId;
 
                 if (block.groupPosition != null)
                 {
-                    BlockInfoGroupPositionXComboBox.SelectedIndex = block.groupPosition.x + 1;
-                    BlockInfoGroupPositionYComboBox.SelectedIndex = block.groupPosition.y + 1;                    
+                    // BlockInfoGroupPositionXComboBox.SelectedIndex = block.groupPosition.x + 1;
+                    //BlockInfoGroupPositionYComboBox.SelectedIndex = block.groupPosition.y + 1;                    
                 }
                 else
                 {
-                    BlockInfoGroupPositionXComboBox.SelectedIndex = 0;
-                    BlockInfoGroupPositionYComboBox.SelectedIndex = 0;
+                    // BlockInfoGroupPositionXComboBox.SelectedIndex = 0;
+                    // BlockInfoGroupPositionYComboBox.SelectedIndex = 0;
                 }
                 RefreshGroupImages(block);
             }
         }
 
         private void RefreshGroupsList()
-        {            
+        {
             BlockInfoGroupComboBox.ItemsSource = blocksManager.groups;
         }
 
@@ -137,7 +160,7 @@ namespace CityGame
         }
 
         private void NewBlock_Click(object sender, RoutedEventArgs e)
-        {            
+        {
             if (blocksManager.groups.Find(p => p.Equals(BlockInfoGroupComboBox.Text)) == null)
             {
                 blocksManager.groups.Add(BlockInfoGroupComboBox.Text);
@@ -151,7 +174,7 @@ namespace CityGame
                 blocksManager.SetBlocks();
                 RefreshGroupImages(block);
             }
-                
+
         }
 
         private void SaveBlocksButton_Click(object sender, RoutedEventArgs e)
@@ -164,29 +187,17 @@ namespace CityGame
                 block.groupPosition = new BlockPoint();
             }
 
-            block.groupPosition.x = BlockInfoGroupPositionXComboBox.SelectedIndex - 1;
-            block.groupPosition.y = BlockInfoGroupPositionYComboBox.SelectedIndex - 1;
 
             blocksManager.SetBlocks();
             RefreshGroupImages(block);
         }
 
-        private void BlockInfoGroupPositionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void BlockInfoGroupComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             BlockItemModel block = (BlockItemModel)PreviewImage.Tag;
-
-            if (block != null)
-            {
-                if (block.groupPosition == null)
-                {
-                    block.groupPosition = new BlockPoint();
-                }
-
-                block.groupPosition.x = BlockInfoGroupPositionXComboBox.SelectedIndex - 1;
-                block.groupPosition.y = BlockInfoGroupPositionYComboBox.SelectedIndex - 1;
-
-                RefreshGroupImages(block);
-            }
+            block.groupId = BlockInfoGroupComboBox.SelectedIndex;
+            blocksManager.SetBlocks();
+            RefreshGroupImages(block);
         }
     }
 }

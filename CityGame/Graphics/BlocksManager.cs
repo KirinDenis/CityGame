@@ -62,8 +62,14 @@ namespace CityGame.Graphics
             _groups = groups;
         }
 
-        public void SetBlocks()
+        public void SetBlocks(BlockItemModel block = null)
         {
+            if (block != null)
+            {
+                BlockItemModel existBlock = GetBlockByPosition(block.position);
+                existBlock = block;
+            }
+
            File.WriteAllText(blocksFile, JsonConvert.SerializeObject(_blocks));
 #if DEBUG
             File.WriteAllText(developmnetBlocksFile, JsonConvert.SerializeObject(_blocks));
@@ -78,7 +84,7 @@ namespace CityGame.Graphics
 #endif
         }
 
-        public BlockItemModel GetBlockInfoByPosition(BlockPoint position)
+        public BlockItemModel GetBlockByPosition(BlockPoint position)
         {
             BlockItemModel? block = blocks.FirstOrDefault(p => p.position.x == position.x && p.position.y == position.y);
 
@@ -89,6 +95,16 @@ namespace CityGame.Graphics
                 SetBlocks();
             }
             return block;
+        }
+
+        public List<BlockItemModel> GetBlockByGroupIndex(int gorupId)
+        {
+            if (gorupId > 0)
+            {                
+                return blocks.FindAll(p => p.groupId == gorupId);
+            }
+
+            return new List<BlockItemModel>();
         }
     }
 }

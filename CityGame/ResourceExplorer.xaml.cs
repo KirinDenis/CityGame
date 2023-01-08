@@ -44,6 +44,9 @@ namespace CityGame
                     textBlock.SetValue(Grid.ColumnProperty, x);
                     textBlock.SetValue(Grid.RowProperty, y);
 
+                    textBlock.VerticalAlignment = VerticalAlignment.Center;
+                    textBlock.HorizontalAlignment = HorizontalAlignment.Center;
+
                     textBlock.Text = string.Format("{0}:{1}", x, y);
                     GroupViewGrid.Children.Add(textBlock);
 
@@ -71,7 +74,7 @@ namespace CityGame
             if (!blockEditMode)
             {
                 BlockPoint position = GetBlockPositionByMouse(e);
-                BlockItemModel block = blocksManager.GetBlockInfoByPosition(GetBlockPositionByMouse(e));
+                BlockItemModel block = blocksManager.GetBlockByPosition(GetBlockPositionByMouse(e));
 
                 PreviewImage.Tag = block;
                 PreviewImage.Source = ResourcesManager.GetBlock(position.x, position.y);
@@ -103,11 +106,27 @@ namespace CityGame
 
         private void RefreshGroupImages(BlockItemModel block)
         {
-            if ((block != null) && (block.groupPosition != null))
+
+            for (int x = 0; x < 5; x++)
             {
-                if ((block.groupPosition.x >= 0) && (block.groupPosition.y >= 0))
+                for (int y = 0; y < 5; y++)
                 {
-                    groupsPreviewImages[block.groupPosition.x, block.groupPosition.y].Source = ResourcesManager.GetBlock(block.position.x, block.position.y);
+                    groupsPreviewImages[x, y].Source = null;
+                }
+            }
+
+            if (block != null)
+            {
+                List<BlockItemModel> blocksItems = blocksManager.GetBlockByGroupIndex(block.groupId);
+                foreach (BlockItemModel blockItem in blocksItems)
+                {
+                    if (blockItem.groupPosition != null)
+                    {
+                        if ((blockItem.groupPosition.x >= 0) && (blockItem.groupPosition.y >= 0))
+                        {
+                            groupsPreviewImages[blockItem.groupPosition.x, blockItem.groupPosition.y].Source = ResourcesManager.GetBlock(blockItem.position.x, blockItem.position.y);
+                        }
+                    }
                 }
             }
         }
@@ -130,6 +149,7 @@ namespace CityGame
                 BlockItemModel block = (BlockItemModel)PreviewImage.Tag;
                 block.groupId = BlockInfoGroupComboBox.SelectedIndex;
                 blocksManager.SetBlocks();
+                RefreshGroupImages(block);
             }
                 
         }
@@ -148,12 +168,25 @@ namespace CityGame
             block.groupPosition.y = BlockInfoGroupPositionYComboBox.SelectedIndex - 1;
 
             blocksManager.SetBlocks();
+            RefreshGroupImages(block);
         }
 
         private void BlockInfoGroupPositionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             BlockItemModel block = (BlockItemModel)PreviewImage.Tag;
-            RefreshGroupImages(block);
+
+            if (block != null)
+            {
+                if (block.groupPosition == null)
+                {
+                    block.groupPosition = new BlockPoint();
+                }
+
+                block.groupPosition.x = BlockInfoGroupPositionXComboBox.SelectedIndex - 1;
+                block.groupPosition.y = BlockInfoGroupPositionYComboBox.SelectedIndex - 1;
+
+                RefreshGroupImages(block);
+            }
         }
     }
 }

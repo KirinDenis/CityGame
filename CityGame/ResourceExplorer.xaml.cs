@@ -1,11 +1,13 @@
 ﻿using CityGame.DataModels;
 using CityGame.Graphics;
+using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace CityGame
 {
@@ -19,6 +21,8 @@ namespace CityGame
         private Image[,] groupsPreviewImages = new Image[5, 5];
 
         private bool blockEditMode = false;
+
+        private int animationFrame = 1;
         public ResourceExplorer()
         {
             InitializeComponent();
@@ -61,7 +65,45 @@ namespace CityGame
 
                 }
             }
+
+            DispatcherTimer animationFrameTimer = new DispatcherTimer();
+            animationFrameTimer.Interval = TimeSpan.FromMilliseconds(300);
+            animationFrameTimer.Tick += AnimationFrameTimer_Tick;
+            animationFrameTimer.Start();
+
         }
+
+        private void AnimationFrameTimer_Tick(object? sender, EventArgs e)
+        {
+            BlockItemModel block = (BlockItemModel)PreviewImage.Tag;
+            if (block != null)
+            {
+                animationFrame++;
+                List<BlockItemModel>? blockItemModels = blocksManager.GetBlockByGroupIndexAnimationOnly(block.groupId);
+                if ((blockItemModels != null) && (blockItemModels.Count > 0))
+                {
+                    List<BlockItemModel>? nextFrameBlocks = blockItemModels?.FindAll(p => p.animationFrame == animationFrame);
+                    
+                    if ((nextFrameBlocks == null) || (nextFrameBlocks.Count == 0))
+                    {
+                        animationFrame = 1;
+                        nextFrameBlocks = blockItemModels?.FindAll(p => p.animationFrame == animationFrame);
+                    }
+                    if ((nextFrameBlocks != null) || (nextFrameBlocks.Count == 0))
+                    {
+                        foreach (var blockItemModel in nextFrameBlocks)
+                        {
+                            if (blockItemModel.groupPosition != null)
+                            {
+                                groupsPreviewImages[blockItemModel.groupPosition.x, blockItemModel.groupPosition.y].Source
+                                    = ResourcesManager.GetBlock(blockItemModel.position.x, blockItemModel.position.y);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
 
         private void ResourceExplorer_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -75,7 +117,7 @@ namespace CityGame
             }
 
 
-    }
+        }
 
         private BlockPoint GetBlockPositionByMouse(MouseEventArgs e)
         {
@@ -107,6 +149,8 @@ namespace CityGame
                 BlockInfoNameTextBox.Text = block.name;
 
                 BlockInfoGroupComboBox.SelectedIndex = block.groupId;
+
+                AnimationFrameComboBox.SelectedIndex = block.animationFrame ?? 0;
 
                 if (block.groupPosition != null)
                 {
@@ -195,9 +239,23 @@ namespace CityGame
         private void BlockInfoGroupComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             BlockItemModel block = (BlockItemModel)PreviewImage.Tag;
-            block.groupId = BlockInfoGroupComboBox.SelectedIndex;
-            blocksManager.SetBlocks();
-            RefreshGroupImages(block);
+            if (block != null)
+            {
+                block.groupId = BlockInfoGroupComboBox.SelectedIndex;
+                blocksManager.SetBlocks();
+                RefreshGroupImages(block);
+            }
+        }
+
+        private void AnimationFrameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            BlockItemModel block = (BlockItemModel)PreviewImage.Tag;
+            if (block != null)
+            {
+                block.animationFrame = AnimationFrameComboBox.SelectedIndex;
+                blocksManager.SetBlocks();
+                RefreshGroupImages(block);
+            }
         }
     }
 }

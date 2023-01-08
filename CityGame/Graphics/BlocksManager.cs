@@ -73,9 +73,9 @@ namespace CityGame.Graphics
 #endif
         }
 
-        public BlockItemModel GetBlockByPosition(BlockPoint position)
+        public BlockItemModel? GetBlockByPosition(BlockPoint position)
         {
-            BlockItemModel? block = _blocks.FirstOrDefault(p => p.position.x == position.x && p.position.y == position.y);
+            BlockItemModel? block = _blocks?.FirstOrDefault(p => p.position.x == position.x && p.position.y == position.y);
 
             if (block == null)
             {
@@ -86,14 +86,25 @@ namespace CityGame.Graphics
             return block;
         }
 
-        public List<BlockItemModel> GetBlockByGroupIndex(int gorupId)
+        public List<BlockItemModel>? GetBlockByGroupIndex(int gorupId)
         {
             if (gorupId > 0)
             {
-                return _blocks.FindAll(p => p.groupId == gorupId);
+                return _blocks?.FindAll(p => p.groupId == gorupId);
             }
 
             return new List<BlockItemModel>();
         }
+
+        public List<BlockItemModel>? GetBlockByGroupIndexAnimationOnly(int gorupId)
+        {
+            if (gorupId > 0)
+            {
+                return _blocks?.FindAll(p => p.groupId == gorupId && p.animationFrame != 0);
+            }
+
+            return new List<BlockItemModel>();
+        }
+
     }
 }

@@ -67,6 +67,19 @@
                         <Button x:Name="DeleteBlock" Content="Del" />
                     </StackPanel>
 
+                    <TextBlock Text="Animatione" Grid.Column="0" Grid.Row="4" VerticalAlignment="Center" />
+                    <ComboBox x:Name="AnimationFrameComboBox" Text="BlockInfoNameTextBox" Grid.Column="1" Grid.Row="4" VerticalAlignment="Center"  SelectedIndex="0" SelectionChanged="AnimationFrameComboBox_SelectionChanged">
+                        <ComboBoxItem>0</ComboBoxItem>
+                        <ComboBoxItem>1</ComboBoxItem>
+                        <ComboBoxItem>2</ComboBoxItem>
+                        <ComboBoxItem>3</ComboBoxItem>
+                        <ComboBoxItem>4</ComboBoxItem>
+                        <ComboBoxItem>5</ComboBoxItem>
+                        <ComboBoxItem>6</ComboBoxItem>
+                        <ComboBoxItem>7</ComboBoxItem>
+                    </ComboBox>
+
+
                     <Button x:Name="SaveBlocksButton" Content="Save" Grid.Column="1" Grid.Row="5" Click="SaveBlocksButton_Click" />
                 </Grid>
             </StackPanel>

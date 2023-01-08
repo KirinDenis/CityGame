@@ -47,5 +47,7 @@ namespace CityGame.DataModels
         /// block location inside group, null by default
         /// </summary>
         public BlockPoint? groupPosition { get; set; }
+
+        public int? animationFrame { get; set; } = 0;
     }
 }

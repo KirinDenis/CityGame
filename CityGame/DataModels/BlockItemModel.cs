@@ -41,7 +41,7 @@ namespace CityGame.DataModels
         /// <summary>
         /// block is part of block's group, null by default -> not in group 
         /// </summary>
-        public int? groupId { get; set; }
+        public int groupId { get; set; } = 0;
 
         /// <summary>
         /// block location inside group, null by default

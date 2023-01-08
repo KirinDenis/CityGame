@@ -14,9 +14,11 @@ namespace CityGame.Graphics
     internal class BlocksManager
     {
         private string blocksFile = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\Resources\Blocks.json";
+        private string groupsFile = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\Resources\Groups.json";
 
 #if DEBUG
         private string developmnetBlocksFile = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"..\..\..\..\Resources\Blocks.json";
+        private string developmnetGroupsFile = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"..\..\..\..\Resources\Groups.json";
 #endif
 
         private List<BlockItemModel>? _blocks;
@@ -36,9 +38,28 @@ namespace CityGame.Graphics
             }            
         }
 
+        private List<string>? _groups;
+        public List<string> groups
+        {
+            get
+            {
+                if (File.Exists(groupsFile))
+                {
+                    _groups = JsonConvert.DeserializeObject<List<string>>(File.ReadAllText(groupsFile));
+                }
+                if (_groups == null)
+                {
+                    _groups = new List<string>();
+                    _groups.Add("NoGroup");
+                }
+                return _groups;
+            }
+        }
+
         public BlocksManager()
         {
             _blocks = blocks;
+            _groups = groups;
         }
 
         public void SetBlocks()
@@ -48,6 +69,15 @@ namespace CityGame.Graphics
             File.WriteAllText(developmnetBlocksFile, JsonConvert.SerializeObject(_blocks));
 #endif
         }
+
+        public void SetGroups()
+        {
+            File.WriteAllText(groupsFile, JsonConvert.SerializeObject(_groups));
+#if DEBUG
+            File.WriteAllText(developmnetGroupsFile, JsonConvert.SerializeObject(_groups));
+#endif
+        }
+
         public BlockItemModel GetBlockInfoByPosition(BlockPoint position)
         {
             BlockItemModel? block = blocks.FirstOrDefault(p => p.position.x == position.x && p.position.y == position.y);

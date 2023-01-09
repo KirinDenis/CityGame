@@ -5,39 +5,51 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CityGame"
         mc:Ignorable="d"
-        Title="Resource Explorer" Height="450" Width="994" Background="#FFF6F6F6" >
-    <Grid>
+        Title="Resource Explorer" Height="650" Width="994" Background="#FFF6F6F6" >
+    <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="16"/>
+            <RowDefinition Height="24"/>
             <RowDefinition Height="395*"/>
             <RowDefinition Height="16"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="16"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="16"/>
-            <ColumnDefinition Width="200"/>
-            <ColumnDefinition Width="16"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="2"/>
             <ColumnDefinition Width="250"/>
             <ColumnDefinition Width="16"/>
         </Grid.ColumnDefinitions>
-        <Image x:Name="ResourceImage" Source="/Resources/resources.png" MouseMove="ResourceImage_MouseMove" RenderOptions.BitmapScalingMode="NearestNeighbor" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" MouseDown="ResourceImage_MouseDown" />
+
+        <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Background="#FFCCD5F0">
+            <TextBlock Text="Resources map " FontWeight="Bold"/>
+            <StackPanel Width="16" />
+            <TextBlock x:Name="ResourceMapModeTextBlock" Text="[SELECT MODE]" FontWeight="Bold" Foreground="#FFFF004D"/>
+        </StackPanel>
+
+        <StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Background="#FFCCD5F0">
+            <TextBlock x:Name="BlockModeTextBlock" Text="Selected block edit" FontWeight="Bold"/>
+        </StackPanel>
+
+        <Image x:Name="ResourceImage" Source="/Resources/resources.png" MouseMove="ResourceImage_MouseMove" RenderOptions.BitmapScalingMode="NearestNeighbor" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1" MouseDown="ResourceImage_MouseDown" />
+        <Border x:Name="ResourceSelectorBorder" Width="16" Height="16" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="#FF00E600" BorderThickness="2,2,2,2"/>
 
         <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center">
-            <TextBlock x:Name="SourceImageInfoTextBlock" Text="Image 1000x1000 " FontWeight="Bold"/>
+            <TextBlock x:Name="SourceImageInfoTextBlock" Text="Image 1000x1000" FontWeight="Bold"/>
+            <StackPanel Width="16" />
             <TextBlock x:Name="SourceBlockInfoTextBlock" Text="Block 16x16" Foreground="#FF3B4F81"/>
+            <StackPanel Width="16" />
             <TextBlock x:Name="SourceCountsInfoTextBlock" Text="Counts 16x16" Foreground="#FF3B4F81"/>
         </StackPanel>
 
 
-        <Grid Grid.Column="3" Grid.Row="1">
+        <Grid Grid.Column="3" Grid.Row="1" Background="#FFE7E8EC">
             <Grid.RowDefinitions>
                 <RowDefinition Height="183*"/>
 
             </Grid.RowDefinitions>
             <StackPanel>
-                <Image x:Name="PreviewImage"  Source="/Resources/resources.png" Height="128" Width="128" VerticalAlignment="Top" RenderOptions.BitmapScalingMode="NearestNeighbor" />
-                
+                <Image x:Name="PreviewImage"  Source="/Resources/resources.png" Height="128" Width="128" VerticalAlignment="Top" RenderOptions.BitmapScalingMode="NearestNeighbor" Margin="0,16"/>
+                 
                 <Grid Grid.Column="2" Grid.Row="1" Margin="16,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="50*"/>
@@ -45,11 +57,12 @@
                     </Grid.ColumnDefinitions>
 
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="32"/>
-                        <RowDefinition Height="32"/>
-                        <RowDefinition Height="32"/>
-                        <RowDefinition Height="32"/>
-                        <RowDefinition Height="32"/>
+                        <RowDefinition Height="24"/>
+                        <RowDefinition Height="24"/>
+                        <RowDefinition Height="24"/>
+                        <RowDefinition Height="24"/>
+                        <RowDefinition Height="24"/>
+                        <RowDefinition Height="24"/>
                         <RowDefinition Height="32"/>
                     </Grid.RowDefinitions>
 
@@ -57,14 +70,15 @@
                     <TextBlock x:Name="BlockInfoPositionTextBlock" Text="1:1" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" />
 
                     <TextBlock Text="Name" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" />
-                    <TextBox x:Name="BlockInfoNameTextBox" Text="BlockInfoNameTextBox" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" />
+                    <TextBox x:Name="BlockInfoNameTextBox" Text="BlockInfoNameTextBox" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" TextChanged="BlockInfoNameTextBox_TextChanged" />
 
                     <TextBlock Text="Group" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" />
                     <ComboBox x:Name="BlockInfoGroupComboBox" Text="BlockInfoNameTextBox" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" IsEditable="True" SelectionChanged="BlockInfoGroupComboBox_SelectionChanged" />
 
-                    <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="3" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Right">
                         <Button x:Name="NewBlock" Content="New" Click="NewBlock_Click" />
-                        <Button x:Name="DeleteBlock" Content="Del" />
+                        
+                        
                     </StackPanel>
 
                     <TextBlock Text="Animatione" Grid.Column="0" Grid.Row="4" VerticalAlignment="Center" />
@@ -79,29 +93,32 @@
                         <ComboBoxItem>7</ComboBoxItem>
                     </ComboBox>
 
+                    <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="5" VerticalAlignment="Center" HorizontalAlignment="Right">
+                        <Button x:Name="SaveBlocksButton" Content="Backup"  Click="SaveBlocksButton_Click" />
+                    </StackPanel>
+                </Grid>
 
-                    <Button x:Name="SaveBlocksButton" Content="Save" Grid.Column="1" Grid.Row="5" Click="SaveBlocksButton_Click" />
+                <Grid x:Name="GroupViewGrid" >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                    </Grid.RowDefinitions>
                 </Grid>
             </StackPanel>
-        </Grid>
+        
 
-        <Grid x:Name="GroupViewGrid" Grid.Column="5" Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="50"/>
-                <ColumnDefinition Width="50"/>
-                <ColumnDefinition Width="50"/>
-                <ColumnDefinition Width="50"/>
-                <ColumnDefinition Width="50"/>
-            </Grid.ColumnDefinitions>
-
-            <Grid.RowDefinitions>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
-            </Grid.RowDefinitions>
 
 
         </Grid>

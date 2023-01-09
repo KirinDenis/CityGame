@@ -2,11 +2,11 @@
 using CityGame.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace CityGame
@@ -30,7 +30,7 @@ namespace CityGame
             SourceImageInfoTextBlock.Text = string.Format("Image {0}x{1}", ResourceImage.Source.Width, ResourceImage.Source.Height);
             SourceBlockInfoTextBlock.Text = string.Format("Block {0}x{1}", ResourcesManager.iconsSizeInPixels, ResourcesManager.iconsSizeInPixels);
             SourceCountsInfoTextBlock.Text = string.Format("Counts {0}x{1}", ResourcesManager.iconsCountByX, ResourcesManager.iconsCountByY);
-
+           
             RefreshGroupsList();
 
             for (int x = 0; x < 5; x++)
@@ -43,6 +43,8 @@ namespace CityGame
 
                     groupsPreviewImages[x, y].Width = groupsPreviewImages[x, y].Height = 50;
 
+                    RenderOptions.SetBitmapScalingMode(groupsPreviewImages[x, y], BitmapScalingMode.NearestNeighbor);
+
                     GroupViewGrid.Children.Add(groupsPreviewImages[x, y]);
 
                     TextBlock textBlock = new TextBlock();
@@ -51,6 +53,7 @@ namespace CityGame
 
                     textBlock.VerticalAlignment = VerticalAlignment.Stretch;
                     textBlock.HorizontalAlignment = HorizontalAlignment.Stretch;
+                    textBlock.TextAlignment = TextAlignment.Center;
 
                     textBlock.Text = string.Format("{0}:{1}", x, y);
 
@@ -83,13 +86,13 @@ namespace CityGame
                 if ((blockItemModels != null) && (blockItemModels.Count > 0))
                 {
                     List<BlockItemModel>? nextFrameBlocks = blockItemModels?.FindAll(p => p.animationFrame == animationFrame);
-                    
-                    if ((nextFrameBlocks == null) || (nextFrameBlocks.Count == 0))
+
+                    if ((nextFrameBlocks == null) || (nextFrameBlocks?.Count == 0))
                     {
                         animationFrame = 1;
                         nextFrameBlocks = blockItemModels?.FindAll(p => p.animationFrame == animationFrame);
                     }
-                    if ((nextFrameBlocks != null) || (nextFrameBlocks.Count == 0))
+                    if ((nextFrameBlocks != null) || (nextFrameBlocks?.Count == 0))
                     {
                         foreach (var blockItemModel in nextFrameBlocks)
                         {
@@ -115,8 +118,6 @@ namespace CityGame
                 blocksManager.SetBlocks();
                 RefreshGroupImages(block);
             }
-
-
         }
 
         private BlockPoint GetBlockPositionByMouse(MouseEventArgs e)
@@ -139,7 +140,7 @@ namespace CityGame
             if (!blockEditMode)
             {
                 BlockPoint position = GetBlockPositionByMouse(e);
-                BlockItemModel block = blocksManager.GetBlockByPosition(GetBlockPositionByMouse(e));
+                BlockItemModel? block = blocksManager.GetBlockByPosition(GetBlockPositionByMouse(e));
 
                 PreviewImage.Tag = block;
                 PreviewImage.Source = ResourcesManager.GetBlock(position.x, position.y);
@@ -152,17 +153,21 @@ namespace CityGame
 
                 AnimationFrameComboBox.SelectedIndex = block.animationFrame ?? 0;
 
-                if (block.groupPosition != null)
-                {
-                    // BlockInfoGroupPositionXComboBox.SelectedIndex = block.groupPosition.x + 1;
-                    //BlockInfoGroupPositionYComboBox.SelectedIndex = block.groupPosition.y + 1;                    
-                }
-                else
-                {
-                    // BlockInfoGroupPositionXComboBox.SelectedIndex = 0;
-                    // BlockInfoGroupPositionYComboBox.SelectedIndex = 0;
-                }
                 RefreshGroupImages(block);
+
+                //Resourve image selector
+                Point actualMargin = ResourceImage.TransformToAncestor(MainGrid).Transform(new Point(0, 0));
+                actualMargin.X -= MainGrid.ColumnDefinitions[0].ActualWidth;
+                actualMargin.Y -= MainGrid.RowDefinitions[0].ActualHeight;
+
+                double actualIconSizeInPixels = ResourceImage.ActualWidth / ResourcesManager.iconsCountByX;
+
+                double x = e.GetPosition(ResourceImage).X - (e.GetPosition(ResourceImage).X % actualIconSizeInPixels) + actualMargin.X;
+                double y = e.GetPosition(ResourceImage).Y - (e.GetPosition(ResourceImage).Y % actualIconSizeInPixels) + actualMargin.Y;
+
+                ResourceSelectorBorder.Width = ResourceSelectorBorder.Height = actualIconSizeInPixels;
+
+                ResourceSelectorBorder.Margin = new Thickness(x, y, 0, 0);             
             }
         }
 
@@ -184,14 +189,17 @@ namespace CityGame
 
             if (block != null)
             {
-                List<BlockItemModel> blocksItems = blocksManager.GetBlockByGroupIndex(block.groupId);
-                foreach (BlockItemModel blockItem in blocksItems)
+                List<BlockItemModel>? blocksItems = blocksManager.GetBlockByGroupIndex(block.groupId);
+                if (blocksItems != null)
                 {
-                    if (blockItem.groupPosition != null)
+                    foreach (BlockItemModel blockItem in blocksItems)
                     {
-                        if ((blockItem.groupPosition.x >= 0) && (blockItem.groupPosition.y >= 0))
+                        if (blockItem.groupPosition != null)
                         {
-                            groupsPreviewImages[blockItem.groupPosition.x, blockItem.groupPosition.y].Source = ResourcesManager.GetBlock(blockItem.position.x, blockItem.position.y);
+                            if ((blockItem.groupPosition.x >= 0) && (blockItem.groupPosition.y >= 0))
+                            {
+                                groupsPreviewImages[blockItem.groupPosition.x, blockItem.groupPosition.y].Source = ResourcesManager.GetBlock(blockItem.position.x, blockItem.position.y);
+                            }
                         }
                     }
                 }
@@ -201,6 +209,20 @@ namespace CityGame
         private void ResourceImage_MouseDown(object sender, MouseButtonEventArgs e)
         {
             blockEditMode = !blockEditMode;
+
+            if (blockEditMode)
+            {
+                ResourceMapModeTextBlock.Text = "[Edit mode]".ToUpper();
+                BlockModeTextBlock.Text = "Selected block edit";
+                BlockModeTextBlock.Foreground = ResourceMapModeTextBlock.Foreground = ResourceSelectorBorder.BorderBrush = new SolidColorBrush(Colors.Red);
+            }
+            else
+            {
+                ResourceMapModeTextBlock.Text = "[Select mode]".ToUpper();
+                BlockModeTextBlock.Text = "Selected block view";
+                ResourceSelectorBorder.BorderBrush = new SolidColorBrush(Colors.LightGreen);
+                BlockModeTextBlock.Foreground = ResourceMapModeTextBlock.Foreground = new SolidColorBrush(Colors.Green);
+            }
         }
 
         private void NewBlock_Click(object sender, RoutedEventArgs e)
@@ -223,17 +245,7 @@ namespace CityGame
 
         private void SaveBlocksButton_Click(object sender, RoutedEventArgs e)
         {
-            BlockItemModel block = (BlockItemModel)PreviewImage.Tag;
-            block.name = BlockInfoNameTextBox.Text;
-            block.groupId = BlockInfoGroupComboBox.SelectedIndex;
-            if (block.groupPosition == null)
-            {
-                block.groupPosition = new BlockPoint();
-            }
-
-
-            blocksManager.SetBlocks();
-            RefreshGroupImages(block);
+            blocksManager.SetBlocks(DateTime.Now.ToString(" dd-M-yyyy HH-mm-ss"));
         }
 
         private void BlockInfoGroupComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -253,6 +265,17 @@ namespace CityGame
             if (block != null)
             {
                 block.animationFrame = AnimationFrameComboBox.SelectedIndex;
+                blocksManager.SetBlocks();
+                RefreshGroupImages(block);
+            }
+        }
+
+        private void BlockInfoNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            BlockItemModel block = (BlockItemModel)PreviewImage.Tag;
+            if (block != null)
+            {
+                block.name = BlockInfoNameTextBox.Text;
                 blocksManager.SetBlocks();
                 RefreshGroupImages(block);
             }

@@ -8,11 +8,11 @@ namespace CityGame.Graphics
 {
     internal class BlocksManager
     {
-        private string blocksFile = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\Resources\Blocks.json";
+        private string blocksFile = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\Resources\Blocks{0}.json";
         private string groupsFile = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\Resources\Groups.json";
 
 #if DEBUG
-        private string developmnetBlocksFile = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"..\..\..\..\Resources\Blocks.json";
+        private string developmnetBlocksFile = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"..\..\..\..\Resources\Blocks{0}.json";
         private string developmnetGroupsFile = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"..\..\..\..\Resources\Groups.json";
 #endif
 
@@ -57,11 +57,11 @@ namespace CityGame.Graphics
             _groups = groups;
         }
 
-        public void SetBlocks()
+        public void SetBlocks(string ?backupExt = null)
         {
-            File.WriteAllText(blocksFile, JsonConvert.SerializeObject(_blocks));
+            File.WriteAllText(string.Format(blocksFile,backupExt), JsonConvert.SerializeObject(_blocks));
 #if DEBUG
-            File.WriteAllText(developmnetBlocksFile, JsonConvert.SerializeObject(_blocks));
+            File.WriteAllText(string.Format(developmnetBlocksFile,backupExt), JsonConvert.SerializeObject(_blocks));
 #endif
         }
 

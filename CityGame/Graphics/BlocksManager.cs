@@ -21,9 +21,9 @@ namespace CityGame.Graphics
         {
             get
             {
-                if (File.Exists(blocksFile))
+                if (File.Exists(string.Format(blocksFile, string.Empty)))
                 {
-                    _blocks = JsonConvert.DeserializeObject<List<BlockItemModel>>(File.ReadAllText(blocksFile));
+                    _blocks = JsonConvert.DeserializeObject<List<BlockItemModel>>(File.ReadAllText(string.Format(blocksFile, string.Empty)));
                 }
                 if (_blocks == null)
                 {

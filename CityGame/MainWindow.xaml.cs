@@ -26,9 +26,11 @@ namespace CityGame
         private int x = 1;
         private int y = 1;
         private Random r = new Random(1000);
+        private double[,] land = new double[51, 51];
 
         private Image[,] images = new Image[200, 200];
         private BitmapImage[,] icon = new BitmapImage[100, 100];
+        private double waterLevel = 0.3;
         public MainWindow()
         {
             InitializeComponent();
@@ -39,6 +41,10 @@ namespace CityGame
             timer.Interval = TimeSpan.FromMilliseconds(300);
             timer.Tick += Timer_Tick;
             // timer.Start();
+
+            WaterLevelTextBox.Text = waterLevel.ToString();
+            DiamondSquare diamondSquare = new DiamondSquare(50, 10, 2);
+            land = diamondSquare.getData();
 
             BuildMap();
         }
@@ -53,8 +59,9 @@ namespace CityGame
                 }
             }
 
-            
+
             //River Algorithm 1 ---------------------
+            /*
             double riverDirectionAngle = Math.PI / 2.0f;
             double riverVectorSize = 0;
 
@@ -99,9 +106,51 @@ namespace CityGame
                 y = nextY;
                 riverDirectionAngle += (-0.5f + r.NextDouble()) / 10.0f;
             }
-            
+            */
             //River algorithm 2 ----------------
             //RiverAlgorithm2();
+
+            //River algorithm 3 ----------------
+            double last = 0;
+
+            
+
+            for (int _x = 0; _x < 50; _x++)
+            {
+                for (int _y = 0; _y < 50; _y++)
+                {
+                    if (land[_x, _y] == 0)
+                    {
+                        land[_x, _y] = last;
+                    }
+
+                    
+                    if (land[_x, _y] <= waterLevel)
+                    {
+                        PutImage(_x, _y, 3, 0);
+                    }    
+                    else
+                    if (land[_x, _y] < 0.5)
+                    {
+                        PutImage(_x, _y, 8, 1);
+                    }
+                    else
+                    if (land[_x, _y] < 0.75)
+                    {
+                        PutImage(_x, _y, 9, 1);
+                    }
+                    else
+                    {
+                        PutImage(_x, _y, 0, 0);
+                    }
+
+
+                    
+                    last = land[_x, _y];
+                }
+            }
+
+
         }
 
         private void RiverAlgorithm2()
@@ -228,6 +277,29 @@ namespace CityGame
         private void GenerateMapButton_Click(object sender, RoutedEventArgs e)
         {
             BuildMap();
+        }
+
+        private void GenerateLandButton_Click(object sender, RoutedEventArgs e)
+        {
+            DiamondSquare diamondSquare = new DiamondSquare(50, 10, 2);
+            land = diamondSquare.getData();
+            BuildMap();
+        }
+
+
+        private void SetWaterLevelButton_Click(object sender, RoutedEventArgs e)
+        {
+            double wl;
+            if (double.TryParse(WaterLevelTextBox.Text, out wl))
+            {
+                waterLevel = wl;
+                BuildMap();
+            }
+            else
+            {
+                WaterLevelTextBox.Text = waterLevel.ToString();
+            }
+
         }
     }
 }

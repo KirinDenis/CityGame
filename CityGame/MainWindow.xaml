@@ -11,9 +11,13 @@
             <RowDefinition Height="32"/>
             <RowDefinition Height="365*"/>
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" >
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
             <Button x:Name="ResourceExplorerButton" Content="Resource Explorer" Width="128" HorizontalAlignment="Left" Click="ResourceExplorerButton_Click" />
             <Button x:Name="GenerateMapButton" Content="Generate map" Width="128" HorizontalAlignment="Left" Click="GenerateMapButton_Click"  />
+            <Button x:Name="GenerateLandButton" Content="Generate land" Width="128" HorizontalAlignment="Left" Click="GenerateLandButton_Click"  />
+            <TextBlock Text="Water level" VerticalAlignment="Center" />
+            <TextBox x:Name="WaterLevelTextBox" Text="0.3" VerticalAlignment="Center"  />
+            <Button x:Name="SetWaterLevelButton" Content="set" HorizontalAlignment="Left" Click="SetWaterLevelButton_Click"  />
         </StackPanel>
         <ScrollViewer ScrollViewer.HorizontalScrollBarVisibility="Visible" Grid.Row="1">
             <Grid x:Name="LandingImage"  />

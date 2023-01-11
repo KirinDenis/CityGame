@@ -7,11 +7,15 @@
         mc:Ignorable="d"
         Title="City Game" Height="800" Width="800" WindowStartupLocation="CenterScreen">
     <Grid >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="167*"/>
+            <ColumnDefinition Width="167*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>
             <RowDefinition Height="365*"/>
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.ColumnSpan="2" >
             <Button x:Name="ResourceExplorerButton" Content="Resource Explorer" Width="128" HorizontalAlignment="Left" Click="ResourceExplorerButton_Click" />
             <Button x:Name="GenerateMapButton" Content="Generate map" Width="128" HorizontalAlignment="Left" Click="GenerateMapButton_Click"  />
             <Button x:Name="GenerateLandButton" Content="Generate land" Width="128" HorizontalAlignment="Left" Click="GenerateLandButton_Click"  />
@@ -19,9 +23,11 @@
             <TextBox x:Name="WaterLevelTextBox" Text="0.3" VerticalAlignment="Center"  />
             <Button x:Name="SetWaterLevelButton" Content="set" HorizontalAlignment="Left" Click="SetWaterLevelButton_Click"  />
         </StackPanel>
-        <ScrollViewer ScrollViewer.HorizontalScrollBarVisibility="Visible" Grid.Row="1">
+        <ScrollViewer ScrollViewer.HorizontalScrollBarVisibility="Visible" Grid.Row="1" Grid.Column="0">
             <Grid x:Name="LandingImage"  />
         </ScrollViewer>
+        <Canvas x:Name="Canvas" Grid.Column="1" Grid.Row="1"  />
+        
 
     </Grid>
 </Window>

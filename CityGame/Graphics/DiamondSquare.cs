@@ -59,6 +59,7 @@ namespace CityGame.Graphics
                 int halfSide = sideLength / 2;
 
                 double avg = 0;
+                double lastAvg = 0;
                 //generate the new square values
                 for (int x = 0; x < DATA_SIZE - 1; x += sideLength)
                 {
@@ -78,6 +79,10 @@ namespace CityGame.Graphics
                             //center is average plus random offset
 
                         }
+                        else
+                        {
+                            avg = 10;
+                        }
                         //We calculate random value in range of 2h
                         //and then subtract h so the end value is
                         //in the range (-h, +h)
@@ -85,8 +90,12 @@ namespace CityGame.Graphics
                         try
                         {
                             data[x + halfSide, y + halfSide] = avg + (r.NextDouble() * 2 * h) - h;
+                            lastAvg = data[x + halfSide, y + halfSide];
                         }
-                        catch { }
+                        catch 
+                        {
+
+                        }
                     }
                 }
                 //generate the diamond values

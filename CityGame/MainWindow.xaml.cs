@@ -1,10 +1,12 @@
 ﻿using CityGame.Graphics;
 using System;
 using System.Collections.Generic;
+//using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 using System.Windows.Threading;
 
 
@@ -30,7 +32,7 @@ namespace CityGame
 
         private Image[,] images = new Image[200, 200];
         private BitmapImage[,] icon = new BitmapImage[100, 100];
-        private double waterLevel = 0.3;
+        private double waterLevel = -0.3;
         public MainWindow()
         {
             InitializeComponent();
@@ -43,7 +45,7 @@ namespace CityGame
             // timer.Start();
 
             WaterLevelTextBox.Text = waterLevel.ToString();
-            DiamondSquare diamondSquare = new DiamondSquare(50, 10, 2);
+            DiamondSquare diamondSquare = new DiamondSquare(50, 150, 20);
             land = diamondSquare.getData();
 
             BuildMap();
@@ -281,9 +283,26 @@ namespace CityGame
 
         private void GenerateLandButton_Click(object sender, RoutedEventArgs e)
         {
-            DiamondSquare diamondSquare = new DiamondSquare(50, 5, 10);
+            DiamondSquare diamondSquare = new DiamondSquare(50, 1, 1);
             land = diamondSquare.getData();
-            BuildMap();
+
+            for (int x = 0; x < 50; x++)
+            {
+                for (int y = 0; y < 50; y++)
+                {
+                    Rectangle rect = new Rectangle();
+                    rect.Margin = new Thickness(x * 5, y * 5, 0, 0);
+                    rect.Width = 5;
+                    rect.Height = 5;
+                    rect.Fill = new SolidColorBrush(Color.FromArgb(0xFF, (byte)(land[x,y] * 0xFF), (byte)(land[x, y] * 0xFF), (byte)(land[x, y] * 0xFF)));
+
+
+                    Canvas.Children.Add(rect);
+
+                }
+            }
+
+                BuildMap();
         }
 
 

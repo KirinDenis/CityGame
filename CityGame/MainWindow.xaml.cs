@@ -281,7 +281,7 @@ namespace CityGame
 
         private void GenerateLandButton_Click(object sender, RoutedEventArgs e)
         {
-            DiamondSquare diamondSquare = new DiamondSquare(50, 10, 2);
+            DiamondSquare diamondSquare = new DiamondSquare(50, 5, 10);
             land = diamondSquare.getData();
             BuildMap();
         }

@@ -86,7 +86,7 @@ namespace CityGame.Graphics
             return block;
         }
 
-        public List<BlockItemModel>? GetBlockByGroupIndex(int gorupId)
+        public List<BlockItemModel>? GetBlockByGroupIndex(int? gorupId)
         {
             if (gorupId > 0)
             {
@@ -94,6 +94,16 @@ namespace CityGame.Graphics
             }
 
             return new List<BlockItemModel>();
+        }
+
+        public int? GetGroupId(string groupItemName)
+        {
+            return groups?.IndexOf(groupItemName);
+        }
+
+        public List<BlockItemModel>? GetBlockByGroupName(string groupItemName)
+        {
+            return GetBlockByGroupIndex(GetGroupId(groupItemName));
         }
 
         public List<BlockItemModel>? GetBlockByGroupIndexAnimationOnly(int gorupId)

@@ -1,4 +1,5 @@
-﻿using CityGame.Graphics;
+﻿using CityGame.DataModels;
+using CityGame.Graphics;
 using System;
 using System.Collections.Generic;
 //using System.Drawing;
@@ -19,23 +20,37 @@ namespace CityGame
         public List<Graph> child = new List<Graph>();
     }
 
+    public enum terrainType
+    {
+        water = 0,
+        land = 1,
+        forest = 2
+    }
+
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        private int x = 1;
-        private int y = 1;
-        private Random r = new Random(1000);
-        private double[,] land = new double[51, 51];
+        private const int terrainSize = 20;
+        
+        //Terrain map
+        //0 - water level
+        //1 - land
+        //2 - forest
+        private terrainType[,] terrain = new terrainType[terrainSize, terrainSize];
 
-        private Image[,] images = new Image[200, 200];
-        private BitmapImage[,] icon = new BitmapImage[100, 100];
-        private double waterLevel = -0.3;
+        private double waterLevel = 0.3;
 
-        private int roughness = 2;
+        private double landLevel = 0.5; //upper this is forest
+
+        private Image[,] images = new Image[terrainSize, terrainSize];
+
+        private int roughness = 0;
         private double seed = 1.0;
+
+        private BlocksManager blocksManager = new BlocksManager();
 
         public MainWindow()
         {
@@ -53,161 +68,43 @@ namespace CityGame
             SeedTextBox.Text = seed.ToString();
 
 
-            DiamondSquare diamondSquare = new DiamondSquare(50, 1);
-            land = diamondSquare.getData();
             DrawDiamand();
             BuildMap();
         }
 
         private void BuildMap()
         {
-            for (int _x = 0; _x < 50; _x++)
+            List<BlockItemModel>? waterGroup = blocksManager.GetBlockByGroupName("water");
+
+            for (int x = 1; x < terrainSize-1; x++)
             {
-                for (int _y = 0; _y < 50; _y++)
+                for (int y = 0; y < terrainSize; y++)
                 {
-                    PutImage(_x, _y, 0, 0);
+                    switch (terrain[x, y])
+                    {
+                        case terrainType.water:
+                            {
+                                if (terrain[x - 1, y] != terrainType.water)
+                                {
+                                    PutImage(x, y, waterGroup[5].position.x, waterGroup[5].position.y);
+                                }
+                                else
+                                {
+
+                                    PutImage(x, y, 3, 0);
+                                }
+                                    break;
+                            }
+                        case terrainType.land:
+                            {
+                                PutImage(x, y, 0, 0);
+
+                                break;
+                            }
+                        default: PutImage(x, y, 9, 1); break;
+                    }
                 }
             }
-
-
-            //River Algorithm 1 ---------------------
-            /*
-            double riverDirectionAngle = Math.PI / 2.0f;
-            double riverVectorSize = 0;
-
-            double x = 50 / 2; //half of map
-            double y = 0;
-
-            double nextX = 0; //half of map
-            double nextY = 0;
-
-            List<Point> points = new List<Point>();
-            points.Add(new Point(x, y));
-
-            while (true)
-            {
-                if ((x < 0) || (x > 50) || (y < 0) || (y > 50))
-                {
-                    break;
-                }
-                PutImage((int)x, (int)y, 2, 0);
-                riverVectorSize = r.NextDouble() * 5;
-                nextX = riverVectorSize * Math.Cos(riverDirectionAngle) + x;
-                nextY = riverVectorSize * Math.Sin(riverDirectionAngle) + y;
-                points.Add(new Point(nextX, nextY));
-                //draw 
-                double lamdaX = (nextX - x) / (nextY - y);
-
-                double _x = x;
-                for (int _y = 0; _y < nextY; _y++)
-                {
-                    if ((_x < 0) || (_x > 50) || (_y < 0) || (_y > 50))
-                    {
-                        break;
-                    }
-
-                    PutImage((int)_x, _y, 3, 0);
-                    _x += lamdaX;
-                }
-
-
-
-                x = nextX;
-                y = nextY;
-                riverDirectionAngle += (-0.5f + r.NextDouble()) / 10.0f;
-            }
-            */
-            //River algorithm 2 ----------------
-            //RiverAlgorithm2();
-
-            //River algorithm 3 ----------------
-            double last = 0;
-
-
-
-            for (int _x = 0; _x < 50; _x++)
-            {
-                for (int _y = 0; _y < 50; _y++)
-                {
-                    if (land[_x, _y] == 0)
-                    {
-                        land[_x, _y] = last;
-                    }
-
-
-                    if (land[_x, _y] <= waterLevel)
-                    {
-                        PutImage(_x, _y, 3, 0);
-                    }
-                    else
-                    if (land[_x, _y] < 0.5)
-                    {
-                        PutImage(_x, _y, 8, 1);
-                    }
-                    else
-                    if (land[_x, _y] < 0.75)
-                    {
-                        PutImage(_x, _y, 9, 1);
-                    }
-                    else
-                    {
-                        PutImage(_x, _y, 0, 0);
-                    }
-
-
-
-                    last = land[_x, _y];
-                }
-            }
-
-
-        }
-
-        private void RiverAlgorithm2()
-        {
-            List<Graph> graphs = new List<Graph>();
-            //first graph 
-            Graph first = new Graph();
-            first.from = new Point(25, 0);
-
-            double riverDirectionAngle = Math.PI / 2.0f;
-            double riverVectorSize = 0;
-            riverVectorSize = r.NextDouble() * 5;
-
-            first.to = new Point(riverVectorSize * Math.Cos(riverDirectionAngle) + first.from.X, riverVectorSize * Math.Sin(riverDirectionAngle) + first.from.Y);
-
-            graphs.Add(first);
-
-            Graph lastGrpah = first;
-            while (true)
-            {
-
-                graphs.Add(NextGraph(lastGrpah));
-                lastGrpah = graphs[graphs.Count - 1];
-                if ((lastGrpah.to.X < 0) || (lastGrpah.to.X > 50) || (lastGrpah.to.Y < 0) || (lastGrpah.to.Y > 50))
-                {
-                    break;
-                }
-            }
-
-        }
-
-        private Graph NextGraph(Graph sourceGraph)
-        {
-            Graph nextGraph = new Graph();
-            nextGraph.from = sourceGraph.to;
-
-            double riverDirectionAngle = Math.PI / 2.0f + (-0.5f + r.NextDouble()) / 10.0f;
-            double riverVectorSize = 0;
-            riverVectorSize = r.NextInt64(5);
-            nextGraph.to = new Point(riverVectorSize * Math.Cos(riverDirectionAngle) + nextGraph.from.X, riverVectorSize * Math.Sin(riverDirectionAngle) + nextGraph.from.Y);
-
-            if (r.Next(100) > 80)
-            {
-
-            }
-
-            return nextGraph;
         }
 
         private void PutImage(int x, int y, int bx, int by)
@@ -225,86 +122,50 @@ namespace CityGame
 
                 LandingImage.Children.Add(images[x, y]);
             }
-
             images[x, y].Source = ResourcesManager.GetBlock(bx, by);
         }
 
-
-
         private void Timer_Tick(object? sender, EventArgs e)
         {
-            for (int i = 0; i < 100 * 100; i++)
-            {
-                x++;
-                if (x > 100)
-                {
-                    x = 0;
-                    y++;
-                    if (y > 100)
-                    {
-                        y = 0;
-                    }
-                }
-
-
-                if (images[x, y] == null)
-                {
-                    images[x, y] = new Image();
-                    images[x, y].Margin = new Thickness(x * 32, y * 32, 0, 0);
-                    images[x, y].Width = 32;
-                    images[x, y].Height = 32;
-                    images[x, y].VerticalAlignment = VerticalAlignment.Top;
-                    images[x, y].HorizontalAlignment = HorizontalAlignment.Left;
-                    images[x, y].Stretch = Stretch.Uniform;
-
-
-                    LandingImage.Children.Add(images[x, y]);
-                }
-
-                int ix = r.Next(40);
-                int iy = r.Next(40);
-                if (icon[ix, iy] == null)
-                {
-                    icon[ix, iy] = ResourcesManager.GetBlock(r.Next(20), r.Next(20));
-                }
-                images[x, y].Source = icon[ix, iy];
-
-
-
-
-            }
-            //LandingImage.Source = Icons.GetIcon(x, y);
-            //LandingImage.UpdateLayout();
         }
 
         private void DrawDiamand()
         {
-            for (int x = 0; x < 50; x++)
+
+            DiamondSquare diamondSquare = new DiamondSquare(terrainSize, 1);
+            double[,] sourceTerraing = diamondSquare.getData();
+
+            Canvas.Children.Clear();
+
+            for (int x = 0; x < terrainSize; x++)
             {
-                for (int y = 0; y < 50; y++)
+                for (int y = 0; y < terrainSize; y++)
                 {
+                    if (sourceTerraing[x, y] <= waterLevel)
+                    {
+                        terrain[x, y] = terrainType.water;
+                    }
+                    else
+                    if (sourceTerraing[x, y] <= landLevel)
+                    {
+                        terrain[x, y] = terrainType.land;
+                    }
+                    else
+                        terrain[x, y] = terrainType.forest;
+
+                    //Draw map
                     Rectangle rect = new Rectangle();
                     rect.Margin = new Thickness(x * 5, y * 5, 0, 0);
                     rect.Width = 5;
                     rect.Height = 5;
 
-                    if (land[x, y] == 10)
+                    switch (terrain[x, y])
                     {
-                        rect.Fill = new SolidColorBrush(Colors.Red);
+                        case terrainType.water: rect.Fill = new SolidColorBrush(Colors.Blue); break;
+                        case terrainType.land: rect.Fill = new SolidColorBrush(Colors.Brown); break;
+                        default: rect.Fill = new SolidColorBrush(Colors.Green); break;
                     }
-                    else
-                    if (land[x, y] == 20)
-                    {
-                        rect.Fill = new SolidColorBrush(Colors.Blue);
-                    }
-                    else
-                    {
-                        rect.Fill = new SolidColorBrush(Color.FromArgb(0xFF, (byte)(land[x, y] * 0xFF), (byte)(land[x, y] * 0xFF), (byte)(land[x, y] * 0xFF)));
-                    }
-
-
                     Canvas.Children.Add(rect);
-
                 }
             }
         }
@@ -321,8 +182,6 @@ namespace CityGame
 
         private void GenerateLandButton_Click(object sender, RoutedEventArgs e)
         {
-            DiamondSquare diamondSquare = new DiamondSquare(50, 2);
-            land = diamondSquare.getData();
             DrawDiamand();
             BuildMap();
         }
@@ -348,9 +207,6 @@ namespace CityGame
             int r;
             if (int.TryParse(RoughnessTextBox.Text, out r))
             {
-                DiamondSquare diamondSquare = new DiamondSquare(50, roughness);
-                land = diamondSquare.getData();
-
                 roughness = r;
                 DrawDiamand();
                 BuildMap();
@@ -366,9 +222,6 @@ namespace CityGame
             double s;
             if (double.TryParse(SeedTextBox.Text, out s))
             {
-                DiamondSquare diamondSquare = new DiamondSquare(50, roughness);
-                land = diamondSquare.getData();
-
                 seed = s;
                 DrawDiamand();
                 BuildMap();

@@ -6,138 +6,161 @@
 // https://stackoverflow.com/questions/2755750/diamond-square-algorithm?newreg=ee2a40d2fe9f49b9b938151e933860d2
 
 using System;
-using System.Runtime.Intrinsics.X86;
 
 namespace CityGame.Graphics
 {
     public class DiamondSquare
     {
+        private int terrainSize;
+        private int roughness;
+        private Random rnd = new Random();
+        private double[,] t;
 
-        private int _terrainPoints;
-        private double _roughness;
-        private double _seed; // an initial seed value for the corners of the data
-
-        public DiamondSquare(int terrainPoints, double roughness, double seed)
+        public DiamondSquare(int terrainSize, int roughness)
         {
-            this._terrainPoints = terrainPoints;
-            this._roughness = roughness;
-            this._seed = seed;
+            this.terrainSize = terrainSize;
+            this.roughness = roughness;
         }
+
+        private void DeomandStep(int x1, int y1, int x2, int y2, int halfSide)
+        {
+            int x = x1 + halfSide;
+            int y = y1 + halfSide;
+            t[x, y] = (t[x1, y1] + t[x2, y2] + t[x1, y2] + t[x2, y1] + rnd.NextDouble()) / 5.0f;
+        }
+
+        private void SquareStep(int x1, int y1, int x2, int y2, int halfSide)
+        {
+            //sum of square
+            double sum = (t[x1, y1] + t[x2, y2] + t[x1, y2] + t[x2, y1] + t[x1 + halfSide, y1 + halfSide]) / 5.0f;
+            //point 1
+            t[(x2 - x1) / 2, y1] = (sum + rnd.NextDouble()) / 2.0f;
+
+            //point 2
+            t[x2, (y2 - y1) / 2] = (sum + rnd.NextDouble()) / 2.0f;
+
+            //point 3
+            t[(x2 - x1) / 2, y2] = (sum + rnd.NextDouble()) / 2.0f;
+
+            //point 4
+            t[x1, (y2 - y1) / 2] = (sum + rnd.NextDouble()) / 2.0f;
+        }
+
+        private void DeomandApStep(int x1, int y1, int x2, int y2, int halfSide)
+        {
+            int x = x1 + halfSide;
+            int y = y1 + halfSide;
+            t[x, y] = (t[x, y] + t[x1, y1] + t[x2, y2] + t[x1, y2] + t[x2, y1]) / 5.0f;
+        }
+
+        private void SquareApStep(int x1, int y1, int x2, int y2, int halfSide)
+        {
+            //sum of square
+            double sum = (t[x1, y1] + t[x2, y2] + t[x1, y2] + t[x2, y1] + t[x1 + halfSide, y1 + halfSide]) / 5.0f;
+            //point 1
+            t[(x2 - x1) / 2, y1] = (sum + t[(x2 - x1) / 2, y1]) / 2.0f;
+
+            //point 2
+            t[x2, (y2 - y1) / 2] = (sum + t[x2, (y2 - y1) / 2]) / 2.0f;
+
+            //point 3
+            t[(x2 - x1) / 2, y2] = (sum + t[(x2 - x1) / 2, y2]) / 2.0f;
+
+            //point 4
+            t[x1, (y2 - y1) / 2] = (sum + t[x1, (y2 - y1) / 2]) / 2.0f;
+        }
+
 
         public double[,] getData()
         {
-            return diamondSquareAlgorithm();
-        }
+            t = new double[terrainSize, terrainSize]; //"t" mean terrain
+            //Init 
+            t[0, 0] = rnd.NextDouble();
+            t[terrainSize - 1, 0] = rnd.NextDouble();
+            t[terrainSize - 1, terrainSize - 1] = rnd.NextDouble();
+            t[0, terrainSize - 1] = rnd.NextDouble();
 
-        private double[,] diamondSquareAlgorithm()
-        {
-            //size of grid to generate, note this must be a
-            //value 2^n+1
-            int DATA_SIZE = _terrainPoints + 1;  // must be a power of two plus one e.g. 33, 65, 128, etc
-
-            double[,] data = new double[DATA_SIZE, DATA_SIZE];
-            data[0, 0] = data[0, DATA_SIZE - 1] = data[DATA_SIZE - 1, 0] =
-              data[DATA_SIZE - 1, DATA_SIZE - 1] = _seed;
-
-            double h = _roughness;//the range (-h -> +h) for the average offset - affects roughness
-            Random r = new Random();//for the new value in range of h
-                                    //side length is distance of a single square side
-                                    //or distance of diagonal in diamond
-
-            for (int sideLength = DATA_SIZE - 1;
-                //side length must be >= 2 so we always have
-                //a new value (if its 1 we overwrite existing values
-                //on the last iteration)
-                sideLength >= 2;
-                //each iteration we are looking at smaller squares
-                //diamonds, and we decrease the variation of the offset
-                sideLength /= 2, h /= 2.0)
+            //Steps            
+            int sideLength = terrainSize - 1;
+            double sum = 0.0f;
+            while (true)
             {
-                //half the length of the side of a square
-                //or distance from diamond center to one corner
-                //(just to make calcs below a little clearer)
-                int halfSide = sideLength / 2;
 
-                double avg = 0;
-                double lastAvg = 0;
-                //generate the new square values
-                for (int x = 0; x < DATA_SIZE - 1; x += sideLength)
+                int halfSide = (int)Math.Ceiling(sideLength / 2.0f);
+                for (int x = 0; x < terrainSize - 1; x += sideLength)
                 {
-                    for (int y = 0; y < DATA_SIZE - 1; y += sideLength)
+                    for (int y = 0; y < terrainSize - 1; y += sideLength)
                     {
-                        //x, y is upper left corner of square
-                        //calculate average of existing corners
-
-                        
-                        if ((x + sideLength < DATA_SIZE) && (y + sideLength < DATA_SIZE))
-                        {
-                            avg = data[x, y] + //top left
-                            data[x + sideLength, y] +//top right
-                            data[x, y + sideLength] + //lower left
-                            data[x + sideLength, y + sideLength];//lower right
-                            avg /= 4.0;
-                            //center is average plus random offset
-
-                        }
-                        else
-                        {
-                            avg = 10;
-                        }
-                        //We calculate random value in range of 2h
-                        //and then subtract h so the end value is
-                        //in the range (-h, +h)
-
                         try
                         {
-                            data[x + halfSide, y + halfSide] = avg + (r.NextDouble() * 2 * h) - h;
-                            lastAvg = data[x + halfSide, y + halfSide];
+                            //DeomandStep(x, y, x + sideLength, y + sideLength, halfSide);
+                            t[x + halfSide, y + halfSide] = (t[x, y] + t[x + sideLength, y + sideLength] + t[x, y + sideLength] + t[x + sideLength, y] + rnd.NextDouble()) / 5.0f;
+
+
+                            //SquareStep(x, y, x + sideLength, y + sideLength, halfSide);
+                            //^^^this generate flat terrain
+                            //sum of square
+                            
+                            //NOTE: this generate terrain with sea on righ buttom terrain side
+                            sum = (t[x, y] + t[x + sideLength, y + sideLength] + t[x, y + sideLength] + t[x + sideLength, y] + t[x + halfSide, y + halfSide]) / 5.0f;
+                            //point 1
+                            t[(x + sideLength) /2, y] = (sum + rnd.NextDouble()) / 2.0f;
+
+                            //point 2
+                            t[x + sideLength, (y + sideLength) / 2] = (sum + rnd.NextDouble()) / 2.0f;
+
+                            //point 3
+                            t[(x + sideLength) / 2, y + sideLength] = (sum + rnd.NextDouble()) / 2.0f;
+
+                            //point 4
+                            t[x, (y + sideLength) / 2] = (sum + rnd.NextDouble()) / 2.0f;
+                            
                         }
-                        catch 
+                        catch
                         {
 
+                        };
+                    }
+                }
+                if (sideLength < 2)
+                {
+                    break;
+                }
+                sideLength = (int)Math.Ceiling(sideLength / 2.0f);
+            }
+
+            //smooth out roughness
+            for (int r = 0; r < roughness; r++)
+            {
+                sideLength = terrainSize - 1;
+
+                while (true)
+                {
+                    int halfSide = (int)Math.Ceiling(sideLength / 2.0f);
+                    for (int x = 0; x < terrainSize - 1; x += sideLength)
+                    {
+                        for (int y = 0; y < terrainSize - 1; y += sideLength)
+                        {
+                            try
+                            {
+                                DeomandApStep(x, y, x + sideLength, y + sideLength, halfSide);
+                                SquareApStep(x, y, x + sideLength, y + sideLength, halfSide);
+                            }
+                            catch
+                            {
+
+                            };
                         }
                     }
-                }
-                //generate the diamond values
-                //since the diamonds are staggered we only move x
-                //by half side
-                //NOTE: if the data shouldn't wrap then x < DATA_SIZE
-                //to generate the far edge values
-                for (int x = 0; x < DATA_SIZE - 1; x += halfSide)
-                {
-                    //and y is x offset by half a side, but moved by
-                    //the full side length
-                    //NOTE: if the data shouldn't wrap then y < DATA_SIZE
-                    //to generate the far edge values
-                    for (int y = (x + halfSide) % sideLength; y < DATA_SIZE - 1; y += sideLength)
+                    if (sideLength < 2)
                     {
-                        //x, y is center of diamond
-                        //note we must use mod  and add DATA_SIZE for subtraction 
-                        //so that we can wrap around the array to find the corners
-                         avg =
-                          data[(x - halfSide + DATA_SIZE) % DATA_SIZE, y] + //left of center
-                          data[(x + halfSide) % DATA_SIZE, y] + //right of center
-                          data[x, (y + halfSide) % DATA_SIZE] + //below center
-                          data[x, (y - halfSide + DATA_SIZE) % DATA_SIZE]; //above center
-                        avg /= 4.0;
-
-                        //new value = average plus random offset
-                        //We calculate random value in range of 2h
-                        //and then subtract h so the end value is
-                        //in the range (-h, +h)
-                        avg = avg + (r.NextDouble() * 2 * h) - h;
-                        //update value for center of diamond
-                        data[x, y] = avg;
-
-                        //wrap values on the edges, remove
-                        //this and adjust loop condition above
-                        //for non-wrapping values.
-                        if (x == 0) data[DATA_SIZE - 1, y] = avg;
-                        if (y == 0) data[x, DATA_SIZE - 1] = avg;
+                        break;
                     }
+                    sideLength = (int)Math.Ceiling(sideLength / 2.0f);
                 }
             }
-            return data;
+            return t;
         }
+
     }
 }

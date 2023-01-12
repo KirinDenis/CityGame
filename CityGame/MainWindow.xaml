@@ -19,9 +19,20 @@
             <Button x:Name="ResourceExplorerButton" Content="Resource Explorer" Width="128" HorizontalAlignment="Left" Click="ResourceExplorerButton_Click" />
             <Button x:Name="GenerateMapButton" Content="Generate map" Width="128" HorizontalAlignment="Left" Click="GenerateMapButton_Click"  />
             <Button x:Name="GenerateLandButton" Content="Generate land" Width="128" HorizontalAlignment="Left" Click="GenerateLandButton_Click"  />
+            
             <TextBlock Text="Water level" VerticalAlignment="Center" />
             <TextBox x:Name="WaterLevelTextBox" Text="0.3" VerticalAlignment="Center"  />
             <Button x:Name="SetWaterLevelButton" Content="set" HorizontalAlignment="Left" Click="SetWaterLevelButton_Click"  />
+
+            <TextBlock Text="Roughness" VerticalAlignment="Center" />
+            <TextBox x:Name="RoughnessTextBox" Text="0.3" VerticalAlignment="Center"  />
+            <Button x:Name="SetRoughnessButton" Content="set" HorizontalAlignment="Left" Click="SetRoughnessButton_Click"  />
+
+            <TextBlock Text="Seed" VerticalAlignment="Center" />
+            <TextBox x:Name="SeedTextBox" Text="0.3" VerticalAlignment="Center"  />
+            <Button x:Name="SeedButton" Content="set" HorizontalAlignment="Left" Click="SetSeedButton_Click"  />
+
+
         </StackPanel>
         <ScrollViewer ScrollViewer.HorizontalScrollBarVisibility="Visible" Grid.Row="1" Grid.Column="0">
             <Grid x:Name="LandingImage"  />

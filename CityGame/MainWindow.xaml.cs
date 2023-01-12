@@ -33,6 +33,10 @@ namespace CityGame
         private Image[,] images = new Image[200, 200];
         private BitmapImage[,] icon = new BitmapImage[100, 100];
         private double waterLevel = -0.3;
+
+        private int roughness = 2;
+        private double seed = 1.0;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -45,9 +49,13 @@ namespace CityGame
             // timer.Start();
 
             WaterLevelTextBox.Text = waterLevel.ToString();
-            DiamondSquare diamondSquare = new DiamondSquare(50, 150, 20);
-            land = diamondSquare.getData();
+            RoughnessTextBox.Text = roughness.ToString();
+            SeedTextBox.Text = seed.ToString();
 
+
+            DiamondSquare diamondSquare = new DiamondSquare(50, 1);
+            land = diamondSquare.getData();
+            DrawDiamand();
             BuildMap();
         }
 
@@ -115,7 +123,7 @@ namespace CityGame
             //River algorithm 3 ----------------
             double last = 0;
 
-            
+
 
             for (int _x = 0; _x < 50; _x++)
             {
@@ -126,11 +134,11 @@ namespace CityGame
                         land[_x, _y] = last;
                     }
 
-                    
+
                     if (land[_x, _y] <= waterLevel)
                     {
                         PutImage(_x, _y, 3, 0);
-                    }    
+                    }
                     else
                     if (land[_x, _y] < 0.5)
                     {
@@ -147,7 +155,7 @@ namespace CityGame
                     }
 
 
-                    
+
                     last = land[_x, _y];
                 }
             }
@@ -173,7 +181,7 @@ namespace CityGame
             Graph lastGrpah = first;
             while (true)
             {
-                
+
                 graphs.Add(NextGraph(lastGrpah));
                 lastGrpah = graphs[graphs.Count - 1];
                 if ((lastGrpah.to.X < 0) || (lastGrpah.to.X > 50) || (lastGrpah.to.Y < 0) || (lastGrpah.to.Y > 50))
@@ -267,8 +275,38 @@ namespace CityGame
             }
             //LandingImage.Source = Icons.GetIcon(x, y);
             //LandingImage.UpdateLayout();
+        }
+
+        private void DrawDiamand()
+        {
+            for (int x = 0; x < 50; x++)
+            {
+                for (int y = 0; y < 50; y++)
+                {
+                    Rectangle rect = new Rectangle();
+                    rect.Margin = new Thickness(x * 5, y * 5, 0, 0);
+                    rect.Width = 5;
+                    rect.Height = 5;
+
+                    if (land[x, y] == 10)
+                    {
+                        rect.Fill = new SolidColorBrush(Colors.Red);
+                    }
+                    else
+                    if (land[x, y] == 20)
+                    {
+                        rect.Fill = new SolidColorBrush(Colors.Blue);
+                    }
+                    else
+                    {
+                        rect.Fill = new SolidColorBrush(Color.FromArgb(0xFF, (byte)(land[x, y] * 0xFF), (byte)(land[x, y] * 0xFF), (byte)(land[x, y] * 0xFF)));
+                    }
 
 
+                    Canvas.Children.Add(rect);
+
+                }
+            }
         }
 
         private void ResourceExplorerButton_Click(object sender, RoutedEventArgs e)
@@ -283,26 +321,10 @@ namespace CityGame
 
         private void GenerateLandButton_Click(object sender, RoutedEventArgs e)
         {
-            DiamondSquare diamondSquare = new DiamondSquare(50, 1, 1);
+            DiamondSquare diamondSquare = new DiamondSquare(50, 2);
             land = diamondSquare.getData();
-
-            for (int x = 0; x < 50; x++)
-            {
-                for (int y = 0; y < 50; y++)
-                {
-                    Rectangle rect = new Rectangle();
-                    rect.Margin = new Thickness(x * 5, y * 5, 0, 0);
-                    rect.Width = 5;
-                    rect.Height = 5;
-                    rect.Fill = new SolidColorBrush(Color.FromArgb(0xFF, (byte)(land[x,y] * 0xFF), (byte)(land[x, y] * 0xFF), (byte)(land[x, y] * 0xFF)));
-
-
-                    Canvas.Children.Add(rect);
-
-                }
-            }
-
-                BuildMap();
+            DrawDiamand();
+            BuildMap();
         }
 
 
@@ -312,13 +334,51 @@ namespace CityGame
             if (double.TryParse(WaterLevelTextBox.Text, out wl))
             {
                 waterLevel = wl;
+                DrawDiamand();
                 BuildMap();
             }
             else
             {
                 WaterLevelTextBox.Text = waterLevel.ToString();
             }
-
         }
+
+        private void SetRoughnessButton_Click(object sender, RoutedEventArgs e)
+        {
+            int r;
+            if (int.TryParse(RoughnessTextBox.Text, out r))
+            {
+                DiamondSquare diamondSquare = new DiamondSquare(50, roughness);
+                land = diamondSquare.getData();
+
+                roughness = r;
+                DrawDiamand();
+                BuildMap();
+            }
+            else
+            {
+                RoughnessTextBox.Text = roughness.ToString();
+            }
+        }
+
+        private void SetSeedButton_Click(object sender, RoutedEventArgs e)
+        {
+            double s;
+            if (double.TryParse(SeedTextBox.Text, out s))
+            {
+                DiamondSquare diamondSquare = new DiamondSquare(50, roughness);
+                land = diamondSquare.getData();
+
+                seed = s;
+                DrawDiamand();
+                BuildMap();
+            }
+            else
+            {
+                SeedTextBox.Text = seed.ToString();
+            }
+        }
+
+
     }
 }

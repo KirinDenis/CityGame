@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
@@ -22,9 +21,9 @@ namespace CityGame
 
     public enum terrainType
     {
-        water = 0,
-        land = 1,
-        forest = 2
+        water = 1,
+        land = 2,
+        forest = 4
     }
 
 
@@ -33,8 +32,8 @@ namespace CityGame
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const int terrainSize = 100;
-        
+        private const int terrainSize = 50;
+
         //Terrain map
         //0 - water level
         //1 - land
@@ -43,7 +42,7 @@ namespace CityGame
 
         private double waterLevel = 0.3;
 
-        private double landLevel = 0.5; //upper this is forest
+        private double landLevel = 0.4; //upper this is forest
 
         private Image[,] images = new Image[terrainSize, terrainSize];
 
@@ -75,76 +74,90 @@ namespace CityGame
         private void BuildMap()
         {
             List<BlockItemModel>? waterGroup = blocksManager.GetBlockByGroupName("water");
+            List<BlockItemModel>? forestGroup = blocksManager.GetBlockByGroupName("forest");
             byte randomIndex = 0;
-            for (int x = 1; x < terrainSize-1; x++)
+            for (int x = 1; x < terrainSize - 1; x++)
             {
                 randomIndex = randomIndex != 0 ? (byte)0 : (byte)1;
-                for (int y = 1; y < terrainSize-1; y++)
+                for (int y = 1; y < terrainSize - 1; y++)
                 {
-                    randomIndex = randomIndex != 0 ? (byte) 0 : (byte)1;
+                    randomIndex = randomIndex != 0 ? (byte)0 : (byte)1;
+
+                    //delete singe 
+                    terrainType s = (terrain[x - 1, y - 1] | terrain[x, y - 1] | terrain[x + 1, y - 1] |
+                        terrain[x - 1, y] | terrain[x + 1, y] |
+                        terrain[x - 1, y + 1] | terrain[x, y + 1] | terrain[x + 1, y + 1]) & terrain[x, y];
+
+                    if (s != terrain[x, y])
+                    {
+                        terrain[x, y] = terrainType.land;
+                    }
+
+
+
                     switch (terrain[x, y])
                     {
                         case terrainType.water:
                             {
                                 if ((terrain[x - 1, y] != terrainType.water) && (terrain[x, y - 1] != terrainType.water))
                                 {
-                                    List<BlockItemModel>? wBlcoks = blocksManager.GetBlockByGroupPosition(waterGroup, 0, 0);
-                                    PutImage(x, y, wBlcoks[randomIndex].position.x, wBlcoks[randomIndex].position.y);
+                                    List<BlockItemModel>? wBlocks = blocksManager.GetBlockByGroupPosition(waterGroup, 0, 0);
+                                    PutImage(x, y, wBlocks[randomIndex].position.x, wBlocks[randomIndex].position.y);
                                 }
                                 else
                                 if ((terrain[x - 1, y] != terrainType.water) && (terrain[x, y + 1] != terrainType.water))
                                 {
-                                    List<BlockItemModel>? wBlcoks = blocksManager.GetBlockByGroupPosition(waterGroup, 0, 2);
-                                    PutImage(x, y, wBlcoks[randomIndex].position.x, wBlcoks[randomIndex].position.y);
+                                    List<BlockItemModel>? wBlocks = blocksManager.GetBlockByGroupPosition(waterGroup, 0, 2);
+                                    PutImage(x, y, wBlocks[randomIndex].position.x, wBlocks[randomIndex].position.y);
                                 }
                                 else
                                 if ((terrain[x + 1, y] != terrainType.water) && (terrain[x, y - 1] != terrainType.water))
                                 {
-                                    List<BlockItemModel>? wBlcoks = blocksManager.GetBlockByGroupPosition(waterGroup, 2, 0);
-                                    PutImage(x, y, wBlcoks[randomIndex].position.x, wBlcoks[randomIndex].position.y);
+                                    List<BlockItemModel>? wBlocks = blocksManager.GetBlockByGroupPosition(waterGroup, 2, 0);
+                                    PutImage(x, y, wBlocks[randomIndex].position.x, wBlocks[randomIndex].position.y);
                                 }
                                 else
                                 if ((terrain[x + 1, y] != terrainType.water) && (terrain[x, y + 1] != terrainType.water))
                                 {
-                                    List<BlockItemModel>? wBlcoks = blocksManager.GetBlockByGroupPosition(waterGroup, 2, 2);
-                                    PutImage(x, y, wBlcoks[randomIndex].position.x, wBlcoks[randomIndex].position.y);
+                                    List<BlockItemModel>? wBlocks = blocksManager.GetBlockByGroupPosition(waterGroup, 2, 2);
+                                    PutImage(x, y, wBlocks[randomIndex].position.x, wBlocks[randomIndex].position.y);
                                 }
                                 else
                                 if ((terrain[x - 1, y] != terrainType.water))
                                 {
-                                    List<BlockItemModel>? wBlcoks = blocksManager.GetBlockByGroupPosition(waterGroup, 0, 1);
-                                    
-                                    PutImage(x, y, wBlcoks[randomIndex].position.x, wBlcoks[randomIndex].position.y);
+                                    List<BlockItemModel>? wBlocks = blocksManager.GetBlockByGroupPosition(waterGroup, 0, 1);
+
+                                    PutImage(x, y, wBlocks[randomIndex].position.x, wBlocks[randomIndex].position.y);
                                 }
                                 else
                                 if ((terrain[x, y - 1] != terrainType.water))
                                 {
-                                    List<BlockItemModel>? wBlcoks = blocksManager.GetBlockByGroupPosition(waterGroup, 1, 0);
+                                    List<BlockItemModel>? wBlocks = blocksManager.GetBlockByGroupPosition(waterGroup, 1, 0);
 
-                                    PutImage(x, y, wBlcoks[randomIndex].position.x, wBlcoks[randomIndex].position.y);
+                                    PutImage(x, y, wBlocks[randomIndex].position.x, wBlocks[randomIndex].position.y);
                                 }
                                 else
                                 if ((terrain[x, y + 1] != terrainType.water))
                                 {
-                                    List<BlockItemModel>? wBlcoks = blocksManager.GetBlockByGroupPosition(waterGroup, 1, 2);
+                                    List<BlockItemModel>? wBlocks = blocksManager.GetBlockByGroupPosition(waterGroup, 1, 2);
 
-                                    PutImage(x, y, wBlcoks[randomIndex].position.x, wBlcoks[randomIndex].position.y);
+                                    PutImage(x, y, wBlocks[randomIndex].position.x, wBlocks[randomIndex].position.y);
                                 }
                                 else
-                                if ((terrain[x+1, y] != terrainType.water))
+                                if ((terrain[x + 1, y] != terrainType.water))
                                 {
-                                    List<BlockItemModel>? wBlcoks = blocksManager.GetBlockByGroupPosition(waterGroup, 2, 1);
+                                    List<BlockItemModel>? wBlocks = blocksManager.GetBlockByGroupPosition(waterGroup, 2, 1);
 
-                                    PutImage(x, y, wBlcoks[randomIndex].position.x, wBlcoks[randomIndex].position.y);
+                                    PutImage(x, y, wBlocks[randomIndex].position.x, wBlocks[randomIndex].position.y);
                                 }
 
                                 else
                                 {
-                                    List<BlockItemModel>? wBlcoks = blocksManager.GetBlockByGroupPosition(waterGroup, 1, 1);
+                                    List<BlockItemModel>? wBlocks = blocksManager.GetBlockByGroupPosition(waterGroup, 1, 1);
 
-                                    PutImage(x, y, wBlcoks[randomIndex].position.x, wBlcoks[randomIndex].position.y);
+                                    PutImage(x, y, wBlocks[randomIndex].position.x, wBlocks[randomIndex].position.y);
                                 }
-                                    break;
+                                break;
                             }
                         case terrainType.land:
                             {
@@ -152,7 +165,69 @@ namespace CityGame
 
                                 break;
                             }
-                        default: PutImage(x, y, 9, 1); break;
+                        default:
+                            {
+                                if ((terrain[x - 1, y] != terrainType.forest) && (terrain[x, y - 1] != terrainType.forest))
+                                {
+                                    List<BlockItemModel>? fBlocks = blocksManager.GetBlockByGroupPosition(forestGroup, 0, 0);
+                                    PutImage(x, y, fBlocks[randomIndex].position.x, fBlocks[randomIndex].position.y);
+                                }
+                                else
+                                if ((terrain[x - 1, y] != terrainType.forest) && (terrain[x, y + 1] != terrainType.forest))
+                                {
+                                    List<BlockItemModel>? fBlocks = blocksManager.GetBlockByGroupPosition(forestGroup, 0, 2);
+                                    PutImage(x, y, fBlocks[randomIndex].position.x, fBlocks[randomIndex].position.y);
+                                }
+                                else
+                                if ((terrain[x + 1, y] != terrainType.forest) && (terrain[x, y - 1] != terrainType.forest))
+                                {
+                                    List<BlockItemModel>? fBlocks = blocksManager.GetBlockByGroupPosition(forestGroup, 2, 0);
+                                    PutImage(x, y, fBlocks[randomIndex].position.x, fBlocks[randomIndex].position.y);
+                                }
+                                else
+                                if ((terrain[x + 1, y] != terrainType.forest) && (terrain[x, y + 1] != terrainType.forest))
+                                {
+                                    List<BlockItemModel>? fBlocks = blocksManager.GetBlockByGroupPosition(forestGroup, 2, 2);
+                                    PutImage(x, y, fBlocks[randomIndex].position.x, fBlocks[randomIndex].position.y);
+                                }
+                                else
+                                if ((terrain[x - 1, y] != terrainType.forest))
+                                {
+                                    List<BlockItemModel>? fBlocks = blocksManager.GetBlockByGroupPosition(forestGroup, 0, 1);
+
+                                    PutImage(x, y, fBlocks[randomIndex].position.x, fBlocks[randomIndex].position.y);
+                                }
+                                else
+                                if ((terrain[x, y - 1] != terrainType.forest))
+                                {
+                                    List<BlockItemModel>? fBlocks = blocksManager.GetBlockByGroupPosition(forestGroup, 1, 0);
+
+                                    PutImage(x, y, fBlocks[randomIndex].position.x, fBlocks[randomIndex].position.y);
+                                }
+                                else
+                                if ((terrain[x, y + 1] != terrainType.forest))
+                                {
+                                    List<BlockItemModel>? fBlocks = blocksManager.GetBlockByGroupPosition(forestGroup, 1, 2);
+
+                                    PutImage(x, y, fBlocks[randomIndex].position.x, fBlocks[randomIndex].position.y);
+                                }
+                                else
+                                if ((terrain[x + 1, y] != terrainType.forest))
+                                {
+                                    List<BlockItemModel>? fBlocks = blocksManager.GetBlockByGroupPosition(forestGroup, 2, 1);
+
+                                    PutImage(x, y, fBlocks[randomIndex].position.x, fBlocks[randomIndex].position.y);
+                                }
+
+                                else
+                                {
+                                    List<BlockItemModel>? fBlocks = blocksManager.GetBlockByGroupPosition(forestGroup, 1, 1);
+
+                                    PutImage(x, y, fBlocks[randomIndex].position.x, fBlocks[randomIndex].position.y);
+                                }
+
+                            }
+                            break;
                     }
                 }
             }
@@ -192,7 +267,7 @@ namespace CityGame
             {
                 for (int y = 0; y < terrainSize; y++)
                 {
-                    
+
                     if (sourceTerraing[x, y] <= waterLevel)
                     {
                         terrain[x, y] = terrainType.water;
@@ -204,7 +279,7 @@ namespace CityGame
                     }
                     else
                         terrain[x, y] = terrainType.forest;
-                    
+
                     /*
                     if ((x > 5) && (x < 15) && (y > 5) && (y < 15))
                     {

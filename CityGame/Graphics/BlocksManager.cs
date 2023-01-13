@@ -57,11 +57,11 @@ namespace CityGame.Graphics
             _groups = groups;
         }
 
-        public void SetBlocks(string ?backupExt = null)
+        public void SetBlocks(string? backupExt = null)
         {
-            File.WriteAllText(string.Format(blocksFile,backupExt), JsonConvert.SerializeObject(_blocks));
+            File.WriteAllText(string.Format(blocksFile, backupExt), JsonConvert.SerializeObject(_blocks));
 #if DEBUG
-            File.WriteAllText(string.Format(developmnetBlocksFile,backupExt), JsonConvert.SerializeObject(_blocks));
+            File.WriteAllText(string.Format(developmnetBlocksFile, backupExt), JsonConvert.SerializeObject(_blocks));
 #endif
         }
 
@@ -105,6 +105,12 @@ namespace CityGame.Graphics
         {
             return GetBlockByGroupIndex(GetGroupId(groupItemName));
         }
+
+        public List<BlockItemModel>? GetBlockByGroupPosition(List<BlockItemModel>? targetBlcoks, int gx, int gy)
+        {
+            return targetBlcoks?.FindAll(p => p.groupPosition != null && (p.groupPosition.x == gx && p.groupPosition.y == gy));
+        }
+
 
         public List<BlockItemModel>? GetBlockByGroupIndexAnimationOnly(int gorupId)
         {

@@ -33,7 +33,7 @@ namespace CityGame
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const int terrainSize = 20;
+        private const int terrainSize = 100;
         
         //Terrain map
         //0 - water level
@@ -75,23 +75,74 @@ namespace CityGame
         private void BuildMap()
         {
             List<BlockItemModel>? waterGroup = blocksManager.GetBlockByGroupName("water");
-
+            byte randomIndex = 0;
             for (int x = 1; x < terrainSize-1; x++)
             {
-                for (int y = 0; y < terrainSize; y++)
+                randomIndex = randomIndex != 0 ? (byte)0 : (byte)1;
+                for (int y = 1; y < terrainSize-1; y++)
                 {
+                    randomIndex = randomIndex != 0 ? (byte) 0 : (byte)1;
                     switch (terrain[x, y])
                     {
                         case terrainType.water:
                             {
-                                if (terrain[x - 1, y] != terrainType.water)
+                                if ((terrain[x - 1, y] != terrainType.water) && (terrain[x, y - 1] != terrainType.water))
                                 {
-                                    PutImage(x, y, waterGroup[5].position.x, waterGroup[5].position.y);
+                                    List<BlockItemModel>? wBlcoks = blocksManager.GetBlockByGroupPosition(waterGroup, 0, 0);
+                                    PutImage(x, y, wBlcoks[randomIndex].position.x, wBlcoks[randomIndex].position.y);
                                 }
                                 else
+                                if ((terrain[x - 1, y] != terrainType.water) && (terrain[x, y + 1] != terrainType.water))
                                 {
+                                    List<BlockItemModel>? wBlcoks = blocksManager.GetBlockByGroupPosition(waterGroup, 0, 2);
+                                    PutImage(x, y, wBlcoks[randomIndex].position.x, wBlcoks[randomIndex].position.y);
+                                }
+                                else
+                                if ((terrain[x + 1, y] != terrainType.water) && (terrain[x, y - 1] != terrainType.water))
+                                {
+                                    List<BlockItemModel>? wBlcoks = blocksManager.GetBlockByGroupPosition(waterGroup, 2, 0);
+                                    PutImage(x, y, wBlcoks[randomIndex].position.x, wBlcoks[randomIndex].position.y);
+                                }
+                                else
+                                if ((terrain[x + 1, y] != terrainType.water) && (terrain[x, y + 1] != terrainType.water))
+                                {
+                                    List<BlockItemModel>? wBlcoks = blocksManager.GetBlockByGroupPosition(waterGroup, 2, 2);
+                                    PutImage(x, y, wBlcoks[randomIndex].position.x, wBlcoks[randomIndex].position.y);
+                                }
+                                else
+                                if ((terrain[x - 1, y] != terrainType.water))
+                                {
+                                    List<BlockItemModel>? wBlcoks = blocksManager.GetBlockByGroupPosition(waterGroup, 0, 1);
+                                    
+                                    PutImage(x, y, wBlcoks[randomIndex].position.x, wBlcoks[randomIndex].position.y);
+                                }
+                                else
+                                if ((terrain[x, y - 1] != terrainType.water))
+                                {
+                                    List<BlockItemModel>? wBlcoks = blocksManager.GetBlockByGroupPosition(waterGroup, 1, 0);
 
-                                    PutImage(x, y, 3, 0);
+                                    PutImage(x, y, wBlcoks[randomIndex].position.x, wBlcoks[randomIndex].position.y);
+                                }
+                                else
+                                if ((terrain[x, y + 1] != terrainType.water))
+                                {
+                                    List<BlockItemModel>? wBlcoks = blocksManager.GetBlockByGroupPosition(waterGroup, 1, 2);
+
+                                    PutImage(x, y, wBlcoks[randomIndex].position.x, wBlcoks[randomIndex].position.y);
+                                }
+                                else
+                                if ((terrain[x+1, y] != terrainType.water))
+                                {
+                                    List<BlockItemModel>? wBlcoks = blocksManager.GetBlockByGroupPosition(waterGroup, 2, 1);
+
+                                    PutImage(x, y, wBlcoks[randomIndex].position.x, wBlcoks[randomIndex].position.y);
+                                }
+
+                                else
+                                {
+                                    List<BlockItemModel>? wBlcoks = blocksManager.GetBlockByGroupPosition(waterGroup, 1, 1);
+
+                                    PutImage(x, y, wBlcoks[randomIndex].position.x, wBlcoks[randomIndex].position.y);
                                 }
                                     break;
                             }
@@ -141,6 +192,7 @@ namespace CityGame
             {
                 for (int y = 0; y < terrainSize; y++)
                 {
+                    
                     if (sourceTerraing[x, y] <= waterLevel)
                     {
                         terrain[x, y] = terrainType.water;
@@ -152,6 +204,17 @@ namespace CityGame
                     }
                     else
                         terrain[x, y] = terrainType.forest;
+                    
+                    /*
+                    if ((x > 5) && (x < 15) && (y > 5) && (y < 15))
+                    {
+                        terrain[x, y] = terrainType.water;
+                    }
+                    else
+                    {
+                        terrain[x, y] = terrainType.land;
+                    }
+                    */
 
                     //Draw map
                     Rectangle rect = new Rectangle();

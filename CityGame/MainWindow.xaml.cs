@@ -53,8 +53,10 @@ namespace CityGame
 
         private DrawingVisual drawingVisual = new DrawingVisual();
 
+
         int count = 0;
         DateTime enter;
+        private int animationFrame = 0;
         public MainWindow()
         {
             InitializeComponent();
@@ -62,12 +64,12 @@ namespace CityGame
             //new ResourceExplorer().Show();
 
             DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(10);
-            //timer.Tick += Timer_Tick;
+            timer.Interval = TimeSpan.FromMilliseconds(100);
+            timer.Tick += Timer_Tick;
             timer.Start();
 
             DispatcherTimer rtimer = new DispatcherTimer();
-            rtimer.Interval = TimeSpan.FromMilliseconds(300);
+            rtimer.Interval = TimeSpan.FromMilliseconds(100);
             rtimer.Tick += Rtimer_Tick;
             rtimer.Start();
 
@@ -118,6 +120,8 @@ namespace CityGame
 
             }
             */
+
+            /*
             Int32Rect rect = new Int32Rect(0, 0, 16, 16);
             for (int x = 0; x < terrainSize - 16; x += 16)
             {
@@ -138,7 +142,50 @@ namespace CityGame
                 //bitmapSource.WritePixels(new Int32Rect(0, 0, terrainSize, terrainSize), pixels, terrainSize, 0);
 
             }
+            */
 
+
+
+            animationFrame++;
+            List<BlockItemModel>? blockItemModels = blocksManager.GetBlockByGroupName("Industrial1");
+            if ((blockItemModels != null) && (blockItemModels.Count > 0))
+            {
+
+                List<BlockItemModel>? nextFrameBlocks = blockItemModels?.FindAll(p => p.animationFrame == 0);
+                foreach (var blockItemModel in nextFrameBlocks)
+                {
+                    if (blockItemModel.groupPosition != null)
+                    {
+                        PutImage(blockItemModel.groupPosition.x + 5, blockItemModel.groupPosition.y + 5, blockItemModel.position.x, blockItemModel.position.y);
+                        PutImage(blockItemModel.groupPosition.x + 50, blockItemModel.groupPosition.y + 20, blockItemModel.position.x, blockItemModel.position.y);
+                        PutImage(blockItemModel.groupPosition.x + 10, blockItemModel.groupPosition.y + 70, blockItemModel.position.x, blockItemModel.position.y);
+                        PutImage(blockItemModel.groupPosition.x + 70, blockItemModel.groupPosition.y + 10, blockItemModel.position.x, blockItemModel.position.y);
+                        PutImage(blockItemModel.groupPosition.x + 35, blockItemModel.groupPosition.y + 40, blockItemModel.position.x, blockItemModel.position.y);
+                    }
+                }
+
+                nextFrameBlocks = blockItemModels?.FindAll(p => p.animationFrame == animationFrame);
+
+                if ((nextFrameBlocks == null) || (nextFrameBlocks?.Count == 0))
+                {
+                    animationFrame = 1;
+                    nextFrameBlocks = blockItemModels?.FindAll(p => p.animationFrame == animationFrame);
+                }
+                if ((nextFrameBlocks != null) || (nextFrameBlocks?.Count == 0))
+                {
+                    foreach (var blockItemModel in nextFrameBlocks)
+                    {
+                        if (blockItemModel.groupPosition != null)
+                        {
+                            PutImage(blockItemModel.groupPosition.x + 5, blockItemModel.groupPosition.y + 5, blockItemModel.position.x, blockItemModel.position.y);
+                            PutImage(blockItemModel.groupPosition.x + 50, blockItemModel.groupPosition.y + 20, blockItemModel.position.x, blockItemModel.position.y);
+                            PutImage(blockItemModel.groupPosition.x + 10, blockItemModel.groupPosition.y + 70, blockItemModel.position.x, blockItemModel.position.y);
+                            PutImage(blockItemModel.groupPosition.x + 70, blockItemModel.groupPosition.y + 10, blockItemModel.position.x, blockItemModel.position.y);
+                            PutImage(blockItemModel.groupPosition.x + 35, blockItemModel.groupPosition.y + 40, blockItemModel.position.x, blockItemModel.position.y);
+                        }
+                    }
+                }
+            }
 
             count++;
 

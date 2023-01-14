@@ -31,7 +31,7 @@ namespace CityGame
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const int terrainSize = 100;
+        private const int terrainSize = 200;
 
         //Terrain map
         //0 - water level
@@ -83,6 +83,10 @@ namespace CityGame
             bitmapSource = new WriteableBitmap(terrainSize * 16, terrainSize * 16, sImage.DpiX, sImage.DpiY, sImage.Format, sImage.Palette);
 
             enter = DateTime.Now;
+
+            DrawDiamand();
+            BuildMap();
+
 
         }
 
@@ -150,17 +154,18 @@ namespace CityGame
             List<BlockItemModel>? blockItemModels = blocksManager.GetBlockByGroupName("Industrial1");
             if ((blockItemModels != null) && (blockItemModels.Count > 0))
             {
-
                 List<BlockItemModel>? nextFrameBlocks = blockItemModels?.FindAll(p => p.animationFrame == 0);
                 foreach (var blockItemModel in nextFrameBlocks)
                 {
                     if (blockItemModel.groupPosition != null)
                     {
-                        PutImage(blockItemModel.groupPosition.x + 5, blockItemModel.groupPosition.y + 5, blockItemModel.position.x, blockItemModel.position.y);
-                        PutImage(blockItemModel.groupPosition.x + 50, blockItemModel.groupPosition.y + 20, blockItemModel.position.x, blockItemModel.position.y);
-                        PutImage(blockItemModel.groupPosition.x + 10, blockItemModel.groupPosition.y + 70, blockItemModel.position.x, blockItemModel.position.y);
-                        PutImage(blockItemModel.groupPosition.x + 70, blockItemModel.groupPosition.y + 10, blockItemModel.position.x, blockItemModel.position.y);
-                        PutImage(blockItemModel.groupPosition.x + 35, blockItemModel.groupPosition.y + 40, blockItemModel.position.x, blockItemModel.position.y);
+                        for (int x = 0; x < 190; x += 3)
+                        {
+                            for (int y = 0; y < 100; y += 3)
+                            {
+                                PutImage(blockItemModel.groupPosition.x + x, blockItemModel.groupPosition.y + y, blockItemModel.position.x, blockItemModel.position.y);
+                            }
+                        }
                     }
                 }
 
@@ -177,18 +182,18 @@ namespace CityGame
                     {
                         if (blockItemModel.groupPosition != null)
                         {
-                            PutImage(blockItemModel.groupPosition.x + 5, blockItemModel.groupPosition.y + 5, blockItemModel.position.x, blockItemModel.position.y);
-                            PutImage(blockItemModel.groupPosition.x + 50, blockItemModel.groupPosition.y + 20, blockItemModel.position.x, blockItemModel.position.y);
-                            PutImage(blockItemModel.groupPosition.x + 10, blockItemModel.groupPosition.y + 70, blockItemModel.position.x, blockItemModel.position.y);
-                            PutImage(blockItemModel.groupPosition.x + 70, blockItemModel.groupPosition.y + 10, blockItemModel.position.x, blockItemModel.position.y);
-                            PutImage(blockItemModel.groupPosition.x + 35, blockItemModel.groupPosition.y + 40, blockItemModel.position.x, blockItemModel.position.y);
+                            for (int x = 0; x < 190; x += 3)
+                            {
+                                for (int y = 0; y < 100; y += 3)
+                                {
+                                    PutImage(blockItemModel.groupPosition.x + x, blockItemModel.groupPosition.y + y, blockItemModel.position.x, blockItemModel.position.y);
+                                }
+                            }
                         }
                     }
                 }
             }
-
             count++;
-
             Title = (count / (DateTime.Now - enter).TotalSeconds) + " FPS";
         }
 
@@ -484,8 +489,6 @@ namespace CityGame
 
         private void Window_Activated(object sender, EventArgs e)
         {
-            DrawDiamand();
-            BuildMap();
 
         }
     }

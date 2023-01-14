@@ -2,10 +2,10 @@
 using CityGame.Graphics;
 using System;
 using System.Collections.Generic;
-//using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
@@ -26,13 +26,12 @@ namespace CityGame
         forest = 4
     }
 
-
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const int terrainSize = 50;
+        private const int terrainSize = 100;
 
         //Terrain map
         //0 - water level
@@ -40,17 +39,22 @@ namespace CityGame
         //2 - forest
         private terrainType[,] terrain = new terrainType[terrainSize, terrainSize];
 
-        private double waterLevel = 0.3;
+        private int waterLevel = 80;
 
-        private double landLevel = 0.4; //upper this is forest
-
-        private Image[,] images = new Image[terrainSize, terrainSize];
+        private int landLevel = 100; //upper this is forest        
 
         private int roughness = 0;
-        private double seed = 1.0;
 
         private BlocksManager blocksManager = new BlocksManager();
 
+        private Random random = new Random();
+
+        private WriteableBitmap bitmapSource;
+
+        private DrawingVisual drawingVisual = new DrawingVisual();
+
+        int count = 0;
+        DateTime enter;
         public MainWindow()
         {
             InitializeComponent();
@@ -58,18 +62,89 @@ namespace CityGame
             //new ResourceExplorer().Show();
 
             DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(300);
-            timer.Tick += Timer_Tick;
-            // timer.Start();
+            timer.Interval = TimeSpan.FromMilliseconds(10);
+            //timer.Tick += Timer_Tick;
+            timer.Start();
+
+            DispatcherTimer rtimer = new DispatcherTimer();
+            rtimer.Interval = TimeSpan.FromMilliseconds(300);
+            rtimer.Tick += Rtimer_Tick;
+            rtimer.Start();
+
 
             WaterLevelTextBox.Text = waterLevel.ToString();
             RoughnessTextBox.Text = roughness.ToString();
-            SeedTextBox.Text = seed.ToString();
 
+            TestImage.Width = TestImage.Height = terrainSize;
 
-            DrawDiamand();
-            BuildMap();
+            BitmapImage sImage = ResourcesManager.GetBlock(0, 0);
+            bitmapSource = new WriteableBitmap(terrainSize * 16, terrainSize * 16, sImage.DpiX, sImage.DpiY, sImage.Format, sImage.Palette);
+
+            enter = DateTime.Now;
+
         }
+
+
+        private void Rtimer_Tick(object? sender, EventArgs e)
+        {
+            using (DrawingContext drawingContext = drawingVisual.RenderOpen())
+            {
+                drawingContext.DrawImage(bitmapSource, new Rect(0, 0, terrainSize, terrainSize));
+                drawingContext.Close();
+            }
+            TestImage.Source = new DrawingImage(drawingVisual.Drawing);
+        }
+
+        private void Timer_Tick(object? sender, EventArgs e)
+        {
+
+            //random.NextBytes(pixels);
+
+            byte[] array = new byte[16 * 16];
+
+            /*
+            for (int i = 0; i < 5000; i++)
+            {
+                Int32Rect rect = new Int32Rect(0, 0, 16, 16);
+                BitmapImage sImage = ResourcesManager.GetBlock(random.Next(20), random.Next(20));
+
+                sImage.CopyPixels(rect, array, 16, 0);
+                
+                rect.X = random.Next(terrainSize / 16) * 16;
+                rect.Y = random.Next(terrainSize / 16) * 16;
+                bitmapSource.WritePixels(rect, array, 16, 0);
+
+                //bitmapSource.WritePixels(new Int32Rect(0, 0, terrainSize, terrainSize), pixels, terrainSize, 0);
+
+            }
+            */
+            Int32Rect rect = new Int32Rect(0, 0, 16, 16);
+            for (int x = 0; x < terrainSize - 16; x += 16)
+            {
+                for (int y = 0; y < terrainSize - 16; y += 16)
+                {
+                    //rect.X = 0;
+                    //rect.Y = 0;
+
+                    //BitmapImage sImage = ResourcesManager.GetBlock(random.Next(32), random.Next(32));
+
+                    //sImage.CopyPixels(rect, array, 16, 0);
+
+                    rect.X = x;
+                    rect.Y = y;
+                    bitmapSource.WritePixels(rect, ResourcesManager.GetPixels(random.Next(32), random.Next(32)), 16, 0);
+                }
+
+                //bitmapSource.WritePixels(new Int32Rect(0, 0, terrainSize, terrainSize), pixels, terrainSize, 0);
+
+            }
+
+
+            count++;
+
+            Title = (count / (DateTime.Now - enter).TotalSeconds) + " FPS";
+        }
+
 
         private void BuildMap()
         {
@@ -235,31 +310,16 @@ namespace CityGame
 
         private void PutImage(int x, int y, int bx, int by)
         {
-            if (images[x, y] == null)
-            {
-                images[x, y] = new Image();
-                images[x, y].Margin = new Thickness(x * 32, y * 32, 0, 0);
-                images[x, y].Width = 32;
-                images[x, y].Height = 32;
-                images[x, y].VerticalAlignment = VerticalAlignment.Top;
-                images[x, y].HorizontalAlignment = HorizontalAlignment.Left;
-
-                RenderOptions.SetBitmapScalingMode(images[x, y], BitmapScalingMode.NearestNeighbor);
-
-                LandingImage.Children.Add(images[x, y]);
-            }
-            images[x, y].Source = ResourcesManager.GetBlock(bx, by);
+            Int32Rect rect = new Int32Rect(x * 16, y * 16, 16, 16);
+            bitmapSource.WritePixels(rect, ResourcesManager.GetPixels(bx, by), 16, 0);
         }
 
-        private void Timer_Tick(object? sender, EventArgs e)
-        {
-        }
 
         private void DrawDiamand()
         {
 
-            DiamondSquare diamondSquare = new DiamondSquare(terrainSize, 1);
-            double[,] sourceTerraing = diamondSquare.getData();
+            DiamondSquareFast diamondSquare = new DiamondSquareFast(terrainSize, 1);
+            int[,] sourceTerraing = diamondSquare.getData();
 
             Canvas.Children.Clear();
 
@@ -327,8 +387,8 @@ namespace CityGame
 
         private void SetWaterLevelButton_Click(object sender, RoutedEventArgs e)
         {
-            double wl;
-            if (double.TryParse(WaterLevelTextBox.Text, out wl))
+            int wl;
+            if (int.TryParse(WaterLevelTextBox.Text, out wl))
             {
                 waterLevel = wl;
                 DrawDiamand();
@@ -355,21 +415,31 @@ namespace CityGame
             }
         }
 
-        private void SetSeedButton_Click(object sender, RoutedEventArgs e)
+        private void TestImage_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
         {
-            double s;
-            if (double.TryParse(SeedTextBox.Text, out s))
+            try
             {
-                seed = s;
-                DrawDiamand();
-                BuildMap();
+                if (e.Delta > 0)
+                {
+                    TestImage.Width = TestImage.Height = TestImage.Height + 10;
+                }
+                else
+                {
+                    TestImage.Width = TestImage.Height = TestImage.Height - 10;
+                }
             }
-            else
-            {
-                SeedTextBox.Text = seed.ToString();
-            }
+            catch { }
         }
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+        }
 
+        private void Window_Activated(object sender, EventArgs e)
+        {
+            DrawDiamand();
+            BuildMap();
+
+        }
     }
 }

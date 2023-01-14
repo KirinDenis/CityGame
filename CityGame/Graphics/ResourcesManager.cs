@@ -40,9 +40,11 @@ OWLOS распространяется в надежде, что она буде
 --------------------------------------------------------------------------------------*/
 
 
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+
 using System.Windows.Media.Imaging;
 
 namespace CityGame.Graphics
@@ -89,10 +91,11 @@ namespace CityGame.Graphics
         /// <summary>
         /// Путь к файлу с иконками
         /// </summary>
-        public static string iconsImageFilePath = @"\Resources\resources.png";
+        public static string iconsImageFilePath = @"\Resources\resources256.bmp";
         private static Bitmap source = null;
 
         private static readonly Dictionary<Point, BitmapImage> bufferBitmaps = new Dictionary<Point, BitmapImage>();
+        private static readonly Dictionary<Point, byte[]> bufferPixels = new Dictionary<Point, byte[]>();
 
         private static void CalcCounters()
         {
@@ -103,6 +106,23 @@ namespace CityGame.Graphics
 
             _iconsCountByX = source.Width / iconsSizeInPixels;
             _iconsCountByY = source.Height / iconsSizeInPixels;
+        }
+
+        public static byte[] GetPixels(int x, int y)
+        {
+            if (bufferPixels.ContainsKey(new Point(x, y)))
+            {
+                return bufferPixels[new Point(x, y)];
+            }
+
+            byte[] array = new byte[16 * 16];
+            System.Windows.Int32Rect rect = new System.Windows.Int32Rect(0, 0, 16, 16);
+            
+            BitmapImage bitmap = GetBlock(x, y);
+            bitmap.CopyPixels(rect, array, 16, 0);
+
+            bufferPixels[new Point(x, y)] = array;
+            return array;
         }
 
         /// <summary>
@@ -135,6 +155,7 @@ namespace CityGame.Graphics
                     source.Clone(new Rectangle(x * iconsSizeInPixels, y * iconsSizeInPixels, iconsSizeInPixels, iconsSizeInPixels), source.PixelFormat).Save(memory, System.Drawing.Imaging.ImageFormat.Png);
                     memory.Position = 0;
                     bitmapimage = new BitmapImage();
+                    
 
                     bitmapimage.BeginInit();
                     bitmapimage.StreamSource = memory;

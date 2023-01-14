@@ -5,11 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CityGame"
         mc:Ignorable="d"
-        Title="City Game" Height="800" Width="800" WindowStartupLocation="CenterScreen">
+        Title="City Game" Height="800" Width="800" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" Activated="Window_Activated">
     <Grid >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="167*"/>
-            <ColumnDefinition Width="167*"/>
+            <ColumnDefinition Width="250"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>
@@ -19,7 +19,7 @@
             <Button x:Name="ResourceExplorerButton" Content="Resource Explorer" Width="128" HorizontalAlignment="Left" Click="ResourceExplorerButton_Click" />
             <Button x:Name="GenerateMapButton" Content="Generate map" Width="128" HorizontalAlignment="Left" Click="GenerateMapButton_Click"  />
             <Button x:Name="GenerateLandButton" Content="Generate land" Width="128" HorizontalAlignment="Left" Click="GenerateLandButton_Click"  />
-            
+
             <TextBlock Text="Water level" VerticalAlignment="Center" />
             <TextBox x:Name="WaterLevelTextBox" Text="0.3" VerticalAlignment="Center"  />
             <Button x:Name="SetWaterLevelButton" Content="set" HorizontalAlignment="Left" Click="SetWaterLevelButton_Click"  />
@@ -28,17 +28,19 @@
             <TextBox x:Name="RoughnessTextBox" Text="0.3" VerticalAlignment="Center"  />
             <Button x:Name="SetRoughnessButton" Content="set" HorizontalAlignment="Left" Click="SetRoughnessButton_Click"  />
 
-            <TextBlock Text="Seed" VerticalAlignment="Center" />
-            <TextBox x:Name="SeedTextBox" Text="0.3" VerticalAlignment="Center"  />
-            <Button x:Name="SeedButton" Content="set" HorizontalAlignment="Left" Click="SetSeedButton_Click"  />
 
 
         </StackPanel>
-        <ScrollViewer ScrollViewer.HorizontalScrollBarVisibility="Visible" Grid.Row="1" Grid.Column="0">
-            <Grid x:Name="LandingImage"  />
-        </ScrollViewer>
-        <Canvas x:Name="Canvas" Grid.Column="1" Grid.Row="1"  />
-        
+        <Grid x:Name="LandingImage"  />
+
+        <Viewbox Grid.Row="1" Grid.ColumnSpan="2" PreviewMouseWheel="TestImage_PreviewMouseWheel">
+            <Image x:Name="TestImage" Width="100000" Height="100000" RenderOptions.BitmapScalingMode="NearestNeighbor" Stretch="None" />
+        </Viewbox>
+
+        <Viewbox Grid.Column="1" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Top" >
+            <Canvas x:Name="Canvas" Width="500" Height="500" />
+        </Viewbox>
+
 
     </Grid>
 </Window>

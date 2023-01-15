@@ -30,9 +30,19 @@
 
         </StackPanel>
 
-        <Grid x:Name="TerrainGrid" Grid.Row="1" Grid.ColumnSpan="2" PreviewMouseWheel="Terrain_PreviewMouseWheel" PreviewMouseMove="TerrainGrid_PreviewMouseMove" Background="#FFF6F6F6">
-        <Image x:Name="TerrainImage" RenderOptions.BitmapScalingMode="NearestNeighbor" HorizontalAlignment="Left" VerticalAlignment="Top"  />
+
+        <Grid x:Name="TerrainGrid"  PreviewMouseWheel="Terrain_PreviewMouseWheel" PreviewMouseMove="TerrainGrid_PreviewMouseMove" Background="#FFF6F6F6" Grid.Row="1" Grid.ColumnSpan="2">
+            <ScrollViewer x:Name="TerrainScroll" HorizontalScrollBarVisibility="Visible"  HorizontalContentAlignment="Stretch" PanningMode="Both"  >
+                <Image x:Name="TerrainImage" RenderOptions.BitmapScalingMode="NearestNeighbor" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0,0" Source="/Resources/resources.png">
+            </Image>
+            </ScrollViewer>
         </Grid>
+        
+
+
+
+
+
 
 
         <Viewbox Grid.Column="1" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Top" >

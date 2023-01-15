@@ -74,7 +74,7 @@ namespace CityGame
         DateTime enter;
         private int animationFrame = 0;
 
-        private int zoom = 4;
+        private int zoom = 2;
         public MainWindow()
         {
             InitializeComponent();
@@ -105,7 +105,9 @@ namespace CityGame
             DrawDiamand();
             BuildMap();
 
-
+            TerrainScroll.ScrollToVerticalOffset(TerrainImage.Width / 2.0f);
+            TerrainScroll.ScrollToHorizontalOffset(TerrainImage.Height / 2.0f);
+            
         }
 
 
@@ -525,7 +527,7 @@ namespace CityGame
             }
             else
             {
-                if (zoom > 1)
+                if (zoom > 0)
                 {
                     zoom--;
                 }
@@ -538,7 +540,7 @@ namespace CityGame
 
                 TerrainImage.Width = TerrainImage.Height = terrainSize * ResourcesManager.iconsSizeInPixels * zoom;
             }
-
+            
             //lock scroll view            
             e.Handled = true;
         }

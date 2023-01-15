@@ -57,6 +57,8 @@ namespace CityGame
         int count = 0;
         DateTime enter;
         private int animationFrame = 0;
+
+        private int zoom = 4;
         public MainWindow()
         {
             InitializeComponent();
@@ -77,7 +79,7 @@ namespace CityGame
             WaterLevelTextBox.Text = waterLevel.ToString();
             RoughnessTextBox.Text = roughness.ToString();
 
-            TestImage.Width = TestImage.Height = terrainSize;
+            TerrainImage.Width = TerrainImage.Height = terrainSize * ResourcesManager.iconsSizeInPixels * zoom;
 
             BitmapImage sImage = ResourcesManager.GetBlock(0, 0);
             bitmapSource = new WriteableBitmap(terrainSize * 16, terrainSize * 16, sImage.DpiX, sImage.DpiY, sImage.Format, sImage.Palette);
@@ -98,7 +100,7 @@ namespace CityGame
                 drawingContext.DrawImage(bitmapSource, new Rect(0, 0, terrainSize, terrainSize));
                 drawingContext.Close();
             }
-            TestImage.Source = new DrawingImage(drawingVisual.Drawing);
+            TerrainImage.Source = new DrawingImage(drawingVisual.Drawing);
         }
 
         private void Timer_Tick(object? sender, EventArgs e)
@@ -148,8 +150,7 @@ namespace CityGame
             }
             */
 
-
-
+            
             animationFrame++;
             List<BlockItemModel>? blockItemModels = blocksManager.GetBlockByGroupName("Industrial1");
             if ((blockItemModels != null) && (blockItemModels.Count > 0))
@@ -159,9 +160,9 @@ namespace CityGame
                 {
                     if (blockItemModel.groupPosition != null)
                     {
-                        for (int x = 0; x < 190; x += 3)
+                        for (int x = 0; x < 7; x += 3)
                         {
-                            for (int y = 0; y < 100; y += 3)
+                            for (int y = 0; y < 7; y += 3)
                             {
                                 PutImage(blockItemModel.groupPosition.x + x, blockItemModel.groupPosition.y + y, blockItemModel.position.x, blockItemModel.position.y);
                             }
@@ -182,9 +183,9 @@ namespace CityGame
                     {
                         if (blockItemModel.groupPosition != null)
                         {
-                            for (int x = 0; x < 190; x += 3)
+                            for (int x = 0; x < 7; x += 3)
                             {
-                                for (int y = 0; y < 100; y += 3)
+                                for (int y = 0; y < 7; y += 3)
                                 {
                                     PutImage(blockItemModel.groupPosition.x + x, blockItemModel.groupPosition.y + y, blockItemModel.position.x, blockItemModel.position.y);
                                 }
@@ -193,6 +194,7 @@ namespace CityGame
                     }
                 }
             }
+            
             count++;
             Title = (count / (DateTime.Now - enter).TotalSeconds) + " FPS";
         }
@@ -467,21 +469,6 @@ namespace CityGame
             }
         }
 
-        private void TestImage_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
-        {
-            try
-            {
-                if (e.Delta > 0)
-                {
-                    TestImage.Width = TestImage.Height = TestImage.Height + 10;
-                }
-                else
-                {
-                    TestImage.Width = TestImage.Height = TestImage.Height - 10;
-                }
-            }
-            catch { }
-        }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -489,6 +476,71 @@ namespace CityGame
 
         private void Window_Activated(object sender, EventArgs e)
         {
+
+        }
+
+        private void Terrain_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+            if (e.Delta > 0)
+            {
+                if (zoom < 4)
+                {
+                    zoom++;
+                }
+            }
+            else
+            {
+                if (zoom > 1)
+                {
+                    zoom--;
+                }
+            }
+
+            if ((terrainSize * ResourcesManager.iconsSizeInPixels * zoom > TerrainGrid.ActualWidth)
+                &&
+                ((terrainSize * ResourcesManager.iconsSizeInPixels * zoom > TerrainGrid.ActualHeight)))
+            {
+
+                TerrainImage.Width = TerrainImage.Height = terrainSize * ResourcesManager.iconsSizeInPixels * zoom;
+            }
+        }
+
+        private void TerrainGrid_PreviewMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            Point mousePosition = e.GetPosition((Grid)sender);
+
+            if (mousePosition.X > TerrainGrid.ActualWidth - 100)
+            {
+                
+                {
+                    TerrainImage.Margin = new Thickness(TerrainImage.Margin.Left - 1, TerrainImage.Margin.Top, 0, 0);
+                }
+            }
+            else
+            if (mousePosition.X < 100)
+            {
+                
+                {
+                    TerrainImage.Margin = new Thickness(TerrainImage.Margin.Left + 1, TerrainImage.Margin.Top, 0, 0);
+                }
+            }
+
+            if (mousePosition.Y > TerrainGrid.ActualHeight - 100)
+            {
+                
+                {
+                    TerrainImage.Margin = new Thickness(TerrainImage.Margin.Left, TerrainImage.Margin.Top - 1, 0, 0);
+                }
+            }
+            else
+            if (mousePosition.Y < 100)
+            {
+                
+                {
+                    TerrainImage.Margin = new Thickness(TerrainImage.Margin.Left, TerrainImage.Margin.Top + 1, 0, 0);
+                }
+            }
+
 
         }
     }

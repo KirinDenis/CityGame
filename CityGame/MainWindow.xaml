@@ -28,14 +28,12 @@
             <TextBox x:Name="RoughnessTextBox" Text="0.3" VerticalAlignment="Center"  />
             <Button x:Name="SetRoughnessButton" Content="set" HorizontalAlignment="Left" Click="SetRoughnessButton_Click"  />
 
-
-
         </StackPanel>
-        <Grid x:Name="LandingImage"  />
 
-        <Viewbox Grid.Row="1" Grid.ColumnSpan="2" PreviewMouseWheel="TestImage_PreviewMouseWheel">
-            <Image x:Name="TestImage" Width="100000" Height="100000" RenderOptions.BitmapScalingMode="NearestNeighbor" Stretch="None" />
-        </Viewbox>
+        <Grid x:Name="TerrainGrid" Grid.Row="1" Grid.ColumnSpan="2" PreviewMouseWheel="Terrain_PreviewMouseWheel" PreviewMouseMove="TerrainGrid_PreviewMouseMove" Background="#FFF6F6F6">
+        <Image x:Name="TerrainImage" RenderOptions.BitmapScalingMode="NearestNeighbor" HorizontalAlignment="Left" VerticalAlignment="Top"  />
+        </Grid>
+
 
         <Viewbox Grid.Column="1" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Top" >
             <Canvas x:Name="Canvas" Width="500" Height="500" />

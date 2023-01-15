@@ -35,7 +35,7 @@ namespace CityGame
         /// Current block size is 16x16 piexels
         /// The terrain size at pixels is terrainSize * 16
         /// </summary>
-        private const int terrainSize = 200;
+        private const int terrainSize = 400;
 
         /// <summary>
         /// If true, the Diamond generator is not called, the terrain is simple random values 2D array 
@@ -105,124 +105,6 @@ namespace CityGame
             DrawDiamand();
             BuildMap();
 
-            /*
-            var sb = new Storyboard();
-            var ta = new ThicknessAnimation();
-            ta.BeginTime = new TimeSpan(0);
-            ta.SetValue(Storyboard.TargetNameProperty, "TerrainImage");
-            Storyboard.SetTargetProperty(ta, new PropertyPath(MarginProperty));
-
-            ta.From = new Thickness(0, 30, 0, 0);
-            ta.To = new Thickness(-3000, 30, 0, 0);
-            ta.Duration = new Duration(TimeSpan.FromSeconds(30));
-
-            sb.Children.Add(ta);
-            sb.Begin(this);
-            */
-
-            // Create a TranslateTransform to
-            // move the rectangle.
-            /*
-            TranslateTransform animatedTranslateTransform =
-                new TranslateTransform();
-            TerrainImage.RenderTransform = animatedTranslateTransform;
-
-            // Assign the TranslateTransform a name so that
-            // it can be targeted by a Storyboard.
-            this.RegisterName(
-                "AnimatedTranslateTransform", animatedTranslateTransform);
-
-            // Create a DoubleAnimationUsingKeyFrames to
-            // animate the TranslateTransform.
-            DoubleAnimationUsingKeyFrames translationAnimation
-                = new DoubleAnimationUsingKeyFrames();
-            translationAnimation.Duration = TimeSpan.FromSeconds(26);
-
-            // Animate from the starting position to 500
-            // over the first second using linear
-            // interpolation.
-            translationAnimation.KeyFrames.Add(
-                new LinearDoubleKeyFrame(
-                    500, // Target value (KeyValue)
-                    KeyTime.FromTimeSpan(TimeSpan.FromSeconds(20))) // KeyTime
-                );
-
-            // Animate from 500 (the value of the previous key frame)
-            // to 400 at 4 seconds using discrete interpolation.
-            // Because the interpolation is discrete, the rectangle will appear
-            // to "jump" from 500 to 400.
-            translationAnimation.KeyFrames.Add(
-                new DiscreteDoubleKeyFrame(
-                    400, // Target value (KeyValue)
-                    KeyTime.FromTimeSpan(TimeSpan.FromSeconds(24))) // KeyTime
-                );
-
-            // Animate from 400 (the value of the previous key frame) to 0
-            // over two seconds, starting at 4 seconds (the key time of the
-            // last key frame) and ending at 6 seconds.
-            translationAnimation.KeyFrames.Add(
-                new SplineDoubleKeyFrame(
-                    0, // Target value (KeyValue)
-                    KeyTime.FromTimeSpan(TimeSpan.FromSeconds(6)), // KeyTime
-                    new KeySpline(0.6, 0.0, 0.9, 0.0) // KeySpline
-                    )
-                );
-
-            // Set the animation to repeat forever.
-            translationAnimation.RepeatBehavior = RepeatBehavior.Forever;
-
-            // Set the animation to target the X property
-            // of the object named "AnimatedTranslateTransform."
-            Storyboard.SetTargetName(translationAnimation, "AnimatedTranslateTransform");
-            Storyboard.SetTargetProperty(
-                translationAnimation, new PropertyPath(TranslateTransform.XProperty));
-
-            // Create a storyboard to apply the animation.
-            Storyboard translationStoryboard = new Storyboard();
-            translationStoryboard.Children.Add(translationAnimation);
-
-            // Start the storyboard after the rectangle loads.
-            TerrainImage.Loaded += delegate (object sender, RoutedEventArgs e)
-            {
-                translationStoryboard.Begin(this);
-            };
-            */
-
-            /*
-
-            var tg = new TransformGroup();
-            var translation = new TranslateTransform(-300, 0);
-            var translationName = "myTranslation" + translation.GetHashCode();
-            RegisterName(translationName, translation);
-            tg.Children.Add(translation);
-            
-            TerrainImage.RenderTransform = tg;
-
-            //panel.Children.Add(e);
-
-            var anim = new DoubleAnimation(0, 1000, new Duration(TimeSpan.FromSeconds(20)))
-            {
-                EasingFunction = new PowerEase { EasingMode = EasingMode.EaseInOut }
-            };
-
-            var s = new Storyboard();
-            Storyboard.SetTargetName(s, translationName);
-            Storyboard.SetTargetProperty(s, new PropertyPath(TranslateTransform.XProperty));
-            var storyboardName = "s" + s.GetHashCode();
-            Resources.Add(storyboardName, s);
-
-            s.Children.Add(anim);
-
-            /*
-            s.Completed +=
-                (sndr, evtArgs) => {
-                    panel.Children.Remove(e);
-                    Resources.Remove(storyboardName);
-                    UnregisterName(translationName);
-                };
-            
-            s.Begin();
-            */
 
         }
 
@@ -297,9 +179,9 @@ namespace CityGame
                 {
                     if (blockItemModel.groupPosition != null)
                     {
-                        for (int x = 0; x < 7; x += 3)
+                        for (int x = 0; x < terrainSize - 10; x += 9)
                         {
-                            for (int y = 0; y < 7; y += 3)
+                            for (int y = 0; y < terrainSize - 10; y += 9)
                             {
                                 PutImage(blockItemModel.groupPosition.x + x, blockItemModel.groupPosition.y + y, blockItemModel.position.x, blockItemModel.position.y);
                             }
@@ -320,9 +202,9 @@ namespace CityGame
                     {
                         if (blockItemModel.groupPosition != null)
                         {
-                            for (int x = 0; x < 7; x += 3)
+                            for (int x = 0; x < terrainSize - 10; x += 9)
                             {
-                                for (int y = 0; y < 7; y += 3)
+                                for (int y = 0; y < terrainSize - 10; y += 9)
                                 {
                                     PutImage(blockItemModel.groupPosition.x + x, blockItemModel.groupPosition.y + y, blockItemModel.position.x, blockItemModel.position.y);
                                 }

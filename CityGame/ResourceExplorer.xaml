@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CityGame"
         mc:Ignorable="d"
-        Title="Resource Explorer" Height="650" Width="994" Background="#FFF6F6F6" >
+        Title="Resource Explorer" Height="750" Width="1094" Background="#FFF6F6F6" >
     <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="24"/>
@@ -16,7 +16,7 @@
             <ColumnDefinition Width="16"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="2"/>
-            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="350"/>
             <ColumnDefinition Width="16"/>
         </Grid.ColumnDefinitions>
 
@@ -91,6 +91,8 @@
                         <ComboBoxItem>5</ComboBoxItem>
                         <ComboBoxItem>6</ComboBoxItem>
                         <ComboBoxItem>7</ComboBoxItem>
+                        <ComboBoxItem>7</ComboBoxItem>
+                        <ComboBoxItem>7</ComboBoxItem>
                     </ComboBox>
 
                     <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="5" VerticalAlignment="Center" HorizontalAlignment="Right">
@@ -105,9 +107,12 @@
                         <ColumnDefinition Width="50"/>
                         <ColumnDefinition Width="50"/>
                         <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
                     </Grid.ColumnDefinitions>
 
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="50"/>
                         <RowDefinition Height="50"/>
                         <RowDefinition Height="50"/>
                         <RowDefinition Height="50"/>

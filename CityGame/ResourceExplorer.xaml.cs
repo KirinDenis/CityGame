@@ -18,7 +18,7 @@ namespace CityGame
     {
         private BlocksManager blocksManager = new BlocksManager();
 
-        private Image[,] groupsPreviewImages = new Image[5, 5];
+        private Image[,] groupsPreviewImages = new Image[7, 7];
 
         private bool blockEditMode = false;
 
@@ -33,9 +33,9 @@ namespace CityGame
            
             RefreshGroupsList();
 
-            for (int x = 0; x < 5; x++)
+            for (int x = 0; x < 7; x++)
             {
-                for (int y = 0; y < 5; y++)
+                for (int y = 0; y < 7; y++)
                 {
                     groupsPreviewImages[x, y] = new Image();
                     groupsPreviewImages[x, y].SetValue(Grid.ColumnProperty, x);
@@ -179,9 +179,9 @@ namespace CityGame
         private void RefreshGroupImages(BlockItemModel block)
         {
 
-            for (int x = 0; x < 5; x++)
+            for (int x = 0; x < 7; x++)
             {
-                for (int y = 0; y < 5; y++)
+                for (int y = 0; y < 7; y++)
                 {
                     groupsPreviewImages[x, y].Source = null;
                 }

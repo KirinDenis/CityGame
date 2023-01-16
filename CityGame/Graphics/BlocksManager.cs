@@ -106,9 +106,22 @@ namespace CityGame.Graphics
             return GetBlockByGroupIndex(GetGroupId(groupItemName));
         }
 
-        public List<BlockItemModel>? GetBlockByGroupPosition(List<BlockItemModel>? targetBlcoks, int gx, int gy)
+        public List<BlockItemModel>? GetBlocksByGroupPosition(List<BlockItemModel>? targetBlcoks, int gx, int gy)
         {
             return targetBlcoks?.FindAll(p => p.groupPosition != null && (p.groupPosition.x == gx && p.groupPosition.y == gy));
+        }
+
+        public int GetBlockOffsetByGroupPosition(List<BlockItemModel>? targetBlcoks, int gx, int gy, int blockIndex = 0)
+        {
+            BlockItemModel? blockModel = targetBlcoks?.FindAll(p => p.groupPosition != null && (p.groupPosition.x == gx && p.groupPosition.y == gy))[blockIndex];
+            if (blockModel != null)
+            {
+                return (blockModel.position.x << 0x10) + blockModel.position.y;
+            }
+            else
+            {
+                return 0;
+            }
         }
 
 

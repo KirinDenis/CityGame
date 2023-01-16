@@ -99,8 +99,7 @@ namespace CityGame
 
             enter = DateTime.Now;
 
-            DrawDiamand();
-            BuildMap();
+            GenerateNewTerrain();
 
             TerrainScroll.ScrollToVerticalOffset(TerrainImage.Width / 2.0f);
             TerrainScroll.ScrollToHorizontalOffset(TerrainImage.Height / 2.0f);
@@ -217,12 +216,6 @@ namespace CityGame
             Title = (count / (DateTime.Now - enter).TotalSeconds) + " FPS";
         }
 
-
-        private void BuildMap()
-        {
-            //
-        }
-
         private void PutImage(int x, int y, int bx, int by)
         {
             Int32Rect rect = new Int32Rect(x * 16, y * 16, 16, 16);
@@ -230,7 +223,7 @@ namespace CityGame
         }
 
 
-        private void DrawDiamand()
+        private void GenerateNewTerrain()
         {
             int[,] sourceTerraing;
             if (!fackeDiomand)
@@ -271,7 +264,7 @@ namespace CityGame
                         sourceTerraing[x, y] = (int)terrainType.land;
                     }
                     else
-                        sourceTerraing[x, y] = (int)terrainType.forest;                    
+                        sourceTerraing[x, y] = (int)terrainType.forest;
                 }
             }
 
@@ -302,63 +295,46 @@ namespace CityGame
                                 if ((sourceTerraing[x - 1, y] != (int)terrainType.water) && (sourceTerraing[x, y - 1] != (int)terrainType.water))
                                 {
                                     terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(waterGroup, 0, 0, randomIndex);
-
                                 }
                                 else
                                 if ((sourceTerraing[x - 1, y] != (int)terrainType.water) && (sourceTerraing[x, y + 1] != (int)terrainType.water))
                                 {
                                     terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(waterGroup, 0, 2, randomIndex);
-                                    //List<BlockItemModel>? wBlocks = blocksManager.GetBlockByGroupPosition(waterGroup, 0, 2);
-                                    //PutImage(x, y, wBlocks[randomIndex].position.x, wBlocks[randomIndex].position.y);
                                 }
                                 else
                                 if ((sourceTerraing[x + 1, y] != (int)terrainType.water) && (sourceTerraing[x, y - 1] != (int)terrainType.water))
                                 {
                                     terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(waterGroup, 2, 0, randomIndex);
-                                    //List<BlockItemModel>? wBlocks = blocksManager.GetBlockByGroupPosition(waterGroup, 2, 0);
-                                    //PutImage(x, y, wBlocks[randomIndex].position.x, wBlocks[randomIndex].position.y);
                                 }
                                 else
                                 if ((sourceTerraing[x + 1, y] != (int)terrainType.water) && (sourceTerraing[x, y + 1] != (int)terrainType.water))
                                 {
                                     terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(waterGroup, 2, 2, randomIndex);
-                                    //List<BlockItemModel>? wBlocks = blocksManager.GetBlockByGroupPosition(waterGroup, 2, 2);
-                                    //PutImage(x, y, wBlocks[randomIndex].position.x, wBlocks[randomIndex].position.y);
                                 }
                                 else
                                 if ((sourceTerraing[x - 1, y] != (int)terrainType.water))
                                 {
                                     terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(waterGroup, 0, 1, randomIndex);
-                                    //List<BlockItemModel>? wBlocks = blocksManager.GetBlockByGroupPosition(waterGroup, 0, 1);
-                                    //PutImage(x, y, wBlocks[randomIndex].position.x, wBlocks[randomIndex].position.y);
                                 }
                                 else
                                 if ((sourceTerraing[x, y - 1] != (int)terrainType.water))
                                 {
                                     terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(waterGroup, 1, 0, randomIndex);
-                                    //List<BlockItemModel>? wBlocks = blocksManager.GetBlockByGroupPosition(waterGroup, 1, 0);
-                                    //PutImage(x, y, wBlocks[randomIndex].position.x, wBlocks[randomIndex].position.y);
                                 }
                                 else
                                 if ((sourceTerraing[x, y + 1] != (int)terrainType.water))
                                 {
                                     terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(waterGroup, 1, 2, randomIndex);
-                                    //List<BlockItemModel>? wBlocks = blocksManager.GetBlockByGroupPosition(waterGroup, 1, 2);
-                                    //PutImage(x, y, wBlocks[randomIndex].position.x, wBlocks[randomIndex].position.y);
                                 }
                                 else
                                 if ((sourceTerraing[x + 1, y] != (int)terrainType.water))
                                 {
                                     terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(waterGroup, 2, 1, randomIndex);
-                                    //List<BlockItemModel>? wBlocks = blocksManager.GetBlockByGroupPosition(waterGroup, 2, 1);
-                                    //PutImage(x, y, wBlocks[randomIndex].position.x, wBlocks[randomIndex].position.y);
                                 }
 
                                 else
                                 {
                                     terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(waterGroup, 1, 1, randomIndex);
-                                    //List<BlockItemModel>? wBlocks = blocksManager.GetBlockByGroupPosition(waterGroup, 1, 1);
-                                    //PutImage(x, y, wBlocks[randomIndex].position.x, wBlocks[randomIndex].position.y);
                                 }
                                 break;
                             }
@@ -372,70 +348,53 @@ namespace CityGame
                                 if ((sourceTerraing[x - 1, y] != (int)terrainType.forest) && (sourceTerraing[x, y - 1] != (int)terrainType.forest))
                                 {
                                     terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(forestGroup, 0, 0, randomIndex);
-                                    //List<BlockItemModel>? fBlocks = blocksManager.GetBlockByGroupPosition(forestGroup, 0, 0);
-                                    //PutImage(x, y, fBlocks[randomIndex].position.x, fBlocks[randomIndex].position.y);
                                 }
                                 else
                                 if ((sourceTerraing[x - 1, y] != (int)terrainType.forest) && (sourceTerraing[x, y + 1] != (int)terrainType.forest))
                                 {
                                     terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(forestGroup, 0, 2, randomIndex);
-                                    //List<BlockItemModel>? fBlocks = blocksManager.GetBlockByGroupPosition(forestGroup, 0, 2);
-                                    //PutImage(x, y, fBlocks[randomIndex].position.x, fBlocks[randomIndex].position.y);
                                 }
                                 else
                                 if ((sourceTerraing[x + 1, y] != (int)terrainType.forest) && (sourceTerraing[x, y - 1] != (int)terrainType.forest))
                                 {
                                     terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(forestGroup, 2, 0, randomIndex);
-                                    //List<BlockItemModel>? fBlocks = blocksManager.GetBlockByGroupPosition(forestGroup, 2, 0);
-                                    //PutImage(x, y, fBlocks[randomIndex].position.x, fBlocks[randomIndex].position.y);
                                 }
                                 else
                                 if ((sourceTerraing[x + 1, y] != (int)terrainType.forest) && (sourceTerraing[x, y + 1] != (int)terrainType.forest))
                                 {
                                     terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(forestGroup, 2, 2, randomIndex);
-                                    //List<BlockItemModel>? fBlocks = blocksManager.GetBlockByGroupPosition(forestGroup, 2, 2);
-                                    //PutImage(x, y, fBlocks[randomIndex].position.x, fBlocks[randomIndex].position.y);
                                 }
                                 else
                                 if ((sourceTerraing[x - 1, y] != (int)terrainType.forest))
                                 {
                                     terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(forestGroup, 0, 1, randomIndex);
-                                    //List<BlockItemModel>? fBlocks = blocksManager.GetBlockByGroupPosition(forestGroup, 0, 1);
-                                    //PutImage(x, y, fBlocks[randomIndex].position.x, fBlocks[randomIndex].position.y);
                                 }
                                 else
                                 if ((sourceTerraing[x, y - 1] != (int)terrainType.forest))
                                 {
                                     terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(forestGroup, 1, 0, randomIndex);
-                                    //List<BlockItemModel>? fBlocks = blocksManager.GetBlockByGroupPosition(forestGroup, 1, 0);
-                                    //PutImage(x, y, fBlocks[randomIndex].position.x, fBlocks[randomIndex].position.y);
                                 }
                                 else
                                 if ((sourceTerraing[x, y + 1] != (int)terrainType.forest))
                                 {
                                     terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(forestGroup, 1, 2, randomIndex);
-                                    //List<BlockItemModel>? fBlocks = blocksManager.GetBlockByGroupPosition(forestGroup, 1, 2);
-                                    //PutImage(x, y, fBlocks[randomIndex].position.x, fBlocks[randomIndex].position.y);
                                 }
                                 else
                                 if ((sourceTerraing[x + 1, y] != (int)terrainType.forest))
                                 {
                                     terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(forestGroup, 2, 1, randomIndex);
-                                    //List<BlockItemModel>? fBlocks = blocksManager.GetBlockByGroupPosition(forestGroup, 2, 1);
-                                    //PutImage(x, y, fBlocks[randomIndex].position.x, fBlocks[randomIndex].position.y);
                                 }
 
                                 else
                                 {
                                     terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(forestGroup, 1, 1, randomIndex);
-                                    //List<BlockItemModel>? fBlocks = blocksManager.GetBlockByGroupPosition(forestGroup, 1, 1);
-                                    //PutImage(x, y, fBlocks[randomIndex].position.x, fBlocks[randomIndex].position.y);
                                 }
-
                             }
                             break;
                     }
-                    PutImage(x, y, terrain[x, y] >> 0x10, terrain[x, y] & 0xFF);
+                    //PutImage(x, y, terrain[x, y] >> 0x10, terrain[x, y] & 0xFF);
+                    Int32Rect rect = new Int32Rect(x * 16, y * 16, 16, 16);
+                    bitmapSource.WritePixels(rect, ResourcesManager.GetPixels(terrain[x, y] >> 0x10, terrain[x, y] & 0xFF), 16, 0);
                 }
             }
 
@@ -464,13 +423,12 @@ namespace CityGame
 
         private void GenerateMapButton_Click(object sender, RoutedEventArgs e)
         {
-            BuildMap();
+            GenerateNewTerrain();
         }
 
         private void GenerateLandButton_Click(object sender, RoutedEventArgs e)
         {
-            DrawDiamand();
-            BuildMap();
+            GenerateNewTerrain();
         }
 
 
@@ -480,8 +438,7 @@ namespace CityGame
             if (int.TryParse(WaterLevelTextBox.Text, out wl))
             {
                 waterLevel = wl;
-                DrawDiamand();
-                BuildMap();
+                GenerateNewTerrain();
             }
             else
             {
@@ -495,23 +452,12 @@ namespace CityGame
             if (int.TryParse(RoughnessTextBox.Text, out r))
             {
                 roughness = r;
-                DrawDiamand();
-                BuildMap();
+                GenerateNewTerrain();
             }
             else
             {
                 RoughnessTextBox.Text = roughness.ToString();
             }
-        }
-
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-        }
-
-        private void Window_Activated(object sender, EventArgs e)
-        {
-
         }
 
         private void Terrain_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
@@ -579,6 +525,28 @@ namespace CityGame
                 }
                 lockScroll = false;
             }
+
+
+            double actualIconSizeInPixels = TerrainImage.ActualWidth / terrainSize;
+
+            double x = e.GetPosition(TerrainImage).X - (e.GetPosition(TerrainImage).X % actualIconSizeInPixels); // + TerrainScroll.HorizontalOffset;
+            double y = e.GetPosition(TerrainImage).Y - (e.GetPosition(TerrainImage).Y % actualIconSizeInPixels); // + TerrainScroll.VerticalOffset;
+
+            TerrainSelector.Width = TerrainSelector.Height = actualIconSizeInPixels;
+
+            TerrainSelector.Margin = new Thickness(x, y, 0, 0);
+
+        }
+
+        private void TerrainGrid_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            double actualIconSizeInPixels = TerrainImage.ActualWidth / terrainSize;
+
+            int x = (int)((e.GetPosition(TerrainImage).X - (e.GetPosition(TerrainImage).X % actualIconSizeInPixels)) / actualIconSizeInPixels); 
+            int y = (int)((e.GetPosition(TerrainImage).Y - (e.GetPosition(TerrainImage).Y % actualIconSizeInPixels)) / actualIconSizeInPixels);
+
+            terrain[x, y] = (2 << 0x10) + 2;
+            PutImage(x, y, terrain[x, y] >> 0x10, terrain[x, y] & 0xFF);
         }
     }
 }

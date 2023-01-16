@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CityGame"
         mc:Ignorable="d"
-        Title="City Game" Height="800" Width="800" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" Activated="Window_Activated">
+        Title="City Game" Height="800" Width="800" WindowStartupLocation="CenterScreen">
     <Grid >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="167*"/>
@@ -31,18 +31,14 @@
         </StackPanel>
 
 
-        <Grid x:Name="TerrainGrid"  PreviewMouseWheel="Terrain_PreviewMouseWheel" PreviewMouseMove="TerrainGrid_PreviewMouseMove" Background="#FFF6F6F6" Grid.Row="1" Grid.ColumnSpan="2">
+        <Grid x:Name="TerrainGrid"  PreviewMouseWheel="Terrain_PreviewMouseWheel" PreviewMouseMove="TerrainGrid_PreviewMouseMove" Background="#FFF6F6F6" Grid.Row="1" Grid.ColumnSpan="2" PreviewMouseDown="TerrainGrid_PreviewMouseDown">
             <ScrollViewer x:Name="TerrainScroll" HorizontalScrollBarVisibility="Visible"  HorizontalContentAlignment="Stretch" PanningMode="Both"  >
-                <Image x:Name="TerrainImage" RenderOptions.BitmapScalingMode="NearestNeighbor" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0,0" Source="/Resources/resources.png">
-            </Image>
+                <Grid HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0,0">
+                    <Image x:Name="TerrainImage" HorizontalAlignment="Left" VerticalAlignment="Top" RenderOptions.BitmapScalingMode="NearestNeighbor" Source="/Resources/resources.png" />
+                    <Border x:Name="TerrainSelector" HorizontalAlignment="Left" VerticalAlignment="Top" Width="16" Height="16" BorderBrush="#FF4FEA25" BorderThickness="2,2,2,2" />
+                </Grid>
             </ScrollViewer>
         </Grid>
-        
-
-
-
-
-
 
 
         <Viewbox Grid.Column="1" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Top" >

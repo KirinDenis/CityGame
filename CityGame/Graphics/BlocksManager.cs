@@ -123,8 +123,6 @@ namespace CityGame.Graphics
                 return 0;
             }
         }
-
-
         public List<BlockItemModel>? GetBlockByGroupIndexAnimationOnly(int gorupId)
         {
             if (gorupId > 0)
@@ -134,6 +132,55 @@ namespace CityGame.Graphics
 
             return new List<BlockItemModel>();
         }
+
+        public List<BlockItemModel> GetBlocksByOffsets(int[] offsets)
+        {
+            List<BlockItemModel> findBlocks = new List<BlockItemModel>();
+            foreach (int offset in offsets)
+            {
+                BlockItemModel? blockItemModel = GetBlockByPosition(new BlockPoint()
+                {
+                    x = offset >> 0x10,
+                    y = offset & 0xFF
+                }
+                );
+                if (blockItemModel == null)
+                {
+                    continue;
+                }
+                findBlocks.Add(blockItemModel);
+            }
+
+            return findBlocks;
+        }
+
+        public BlockItemModel[,] GetBlocksByOffsets(int[,] offsets)
+        {
+            BlockItemModel[,] findBlocks = new BlockItemModel[offsets.GetLength(0), offsets.GetLength(1)];
+
+            for (int x = 0; x < offsets.GetLength(0); x++)
+            {
+                for (int y = 0; y < offsets.GetLength(1); y++)
+                {
+
+                    BlockItemModel? blockItemModel = GetBlockByPosition(new BlockPoint()
+                    {
+                        x = offsets[x, y] >> 0x10,
+                        y = offsets[x, y] & 0xFF
+                    }
+                );
+                    if (blockItemModel == null)
+                    {
+                        continue;
+                    }
+                    findBlocks[x, y] = blockItemModel;
+                }
+            }
+
+            return findBlocks;
+        }
+
+
 
     }
 }

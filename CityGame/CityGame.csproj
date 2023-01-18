@@ -8,11 +8,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Blocks.json" />
+    <None Remove="Resources\Groups.json" />
     <None Remove="Resources\resources.png" />
     <None Remove="Resources\resources256.bmp" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Resources\Blocks.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Groups.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\resources.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -28,16 +36,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Graphics\ResourcesManager.cs">
+    <Compile Update="Graphics\SpriteRepository.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Resources\Blocks.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\Groups.json">
+    <None Update="Resources\Sprites.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

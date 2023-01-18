@@ -21,7 +21,7 @@ namespace CityGame.Graphics
         {
             this.terrainSize = terrainSize;
             this.roughness = roughness;
-        
+
         }
 
         private void DeomandStep(int x1, int y1, int x2, int y2, int halfSide)
@@ -72,7 +72,6 @@ namespace CityGame.Graphics
             t[x1, (y2 - y1) / 2] = (sum + t[x1, (y2 - y1) / 2]) / 2;
         }
 
-
         public int[,] getData()
         {
             t = new int[terrainSize, terrainSize]; //"t" mean terrain
@@ -93,33 +92,33 @@ namespace CityGame.Graphics
                 {
                     for (int y = 0; y < terrainSize - 1; y += sideLength)
                     {
-                            //DeomandStep(x, y, x + sideLength, y + sideLength, halfSide);
-                            if ((x + halfSide < terrainSize) && (y + halfSide < terrainSize)
-                                && (x + sideLength < terrainSize) && (y + sideLength < terrainSize))
-                            {
-                                t[x + halfSide, y + halfSide] = (t[x, y] + t[x + sideLength, y + sideLength] + t[x, y + sideLength] + t[x + sideLength, y] + rnd.Next(512)) / 5;
+                        //DeomandStep(x, y, x + sideLength, y + sideLength, halfSide);
+                        if ((x + halfSide < terrainSize) && (y + halfSide < terrainSize)
+                            && (x + sideLength < terrainSize) && (y + sideLength < terrainSize))
+                        {
+                            t[x + halfSide, y + halfSide] = (t[x, y] + t[x + sideLength, y + sideLength] + t[x, y + sideLength] + t[x + sideLength, y] + rnd.Next(512)) / 5;
 
 
-                                //SquareStep(x, y, x + sideLength, y + sideLength, halfSide);
-                                //^^^this generate flat terrain
-                                //sum of square
+                            //SquareStep(x, y, x + sideLength, y + sideLength, halfSide);
+                            //^^^this generate flat terrain
+                            //sum of square
 
-                                //NOTE: this generate terrain with sea on righ buttom terrain side
-                                sum = (t[x, y] + t[x + sideLength, y + sideLength] + t[x, y + sideLength] + t[x + sideLength, y] + t[x + halfSide, y + halfSide]) / 5;
-                                //point 1
-                                t[(x + sideLength) / 2, y] = (sum + rnd.Next(512)) / 2;
+                            //NOTE: this generate terrain with sea on righ buttom terrain side
+                            sum = (t[x, y] + t[x + sideLength, y + sideLength] + t[x, y + sideLength] + t[x + sideLength, y] + t[x + halfSide, y + halfSide]) / 5;
+                            //point 1
+                            t[(x + sideLength) / 2, y] = (sum + rnd.Next(512)) / 2;
 
-                                //point 2
-                                t[x + sideLength, (y + sideLength) / 2] = (sum + rnd.Next(512)) / 2;
+                            //point 2
+                            t[x + sideLength, (y + sideLength) / 2] = (sum + rnd.Next(512)) / 2;
 
-                                //point 3
-                                t[(x + sideLength) / 2, y + sideLength] = (sum + rnd.Next(512)) / 2;
+                            //point 3
+                            t[(x + sideLength) / 2, y + sideLength] = (sum + rnd.Next(512)) / 2;
 
-                                //point 4
-                                t[x, (y + sideLength) / 2] = (sum + rnd.Next(512)) / 2;
-                            }
-                            
-                        
+                            //point 4
+                            t[x, (y + sideLength) / 2] = (sum + rnd.Next(512)) / 2;
+                        }
+
+
                     }
                 }
                 if (sideLength < 2)
@@ -129,7 +128,6 @@ namespace CityGame.Graphics
                 sideLength = (int)Math.Ceiling(sideLength / 2.0f);
             }
 
-            
             //smooth out roughness
             for (int r = 0; r < roughness; r++)
             {
@@ -176,7 +174,7 @@ namespace CityGame.Graphics
                     sideLength = (int)Math.Ceiling(sideLength / 2.0f);
                 }
             }
-            
+
             return t;
         }
 

@@ -16,11 +16,11 @@ namespace CityGame
     /// </summary>
     public partial class ResourceExplorer : Window
     {
-        private BlocksManager blocksManager = new BlocksManager();
+        private SpriteBusiness spriteBusiness = new SpriteBusiness();
 
         private Image[,] groupsPreviewImages = new Image[7, 7];
 
-        private bool blockEditMode = false;
+        private bool spriteEditMode = false;
 
         private int animationFrame = 1;
         public ResourceExplorer()
@@ -28,8 +28,8 @@ namespace CityGame
             InitializeComponent();
 
             SourceImageInfoTextBlock.Text = string.Format("Image {0}x{1}", ResourceImage.Source.Width, ResourceImage.Source.Height);
-            SourceBlockInfoTextBlock.Text = string.Format("Block {0}x{1}", ResourcesManager.iconsSizeInPixels, ResourcesManager.iconsSizeInPixels);
-            SourceCountsInfoTextBlock.Text = string.Format("Counts {0}x{1}", ResourcesManager.iconsCountByX, ResourcesManager.iconsCountByY);
+            SourceSpriteInfoTextBlock.Text = string.Format("Sprite {0}x{1}", SpriteRepository.SizeInPixels, SpriteRepository.SizeInPixels);
+            SourceCountsInfoTextBlock.Text = string.Format("Counts {0}x{1}", SpriteRepository.Width, SpriteRepository.Height);
            
             RefreshGroupsList();
 
@@ -57,7 +57,7 @@ namespace CityGame
 
                     textBlock.Text = string.Format("{0}:{1}", x, y);
 
-                    textBlock.Tag = new BlockPoint()
+                    textBlock.Tag = new PositionModel()
                     {
                         x = x,
                         y = y
@@ -78,28 +78,28 @@ namespace CityGame
 
         private void AnimationFrameTimer_Tick(object? sender, EventArgs e)
         {
-            BlockItemModel block = (BlockItemModel)PreviewImage.Tag;
-            if (block != null)
+            SpriteModel sprite = (SpriteModel)PreviewImage.Tag;
+            if (sprite != null)
             {
                 animationFrame++;
-                List<BlockItemModel>? blockItemModels = blocksManager.GetBlockByGroupIndexAnimationOnly(block.groupId);
-                if ((blockItemModels != null) && (blockItemModels.Count > 0))
+                List<SpriteModel>? spriteItemModels = spriteBusiness.GetSpriteByGroupIndexAnimationOnly(sprite.groupId);
+                if ((spriteItemModels != null) && (spriteItemModels.Count > 0))
                 {
-                    List<BlockItemModel>? nextFrameBlocks = blockItemModels?.FindAll(p => p.animationFrame == animationFrame);
+                    List<SpriteModel>? nextFrameSprites = spriteItemModels?.FindAll(p => p.animationFrame == animationFrame);
 
-                    if ((nextFrameBlocks == null) || (nextFrameBlocks?.Count == 0))
+                    if ((nextFrameSprites == null) || (nextFrameSprites?.Count == 0))
                     {
                         animationFrame = 1;
-                        nextFrameBlocks = blockItemModels?.FindAll(p => p.animationFrame == animationFrame);
+                        nextFrameSprites = spriteItemModels?.FindAll(p => p.animationFrame == animationFrame);
                     }
-                    if ((nextFrameBlocks != null) || (nextFrameBlocks?.Count == 0))
+                    if ((nextFrameSprites != null) || (nextFrameSprites?.Count == 0))
                     {
-                        foreach (var blockItemModel in nextFrameBlocks)
+                        foreach (var spriteItemModel in nextFrameSprites)
                         {
-                            if (blockItemModel.groupPosition != null)
+                            if (spriteItemModel.groupPosition != null)
                             {
-                                groupsPreviewImages[blockItemModel.groupPosition.x, blockItemModel.groupPosition.y].Source
-                                    = ResourcesManager.GetBlock(blockItemModel.position.x, blockItemModel.position.y);
+                                groupsPreviewImages[spriteItemModel.groupPosition.x, spriteItemModel.groupPosition.y].Source
+                                    = SpriteRepository.GetSprite(spriteItemModel.position.x, spriteItemModel.position.y);
                             }
                         }
                     }
@@ -110,62 +110,62 @@ namespace CityGame
 
         private void ResourceExplorer_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            BlockItemModel block = (BlockItemModel)PreviewImage.Tag;
+            SpriteModel sprite = (SpriteModel)PreviewImage.Tag;
 
-            if (block != null)
+            if (sprite != null)
             {
-                block.groupPosition = (BlockPoint)((TextBlock)sender).Tag;
-                blocksManager.SetBlocks();
-                RefreshGroupImages(block);
+                sprite.groupPosition = (PositionModel)((TextBlock)sender).Tag;
+                spriteBusiness.SetSprites();
+                RefreshGroupImages(sprite);
             }
         }
 
-        private BlockPoint GetBlockPositionByMouse(MouseEventArgs e)
+        private PositionModel GetSpritePositionByMouse(MouseEventArgs e)
         {
             Point mousePosition = e.GetPosition(ResourceImage);
-            return new BlockPoint()
+            return new PositionModel()
             {
-                x = (int)(mousePosition.X / (ResourceImage.ActualWidth / ResourceImage.Source.Width)) / ResourcesManager.iconsSizeInPixels,
-                y = (int)(mousePosition.Y / (ResourceImage.ActualHeight / ResourceImage.Source.Height)) / ResourcesManager.iconsSizeInPixels
+                x = (int)(mousePosition.X / (ResourceImage.ActualWidth / ResourceImage.Source.Width)) / SpriteRepository.SizeInPixels,
+                y = (int)(mousePosition.Y / (ResourceImage.ActualHeight / ResourceImage.Source.Height)) / SpriteRepository.SizeInPixels
             };
         }
 
         /// <summary>
-        /// Select block by mouse move over source image
+        /// Select sprite by mouse move over source image
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void ResourceImage_MouseMove(object sender, MouseEventArgs e)
         {
-            if (!blockEditMode)
+            if (!spriteEditMode)
             {
-                BlockPoint position = GetBlockPositionByMouse(e);
-                BlockItemModel? block = blocksManager.GetBlockByPosition(GetBlockPositionByMouse(e));
+                PositionModel position = GetSpritePositionByMouse(e);
+                SpriteModel? sprite = spriteBusiness.GetSpriteByPosition(GetSpritePositionByMouse(e));
 
-                PreviewImage.Tag = block;
-                PreviewImage.Source = ResourcesManager.GetBlock(position.x, position.y);
+                PreviewImage.Tag = sprite;
+                PreviewImage.Source = SpriteRepository.GetSprite(position.x, position.y);
 
-                BlockInfoPositionTextBlock.Text = string.Format("{0}:{1}", block.position.x, block.position.y);
+                SpriteInfoPositionTextBlock.Text = string.Format("{0}:{1}", sprite.position.x, sprite.position.y);
 
-                BlockInfoNameTextBox.Text = block.name;
+                SpriteInfoNameTextBox.Text = sprite.name;
 
-                BlockInfoGroupComboBox.SelectedIndex = block.groupId;
+                SpriteInfoGroupComboBox.SelectedIndex = sprite.groupId;
 
-                AnimationFrameComboBox.SelectedIndex = block.animationFrame ?? 0;
+                AnimationFrameComboBox.SelectedIndex = sprite.animationFrame ?? 0;
 
-                RefreshGroupImages(block);
+                RefreshGroupImages(sprite);
 
                 //Resourve image selector
                 Point actualMargin = ResourceImage.TransformToAncestor(MainGrid).Transform(new Point(0, 0));
                 actualMargin.X -= MainGrid.ColumnDefinitions[0].ActualWidth;
                 actualMargin.Y -= MainGrid.RowDefinitions[0].ActualHeight;
 
-                double actualIconSizeInPixels = ResourceImage.ActualWidth / ResourcesManager.iconsCountByX;
+                double actualSpriteSizeInPixels = ResourceImage.ActualWidth / SpriteRepository.Width;
 
-                double x = e.GetPosition(ResourceImage).X - (e.GetPosition(ResourceImage).X % actualIconSizeInPixels) + actualMargin.X;
-                double y = e.GetPosition(ResourceImage).Y - (e.GetPosition(ResourceImage).Y % actualIconSizeInPixels) + actualMargin.Y;
+                double x = e.GetPosition(ResourceImage).X - (e.GetPosition(ResourceImage).X % actualSpriteSizeInPixels) + actualMargin.X;
+                double y = e.GetPosition(ResourceImage).Y - (e.GetPosition(ResourceImage).Y % actualSpriteSizeInPixels) + actualMargin.Y;
 
-                ResourceSelectorBorder.Width = ResourceSelectorBorder.Height = actualIconSizeInPixels;
+                ResourceSelectorBorder.Width = ResourceSelectorBorder.Height = actualSpriteSizeInPixels;
 
                 ResourceSelectorBorder.Margin = new Thickness(x, y, 0, 0);             
             }
@@ -173,10 +173,10 @@ namespace CityGame
 
         private void RefreshGroupsList()
         {
-            BlockInfoGroupComboBox.ItemsSource = blocksManager.groups;
+            SpriteInfoGroupComboBox.ItemsSource = spriteBusiness.groups;
         }
 
-        private void RefreshGroupImages(BlockItemModel block)
+        private void RefreshGroupImages(SpriteModel sprite)
         {
 
             for (int x = 0; x < 7; x++)
@@ -187,18 +187,18 @@ namespace CityGame
                 }
             }
 
-            if (block != null)
+            if (sprite != null)
             {
-                List<BlockItemModel>? blocksItems = blocksManager.GetBlockByGroupIndex(block.groupId);
-                if (blocksItems != null)
+                List<SpriteModel>? spritesItems = spriteBusiness.GetSpriteByGroupIndex(sprite.groupId);
+                if (spritesItems != null)
                 {
-                    foreach (BlockItemModel blockItem in blocksItems)
+                    foreach (SpriteModel spriteItem in spritesItems)
                     {
-                        if (blockItem.groupPosition != null)
+                        if (spriteItem.groupPosition != null)
                         {
-                            if ((blockItem.groupPosition.x >= 0) && (blockItem.groupPosition.y >= 0))
+                            if ((spriteItem.groupPosition.x >= 0) && (spriteItem.groupPosition.y >= 0))
                             {
-                                groupsPreviewImages[blockItem.groupPosition.x, blockItem.groupPosition.y].Source = ResourcesManager.GetBlock(blockItem.position.x, blockItem.position.y);
+                                groupsPreviewImages[spriteItem.groupPosition.x, spriteItem.groupPosition.y].Source = SpriteRepository.GetSprite(spriteItem.position.x, spriteItem.position.y);
                             }
                         }
                     }
@@ -208,76 +208,76 @@ namespace CityGame
 
         private void ResourceImage_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            blockEditMode = !blockEditMode;
+            spriteEditMode = !spriteEditMode;
 
-            if (blockEditMode)
+            if (spriteEditMode)
             {
                 ResourceMapModeTextBlock.Text = "[Edit mode]".ToUpper();
-                BlockModeTextBlock.Text = "Selected block edit";
-                BlockModeTextBlock.Foreground = ResourceMapModeTextBlock.Foreground = ResourceSelectorBorder.BorderBrush = new SolidColorBrush(Colors.Red);
+                SpriteModeTextBlock.Text = "Selected sprite edit";
+                SpriteModeTextBlock.Foreground = ResourceMapModeTextBlock.Foreground = ResourceSelectorBorder.BorderBrush = new SolidColorBrush(Colors.Red);
             }
             else
             {
                 ResourceMapModeTextBlock.Text = "[Select mode]".ToUpper();
-                BlockModeTextBlock.Text = "Selected block view";
+                SpriteModeTextBlock.Text = "Selected sprite view";
                 ResourceSelectorBorder.BorderBrush = new SolidColorBrush(Colors.LightGreen);
-                BlockModeTextBlock.Foreground = ResourceMapModeTextBlock.Foreground = new SolidColorBrush(Colors.Green);
+                SpriteModeTextBlock.Foreground = ResourceMapModeTextBlock.Foreground = new SolidColorBrush(Colors.Green);
             }
         }
 
-        private void NewBlock_Click(object sender, RoutedEventArgs e)
+        private void NewSprite_Click(object sender, RoutedEventArgs e)
         {
-            if (blocksManager.groups.Find(p => p.Equals(BlockInfoGroupComboBox.Text)) == null)
+            if (spriteBusiness.groups.Find(p => p.Equals(SpriteInfoGroupComboBox.Text)) == null)
             {
-                blocksManager.groups.Add(BlockInfoGroupComboBox.Text);
-                blocksManager.SetGroups();
+                spriteBusiness.groups.Add(SpriteInfoGroupComboBox.Text);
+                spriteBusiness.SetGroups();
 
-                BlockInfoGroupComboBox.ItemsSource = blocksManager.groups;
-                BlockInfoGroupComboBox.SelectedIndex = BlockInfoGroupComboBox.Items.Count - 1;
+                SpriteInfoGroupComboBox.ItemsSource = spriteBusiness.groups;
+                SpriteInfoGroupComboBox.SelectedIndex = SpriteInfoGroupComboBox.Items.Count - 1;
 
-                BlockItemModel block = (BlockItemModel)PreviewImage.Tag;
-                block.groupId = BlockInfoGroupComboBox.SelectedIndex;
-                blocksManager.SetBlocks();
-                RefreshGroupImages(block);
+                SpriteModel sprite = (SpriteModel)PreviewImage.Tag;
+                sprite.groupId = SpriteInfoGroupComboBox.SelectedIndex;
+                spriteBusiness.SetSprites();
+                RefreshGroupImages(sprite);
             }
 
         }
 
-        private void SaveBlocksButton_Click(object sender, RoutedEventArgs e)
+        private void SaveSpritesButton_Click(object sender, RoutedEventArgs e)
         {
-            blocksManager.SetBlocks(DateTime.Now.ToString(" dd-M-yyyy HH-mm-ss"));
+            spriteBusiness.SetSprites(DateTime.Now.ToString(" dd-M-yyyy HH-mm-ss"));
         }
 
-        private void BlockInfoGroupComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void SpriteInfoGroupComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            BlockItemModel block = (BlockItemModel)PreviewImage.Tag;
-            if (block != null)
+            SpriteModel sprite = (SpriteModel)PreviewImage.Tag;
+            if (sprite != null)
             {
-                block.groupId = BlockInfoGroupComboBox.SelectedIndex;
-                blocksManager.SetBlocks();
-                RefreshGroupImages(block);
+                sprite.groupId = SpriteInfoGroupComboBox.SelectedIndex;
+                spriteBusiness.SetSprites();
+                RefreshGroupImages(sprite);
             }
         }
 
         private void AnimationFrameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            BlockItemModel block = (BlockItemModel)PreviewImage.Tag;
-            if (block != null)
+            SpriteModel sprite = (SpriteModel)PreviewImage.Tag;
+            if (sprite != null)
             {
-                block.animationFrame = AnimationFrameComboBox.SelectedIndex;
-                blocksManager.SetBlocks();
-                RefreshGroupImages(block);
+                sprite.animationFrame = AnimationFrameComboBox.SelectedIndex;
+                spriteBusiness.SetSprites();
+                RefreshGroupImages(sprite);
             }
         }
 
-        private void BlockInfoNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void SpriteInfoNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            BlockItemModel block = (BlockItemModel)PreviewImage.Tag;
-            if (block != null)
+            SpriteModel sprite = (SpriteModel)PreviewImage.Tag;
+            if (sprite != null)
             {
-                block.name = BlockInfoNameTextBox.Text;
-                blocksManager.SetBlocks();
-                RefreshGroupImages(block);
+                sprite.name = SpriteInfoNameTextBox.Text;
+                spriteBusiness.SetSprites();
+                RefreshGroupImages(sprite);
             }
         }
     }

@@ -31,8 +31,8 @@ namespace CityGame
     public partial class MainWindow : Window
     {
         /// <summary>
-        /// Terrain width and height at blocks
-        /// Current block size is 16x16 piexels
+        /// Terrain width and height at sprites
+        /// Current sprite size is 16x16 piexels
         /// The terrain size at pixels is terrainSize * 16
         /// </summary>
         private const int terrainSize = 400;
@@ -43,7 +43,7 @@ namespace CityGame
         /// </summary>
         private const bool fackeDiomand = false;
 
-        //Terrain map - block offsets
+        //Terrain map - sprite offsets
         private int[,] terrain = new int[terrainSize, terrainSize];
 
         private int waterLevel = 120;
@@ -52,7 +52,7 @@ namespace CityGame
 
         private int roughness = 0;
 
-        private BlocksManager blocksManager = new BlocksManager();
+        private SpriteBusiness spriteBusiness = new SpriteBusiness();
 
         private Random random = new Random();
 
@@ -94,7 +94,6 @@ namespace CityGame
             return --y;
         };
 
-
         /// <summary>
         /// Inline Right, Bottom
         /// </summary>
@@ -108,9 +107,9 @@ namespace CityGame
             return ++y;
         };
 
-        private List<BlockItemModel>? waterGroup;
-        private List<BlockItemModel>? forestGroup;
-        private List<BlockItemModel>? roadGroup;
+        private List<SpriteModel>? waterGroup;
+        private List<SpriteModel>? forestGroup;
+        private List<SpriteModel>? roadGroup;
 
         Func<int, int, int> CoordToOffset = delegate (int x, int y)
         {
@@ -147,16 +146,16 @@ namespace CityGame
             WaterLevelTextBox.Text = waterLevel.ToString();
             RoughnessTextBox.Text = roughness.ToString();
 
-            TerrainImage.Width = TerrainImage.Height = terrainSize * ResourcesManager.iconsSizeInPixels * zoom;
+            TerrainImage.Width = TerrainImage.Height = terrainSize * SpriteRepository.SizeInPixels * zoom;
 
-            BitmapImage sImage = ResourcesManager.GetBlock(0, 0);
+            BitmapImage sImage = SpriteRepository.GetSprite(0, 0);
             bitmapSource = new WriteableBitmap(terrainSize * 16, terrainSize * 16, sImage.DpiX, sImage.DpiY, sImage.Format, sImage.Palette);
 
             enter = DateTime.Now;
 
-            waterGroup = blocksManager.GetBlockByGroupName("water");
-            forestGroup = blocksManager.GetBlockByGroupName("forest");
-            roadGroup = blocksManager.GetBlockByGroupName("road");
+            waterGroup = spriteBusiness.GetSpriteByGroupName("water");
+            forestGroup = spriteBusiness.GetSpriteByGroupName("forest");
+            roadGroup = spriteBusiness.GetSpriteByGroupName("road");
 
 
             GenerateNewTerrain();
@@ -191,7 +190,7 @@ namespace CityGame
             for (int i = 0; i < 5000; i++)
             {
                 Int32Rect rect = new Int32Rect(0, 0, 16, 16);
-                BitmapImage sImage = ResourcesManager.GetBlock(random.Next(20), random.Next(20));
+                BitmapImage sImage = ResourcesManager.GetSprite(random.Next(20), random.Next(20));
 
                 sImage.CopyPixels(rect, array, 16, 0);
                 
@@ -213,7 +212,7 @@ namespace CityGame
                     //rect.X = 0;
                     //rect.Y = 0;
 
-                    //BitmapImage sImage = ResourcesManager.GetBlock(random.Next(32), random.Next(32));
+                    //BitmapImage sImage = ResourcesManager.GetSprite(random.Next(32), random.Next(32));
 
                     //sImage.CopyPixels(rect, array, 16, 0);
 
@@ -229,42 +228,42 @@ namespace CityGame
 
             /*
             animationFrame++;
-            List<BlockItemModel>? blockItemModels = blocksManager.GetBlockByGroupName("Industrial1");
-            if ((blockItemModels != null) && (blockItemModels.Count > 0))
+            List<SpriteItemModel>? spriteItemModels = spriteBusiness.GetSpriteByGroupName("Industrial1");
+            if ((spriteItemModels != null) && (spriteItemModels.Count > 0))
             {
-                List<BlockItemModel>? nextFrameBlocks = blockItemModels?.FindAll(p => p.animationFrame == 0);
-                foreach (var blockItemModel in nextFrameBlocks)
+                List<SpriteItemModel>? nextFrameSprites = spriteItemModels?.FindAll(p => p.animationFrame == 0);
+                foreach (var spriteItemModel in nextFrameSprites)
                 {
-                    if (blockItemModel.groupPosition != null)
+                    if (spriteItemModel.groupPosition != null)
                     {
                         for (int x = 0; x < terrainSize - 10; x += 9)
                         {
                             for (int y = 0; y < terrainSize - 10; y += 9)
                             {
-                                PutImage(blockItemModel.groupPosition.x + x, blockItemModel.groupPosition.y + y, blockItemModel.position.x, blockItemModel.position.y);
+                                PutImage(spriteItemModel.groupPosition.x + x, spriteItemModel.groupPosition.y + y, spriteItemModel.position.x, spriteItemModel.position.y);
                             }
                         }
                     }
                 }
 
-                nextFrameBlocks = blockItemModels?.FindAll(p => p.animationFrame == animationFrame);
+                nextFrameSprites = spriteItemModels?.FindAll(p => p.animationFrame == animationFrame);
 
-                if ((nextFrameBlocks == null) || (nextFrameBlocks?.Count == 0))
+                if ((nextFrameSprites == null) || (nextFrameSprites?.Count == 0))
                 {
                     animationFrame = 1;
-                    nextFrameBlocks = blockItemModels?.FindAll(p => p.animationFrame == animationFrame);
+                    nextFrameSprites = spriteItemModels?.FindAll(p => p.animationFrame == animationFrame);
                 }
-                if ((nextFrameBlocks != null) || (nextFrameBlocks?.Count == 0))
+                if ((nextFrameSprites != null) || (nextFrameSprites?.Count == 0))
                 {
-                    foreach (var blockItemModel in nextFrameBlocks)
+                    foreach (var spriteItemModel in nextFrameSprites)
                     {
-                        if (blockItemModel.groupPosition != null)
+                        if (spriteItemModel.groupPosition != null)
                         {
                             for (int x = 0; x < terrainSize - 10; x += 9)
                             {
                                 for (int y = 0; y < terrainSize - 10; y += 9)
                                 {
-                                    PutImage(blockItemModel.groupPosition.x + x, blockItemModel.groupPosition.y + y, blockItemModel.position.x, blockItemModel.position.y);
+                                    PutImage(spriteItemModel.groupPosition.x + x, spriteItemModel.groupPosition.y + y, spriteItemModel.position.x, spriteItemModel.position.y);
                                 }
                             }
                         }
@@ -279,7 +278,7 @@ namespace CityGame
         private void PutImage(int x, int y, int bx, int by)
         {
             Int32Rect rect = new Int32Rect(x * 16, y * 16, 16, 16);
-            bitmapSource.WritePixels(rect, ResourcesManager.GetPixels(bx, by), 16, 0);
+            bitmapSource.WritePixels(rect, SpriteRepository.GetPixels(bx, by), 16, 0);
         }
 
 
@@ -354,47 +353,47 @@ namespace CityGame
                             {
                                 if ((sourceTerraing[CLeft(x), y] != (int)terrainType.water) && (sourceTerraing[x, CTop(y)] != (int)terrainType.water))
                                 {
-                                    terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(waterGroup, 0, 0, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(waterGroup, 0, 0, randomIndex);
                                 }
                                 else
                                 if ((sourceTerraing[CLeft(x), y] != (int)terrainType.water) && (sourceTerraing[x, CBottom(y)] != (int)terrainType.water))
                                 {
-                                    terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(waterGroup, 0, 2, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(waterGroup, 0, 2, randomIndex);
                                 }
                                 else
                                 if ((sourceTerraing[CRight(x), y] != (int)terrainType.water) && (sourceTerraing[x, CTop(y)] != (int)terrainType.water))
                                 {
-                                    terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(waterGroup, 2, 0, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(waterGroup, 2, 0, randomIndex);
                                 }
                                 else
                                 if ((sourceTerraing[CRight(x), y] != (int)terrainType.water) && (sourceTerraing[x, CBottom(y)] != (int)terrainType.water))
                                 {
-                                    terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(waterGroup, 2, 2, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(waterGroup, 2, 2, randomIndex);
                                 }
                                 else
                                 if ((sourceTerraing[CLeft(x), y] != (int)terrainType.water))
                                 {
-                                    terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(waterGroup, 0, 1, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(waterGroup, 0, 1, randomIndex);
                                 }
                                 else
                                 if ((sourceTerraing[x, CTop(y)] != (int)terrainType.water))
                                 {
-                                    terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(waterGroup, 1, 0, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(waterGroup, 1, 0, randomIndex);
                                 }
                                 else
                                 if ((sourceTerraing[x, CBottom(y)] != (int)terrainType.water))
                                 {
-                                    terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(waterGroup, 1, 2, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(waterGroup, 1, 2, randomIndex);
                                 }
                                 else
                                 if ((sourceTerraing[CRight(x), y] != (int)terrainType.water))
                                 {
-                                    terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(waterGroup, 2, 1, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(waterGroup, 2, 1, randomIndex);
                                 }
 
                                 else
                                 {
-                                    terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(waterGroup, 1, 1, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(waterGroup, 1, 1, randomIndex);
                                 }
                                 break;
                             }
@@ -407,47 +406,47 @@ namespace CityGame
                             {
                                 if ((sourceTerraing[CLeft(x), y] != (int)terrainType.forest) && (sourceTerraing[x, CTop(y)] != (int)terrainType.forest))
                                 {
-                                    terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(forestGroup, 0, 0, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(forestGroup, 0, 0, randomIndex);
                                 }
                                 else
                                 if ((sourceTerraing[CLeft(x), y] != (int)terrainType.forest) && (sourceTerraing[x, CBottom(y)] != (int)terrainType.forest))
                                 {
-                                    terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(forestGroup, 0, 2, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(forestGroup, 0, 2, randomIndex);
                                 }
                                 else
                                 if ((sourceTerraing[CRight(x), y] != (int)terrainType.forest) && (sourceTerraing[x, CTop(y)] != (int)terrainType.forest))
                                 {
-                                    terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(forestGroup, 2, 0, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(forestGroup, 2, 0, randomIndex);
                                 }
                                 else
                                 if ((sourceTerraing[CRight(x), y] != (int)terrainType.forest) && (sourceTerraing[x, CBottom(y)] != (int)terrainType.forest))
                                 {
-                                    terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(forestGroup, 2, 2, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(forestGroup, 2, 2, randomIndex);
                                 }
                                 else
                                 if ((sourceTerraing[CLeft(x), y] != (int)terrainType.forest))
                                 {
-                                    terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(forestGroup, 0, 1, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(forestGroup, 0, 1, randomIndex);
                                 }
                                 else
                                 if ((sourceTerraing[x, CTop(y)] != (int)terrainType.forest))
                                 {
-                                    terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(forestGroup, 1, 0, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(forestGroup, 1, 0, randomIndex);
                                 }
                                 else
                                 if ((sourceTerraing[x, CBottom(y)] != (int)terrainType.forest))
                                 {
-                                    terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(forestGroup, 1, 2, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(forestGroup, 1, 2, randomIndex);
                                 }
                                 else
                                 if ((sourceTerraing[CRight(x), y] != (int)terrainType.forest))
                                 {
-                                    terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(forestGroup, 2, 1, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(forestGroup, 2, 1, randomIndex);
                                 }
 
                                 else
                                 {
-                                    terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(forestGroup, 1, 1, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(forestGroup, 1, 1, randomIndex);
                                 }
                             }
                             break;
@@ -455,7 +454,7 @@ namespace CityGame
                     
                     //PutImage(x, y, terrain[x, y] >> 0x10, terrain[x, y] & 0xFF);
                     Int32Rect rect = new Int32Rect(x * 16, y * 16, 16, 16);
-                    bitmapSource.WritePixels(rect, ResourcesManager.GetPixels(terrain[x, y] >> 0x10, terrain[x, y] & 0xFF), 16, 0);
+                    bitmapSource.WritePixels(rect, SpriteRepository.GetPixels(terrain[x, y] >> 0x10, terrain[x, y] & 0xFF), 16, 0);
                 }
             }
 
@@ -538,12 +537,12 @@ namespace CityGame
                 }
             }
 
-            if ((terrainSize * ResourcesManager.iconsSizeInPixels * zoom > TerrainGrid.ActualWidth)
+            if ((terrainSize * SpriteRepository.SizeInPixels * zoom > TerrainGrid.ActualWidth)
                 &&
-                ((terrainSize * ResourcesManager.iconsSizeInPixels * zoom > TerrainGrid.ActualHeight)))
+                ((terrainSize * SpriteRepository.SizeInPixels * zoom > TerrainGrid.ActualHeight)))
             {
 
-                TerrainImage.Width = TerrainImage.Height = terrainSize * ResourcesManager.iconsSizeInPixels * zoom;
+                TerrainImage.Width = TerrainImage.Height = terrainSize * SpriteRepository.SizeInPixels * zoom;
             }
 
             //lock scroll view            
@@ -588,18 +587,18 @@ namespace CityGame
             }
 
 
-            double actualIconSizeInPixels = TerrainImage.ActualWidth / terrainSize;
+            double actualSpriteSizeInPixels = TerrainImage.ActualWidth / terrainSize;
 
-            double x = e.GetPosition(TerrainImage).X - (e.GetPosition(TerrainImage).X % actualIconSizeInPixels); // + TerrainScroll.HorizontalOffset;
-            double y = e.GetPosition(TerrainImage).Y - (e.GetPosition(TerrainImage).Y % actualIconSizeInPixels); // + TerrainScroll.VerticalOffset;
+            double x = e.GetPosition(TerrainImage).X - (e.GetPosition(TerrainImage).X % actualSpriteSizeInPixels); // + TerrainScroll.HorizontalOffset;
+            double y = e.GetPosition(TerrainImage).Y - (e.GetPosition(TerrainImage).Y % actualSpriteSizeInPixels); // + TerrainScroll.VerticalOffset;
 
-            TerrainSelector.Width = TerrainSelector.Height = actualIconSizeInPixels;
+            TerrainSelector.Width = TerrainSelector.Height = actualSpriteSizeInPixels;
 
             TerrainSelector.Margin = new Thickness(x, y, 0, 0);
 
         }
 
-        private BlockItemModel[,] BuildRoad(int x, int y)
+        private SpriteModel[,] BuildRoad(int x, int y)
         {
             int[,] offsets = new int[3, 3];
             int ox = 0;
@@ -612,11 +611,11 @@ namespace CityGame
                 }
             }
 
-            BlockItemModel[,] blocks = blocksManager.GetBlocksByOffsets(offsets);
+            SpriteModel[,] sprites = spriteBusiness.GetSpritesByOffsets(offsets);
 
-            int? roadId = blocksManager.GetGroupId("road");
+            int? roadId = spriteBusiness.GetGroupId("road");
 
-            terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(roadGroup, 4, 0);
+            terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(roadGroup, 4, 0);
 
             int l = 0;
             int c = 1;
@@ -626,86 +625,86 @@ namespace CityGame
 
 
             //Central cross of 4 roads
-            if ((blocks[c, t].groupId & blocks[c, b].groupId & blocks[l, c].groupId & blocks[r, c].groupId) == roadId)
+            if ((sprites[c, t].groupId & sprites[c, b].groupId & sprites[l, c].groupId & sprites[r, c].groupId) == roadId)
             {
-                terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(roadGroup, 1, 1);
+                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(roadGroup, 1, 1);
             }
             //Left Right Top cross of 3 roads  
             else
-            if ((blocks[c, t].groupId & blocks[l, c].groupId & blocks[r, c].groupId) == roadId)
+            if ((sprites[c, t].groupId & sprites[l, c].groupId & sprites[r, c].groupId) == roadId)
             {
-                terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(roadGroup, 1, 2);
+                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(roadGroup, 1, 2);
             }
             //Left Right Bottom cross of 3 roads 
             else
-            if ((blocks[c, b].groupId & blocks[l, c].groupId & blocks[r, c].groupId) == roadId)
+            if ((sprites[c, b].groupId & sprites[l, c].groupId & sprites[r, c].groupId) == roadId)
             {
-                terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(roadGroup, 1, 0);
+                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(roadGroup, 1, 0);
             }
             //Left Top Bottom cross of 3 roads 
             else
-            if ((blocks[c, t].groupId & blocks[c, b].groupId & blocks[l, c].groupId) == roadId)
+            if ((sprites[c, t].groupId & sprites[c, b].groupId & sprites[l, c].groupId) == roadId)
             {
-                terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(roadGroup, 2, 1);
+                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(roadGroup, 2, 1);
             }
             //Right Top Bottom cross of 3 roads 
             else
-            if ((blocks[c, t].groupId & blocks[c, b].groupId & blocks[r, c].groupId) == roadId)
+            if ((sprites[c, t].groupId & sprites[c, b].groupId & sprites[r, c].groupId) == roadId)
             {
-                terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(roadGroup, 0, 1);
+                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(roadGroup, 0, 1);
             }
             //Right Top turn of 2 roads 
             else
-            if ((blocks[c, b].groupId & blocks[r, c].groupId) == roadId)
+            if ((sprites[c, b].groupId & sprites[r, c].groupId) == roadId)
             {
-                terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(roadGroup, 0, 0);
+                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(roadGroup, 0, 0);
             }
             //Left Top turn of 2 roads 
             else
-            if ((blocks[c, b].groupId & blocks[l, c].groupId) == roadId)
+            if ((sprites[c, b].groupId & sprites[l, c].groupId) == roadId)
             {
-                terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(roadGroup, 2, 0);
+                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(roadGroup, 2, 0);
             }
             //Right Bottom turn of 2 roads 
             else
-            if ((blocks[c, t].groupId & blocks[r, c].groupId) == roadId)
+            if ((sprites[c, t].groupId & sprites[r, c].groupId) == roadId)
             {
-                terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(roadGroup, 0, 2);
+                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(roadGroup, 0, 2);
             }
             //Left Bottom turn of 2 roads 
             else
-            if ((blocks[c, t].groupId & blocks[l, c].groupId) == roadId)
+            if ((sprites[c, t].groupId & sprites[l, c].groupId) == roadId)
             {
-                terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(roadGroup, 2, 2);
+                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(roadGroup, 2, 2);
             }
             //Horisontal road
             else
-            if ((blocks[r, c].groupId == roadId) || (blocks[l, c].groupId == roadId))
+            if ((sprites[r, c].groupId == roadId) || (sprites[l, c].groupId == roadId))
             {
-                terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(roadGroup, 3, 0);
+                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(roadGroup, 3, 0);
             }
             //Vertical road
             else
-            if ((blocks[c, t].groupId == roadId) || (blocks[c, b].groupId == roadId))
+            if ((sprites[c, t].groupId == roadId) || (sprites[c, b].groupId == roadId))
             {
-                terrain[x, y] = blocksManager.GetBlockOffsetByGroupPosition(roadGroup, 4, 0);
+                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(roadGroup, 4, 0);
             }
             //else default single road
 
             PutImage(x, y, OffsetToX(terrain[x, y]), OffsetToY(terrain[x, y]));
 
-            return blocks;
+            return sprites;
         }
 
         private void TerrainGrid_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            double actualIconSizeInPixels = TerrainImage.ActualWidth / terrainSize;
+            double actualSpriteSizeInPixels = TerrainImage.ActualWidth / terrainSize;
 
-            int x = (int)((e.GetPosition(TerrainImage).X - (e.GetPosition(TerrainImage).X % actualIconSizeInPixels)) / actualIconSizeInPixels);
-            int y = (int)((e.GetPosition(TerrainImage).Y - (e.GetPosition(TerrainImage).Y % actualIconSizeInPixels)) / actualIconSizeInPixels);
+            int x = (int)((e.GetPosition(TerrainImage).X - (e.GetPosition(TerrainImage).X % actualSpriteSizeInPixels)) / actualSpriteSizeInPixels);
+            int y = (int)((e.GetPosition(TerrainImage).Y - (e.GetPosition(TerrainImage).Y % actualSpriteSizeInPixels)) / actualSpriteSizeInPixels);
 
-            BlockItemModel[,] blocks = BuildRoad(x, y);
-            int? roadId = blocksManager.GetGroupId("road");
+            SpriteModel[,] sprites = BuildRoad(x, y);
+            int? roadId = spriteBusiness.GetGroupId("road");
 
             //Rebuild near roads            
             int ox = 0;
@@ -714,7 +713,7 @@ namespace CityGame
                 int oy = 0;
                 for (int ty = CLeft(y); ty < CRight(y) + 1; ty++, oy++)
                 {
-                    if (blocks[ox, oy].groupId == roadId)
+                    if (sprites[ox, oy].groupId == roadId)
                     {
                         BuildRoad(tx, ty);
                     }

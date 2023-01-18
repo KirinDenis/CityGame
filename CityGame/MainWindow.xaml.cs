@@ -59,16 +59,13 @@ namespace CityGame
             //new ResourceExplorer().Show();
 
             cityGameEngine = new CityGameEngine("new city", 400, 400);
+            cityGameEngine.RenderCompleted += CityGameEngine_RenderCompleted;
+
 
             DispatcherTimer timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(100);
             timer.Tick += Timer_Tick;
             timer.Start();
-
-            DispatcherTimer rtimer = new DispatcherTimer();
-            rtimer.Interval = TimeSpan.FromMilliseconds(100);
-            rtimer.Tick += Rtimer_Tick;
-            rtimer.Start();
 
             WaterLevelTextBox.Text = cityGameEngine.waterLevel.ToString();
             RoughnessTextBox.Text = cityGameEngine.roughness.ToString();
@@ -80,8 +77,7 @@ namespace CityGame
 
         }
 
-
-        private void Rtimer_Tick(object? sender, EventArgs e)
+        private void CityGameEngine_RenderCompleted(object? sender, EventArgs e)
         {
             using (DrawingContext drawingContext = drawingVisual.RenderOpen())
             {
@@ -89,9 +85,9 @@ namespace CityGame
                 drawingContext.Close();
             }
             TerrainImage.Source = new DrawingImage(drawingVisual.Drawing);
-            // TerrainImage.Margin = new Thickness(TerrainImage.Margin.Left - 1, TerrainImage.Margin.Top, 0, 0);
-            ((DispatcherTimer)sender).Stop();
+
         }
+
 
         private void Timer_Tick(object? sender, EventArgs e)
         {

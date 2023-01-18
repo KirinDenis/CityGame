@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace CityGame.Models
 {
@@ -39,10 +40,7 @@ namespace CityGame.Models
         private Random random = new Random();
 
         public WriteableBitmap bitmapSource;
-
-
-        
-
+       
         private const int left = -1;
         private const int top = -1;
 
@@ -96,6 +94,7 @@ namespace CityGame.Models
             return flat & 0xFF;
         };
 
+        public event EventHandler RenderCompleted;
 
 
         public CityGameEngine(string cityName, int width = 400, int height = 400)
@@ -104,15 +103,29 @@ namespace CityGame.Models
 
             BitmapImage sImage = SpriteRepository.GetSprite(0, 0);
             bitmapSource = new WriteableBitmap(terrainSize * 16, terrainSize * 16, sImage.DpiX, sImage.DpiY, sImage.Format, sImage.Palette);
-
-            
-
+           
             waterGroup = spriteBusiness.GetSpriteByGroupName("water");
             forestGroup = spriteBusiness.GetSpriteByGroupName("forest");
             roadGroup = spriteBusiness.GetSpriteByGroupName("road");
 
             GenerateNewTerrain();
 
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(100);
+            timer.Tick += Timer_Tick; ;
+            timer.Start();
+
+
+        }
+
+        private void Timer_Tick(object? sender, EventArgs e)
+        {
+            OnRenderCompleted(EventArgs.Empty);
+        }
+
+        protected virtual void OnRenderCompleted(EventArgs e)
+        {
+            RenderCompleted?.Invoke(this, e);
         }
 
         private void PutImage(int x, int y, int bx, int by)

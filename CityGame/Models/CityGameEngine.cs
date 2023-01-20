@@ -11,6 +11,12 @@ using System.Windows.Threading;
 
 namespace CityGame.Models
 {
+    public enum NetworkType
+    {
+        road,
+        rail,
+        wire
+    }
     public class CityGameEngine
     {
         /// <summary>
@@ -78,6 +84,8 @@ namespace CityGame.Models
         private List<SpriteModel>? waterGroup;
         private List<SpriteModel>? forestGroup;
         private List<SpriteModel>? roadGroup;
+        private List<SpriteModel>? railGroup;
+        private List<SpriteModel>? wireGroup;
 
         Func<int, int, int> CoordToOffset = delegate (int x, int y)
         {
@@ -107,6 +115,8 @@ namespace CityGame.Models
             waterGroup = spriteBusiness.GetSpriteByGroupName("water");
             forestGroup = spriteBusiness.GetSpriteByGroupName("forest");
             roadGroup = spriteBusiness.GetSpriteByGroupName("road");
+            railGroup = spriteBusiness.GetSpriteByGroupName("rail");
+            wireGroup = spriteBusiness.GetSpriteByGroupName("wire");
 
             GenerateNewTerrain();
 
@@ -328,7 +338,7 @@ namespace CityGame.Models
             */
         }
 
-        public SpriteModel[,] BuildRoadSection(int x, int y)
+        public SpriteModel[,] BuildNetworkItem(int x, int y, int? networkGroupId, List<SpriteModel>? networkGroup)
         {
             int[,] offsets = new int[3, 3];
             int ox = 0;
@@ -341,11 +351,9 @@ namespace CityGame.Models
                 }
             }
 
-            SpriteModel[,] sprites = spriteBusiness.GetSpritesByOffsets(offsets);
+            SpriteModel[,] sprites = spriteBusiness.GetSpritesByOffsets(offsets);        
 
-            int? roadId = spriteBusiness.GetGroupId("road");
-
-            terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(roadGroup, 4, 0);
+            terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(networkGroup, 4, 0);
 
             int l = 0;
             int c = 1;
@@ -355,69 +363,69 @@ namespace CityGame.Models
 
 
             //Central cross of 4 roads
-            if ((sprites[c, t].groupId & sprites[c, b].groupId & sprites[l, c].groupId & sprites[r, c].groupId) == roadId)
+            if ((sprites[c, t].groupId & sprites[c, b].groupId & sprites[l, c].groupId & sprites[r, c].groupId) == networkGroupId)
             {
-                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(roadGroup, 1, 1);
+                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(networkGroup, 1, 1);
             }
             //Left Right Top cross of 3 roads  
             else
-            if ((sprites[c, t].groupId & sprites[l, c].groupId & sprites[r, c].groupId) == roadId)
+            if ((sprites[c, t].groupId & sprites[l, c].groupId & sprites[r, c].groupId) == networkGroupId)
             {
-                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(roadGroup, 1, 2);
+                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(networkGroup, 1, 2);
             }
             //Left Right Bottom cross of 3 roads 
             else
-            if ((sprites[c, b].groupId & sprites[l, c].groupId & sprites[r, c].groupId) == roadId)
+            if ((sprites[c, b].groupId & sprites[l, c].groupId & sprites[r, c].groupId) == networkGroupId)
             {
-                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(roadGroup, 1, 0);
+                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(networkGroup, 1, 0);
             }
             //Left Top Bottom cross of 3 roads 
             else
-            if ((sprites[c, t].groupId & sprites[c, b].groupId & sprites[l, c].groupId) == roadId)
+            if ((sprites[c, t].groupId & sprites[c, b].groupId & sprites[l, c].groupId) == networkGroupId)
             {
-                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(roadGroup, 2, 1);
+                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(networkGroup, 2, 1);
             }
             //Right Top Bottom cross of 3 roads 
             else
-            if ((sprites[c, t].groupId & sprites[c, b].groupId & sprites[r, c].groupId) == roadId)
+            if ((sprites[c, t].groupId & sprites[c, b].groupId & sprites[r, c].groupId) == networkGroupId)
             {
-                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(roadGroup, 0, 1);
+                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(networkGroup, 0, 1);
             }
             //Right Top turn of 2 roads 
             else
-            if ((sprites[c, b].groupId & sprites[r, c].groupId) == roadId)
+            if ((sprites[c, b].groupId & sprites[r, c].groupId) == networkGroupId)
             {
-                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(roadGroup, 0, 0);
+                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(networkGroup, 0, 0);
             }
             //Left Top turn of 2 roads 
             else
-            if ((sprites[c, b].groupId & sprites[l, c].groupId) == roadId)
+            if ((sprites[c, b].groupId & sprites[l, c].groupId) == networkGroupId)
             {
-                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(roadGroup, 2, 0);
+                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(networkGroup, 2, 0);
             }
             //Right Bottom turn of 2 roads 
             else
-            if ((sprites[c, t].groupId & sprites[r, c].groupId) == roadId)
+            if ((sprites[c, t].groupId & sprites[r, c].groupId) == networkGroupId)
             {
-                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(roadGroup, 0, 2);
+                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(networkGroup, 0, 2);
             }
             //Left Bottom turn of 2 roads 
             else
-            if ((sprites[c, t].groupId & sprites[l, c].groupId) == roadId)
+            if ((sprites[c, t].groupId & sprites[l, c].groupId) == networkGroupId)
             {
-                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(roadGroup, 2, 2);
+                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(networkGroup, 2, 2);
             }
             //Horisontal road
             else
-            if ((sprites[r, c].groupId == roadId) || (sprites[l, c].groupId == roadId))
+            if ((sprites[r, c].groupId == networkGroupId) || (sprites[l, c].groupId == networkGroupId))
             {
-                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(roadGroup, 3, 0);
+                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(networkGroup, 3, 0);
             }
             //Vertical road
             else
-            if ((sprites[c, t].groupId == roadId) || (sprites[c, b].groupId == roadId))
+            if ((sprites[c, t].groupId == networkGroupId) || (sprites[c, b].groupId == networkGroupId))
             {
-                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(roadGroup, 4, 0);
+                terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(networkGroup, 4, 0);
             }
             //else default single road
 
@@ -426,10 +434,30 @@ namespace CityGame.Models
             return sprites;
         }
 
-        public void BuildRoad(int x, int y)
+        public void PutNetworkItem(int x, int y, NetworkType networkType)
         {
-            SpriteModel[,] sprites = BuildRoadSection(x, y);
-            int? roadId = spriteBusiness.GetGroupId("road");
+            int? networkGroupId;
+            List<SpriteModel>? networkGroup;
+
+            switch (networkType)
+            {
+                case NetworkType.road:
+                    networkGroupId = spriteBusiness.GetGroupId("road");
+                    networkGroup = roadGroup;
+                    break;
+                case NetworkType.rail:
+                    networkGroupId = spriteBusiness.GetGroupId("rail");
+                    networkGroup = railGroup;
+                    break;
+                default:
+                    networkGroupId = spriteBusiness.GetGroupId("wire");
+                    networkGroup = wireGroup;
+                    break;
+            }
+
+
+            SpriteModel[,] sprites = BuildNetworkItem(x, y, networkGroupId, networkGroup);
+            
 
             //Rebuild near roads            
             int ox = 0;
@@ -438,9 +466,9 @@ namespace CityGame.Models
                 int oy = 0;
                 for (int ty = CLeft(y); ty < CRight(y) + 1; ty++, oy++)
                 {
-                    if (sprites[ox, oy].groupId == roadId)
+                    if (sprites[ox, oy].groupId == networkGroupId)
                     {
-                        BuildRoadSection(tx, ty);
+                        BuildNetworkItem(tx, ty, networkGroupId, networkGroup);
                     }
                 }
             }

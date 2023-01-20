@@ -318,7 +318,7 @@ namespace CityGame
             int x = (int)((e.GetPosition(TerrainImage).X - (e.GetPosition(TerrainImage).X % actualSpriteSizeInPixels)) / actualSpriteSizeInPixels);
             int y = (int)((e.GetPosition(TerrainImage).Y - (e.GetPosition(TerrainImage).Y % actualSpriteSizeInPixels)) / actualSpriteSizeInPixels);
 
-            cityGameEngine.BuildRoad(x, y);
+            cityGameEngine.PutNetworkItem(x, y, NetworkType.rail);
         }
     }
 }

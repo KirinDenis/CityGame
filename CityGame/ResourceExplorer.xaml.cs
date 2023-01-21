@@ -59,8 +59,8 @@ namespace CityGame
 
                     textBlock.Tag = new PositionModel()
                     {
-                        x = x,
-                        y = y
+                        x = (ushort)x,
+                        y = (ushort)y
                     };
                     textBlock.MouseDown += ResourceExplorer_MouseDown;
 
@@ -125,8 +125,8 @@ namespace CityGame
             Point mousePosition = e.GetPosition(ResourceImage);
             return new PositionModel()
             {
-                x = (int)(mousePosition.X / (ResourceImage.ActualWidth / ResourceImage.Source.Width)) / SpriteRepository.SizeInPixels,
-                y = (int)(mousePosition.Y / (ResourceImage.ActualHeight / ResourceImage.Source.Height)) / SpriteRepository.SizeInPixels
+                x = (ushort)((mousePosition.X / (ResourceImage.ActualWidth / ResourceImage.Source.Width)) / SpriteRepository.SizeInPixels),
+                y = (ushort)((mousePosition.Y / (ResourceImage.ActualHeight / ResourceImage.Source.Height)) / SpriteRepository.SizeInPixels)
             };
         }
 

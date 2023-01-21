@@ -1,4 +1,5 @@
 ﻿using CityGame.DataModels;
+using CityGame.DataModels.Enum;
 using CityGame.Graphics;
 using CityGame.Models;
 using System;
@@ -58,7 +59,7 @@ namespace CityGame
 
             //new ResourceExplorer().Show();
 
-            cityGameEngine = new CityGameEngine("new city", 400, 400);
+            cityGameEngine = new CityGameEngine("new city", 100);
             cityGameEngine.RenderCompleted += CityGameEngine_RenderCompleted;
 
 
@@ -67,10 +68,10 @@ namespace CityGame
             timer.Tick += Timer_Tick;
             timer.Start();
 
-            WaterLevelTextBox.Text = cityGameEngine.waterLevel.ToString();
-            RoughnessTextBox.Text = cityGameEngine.roughness.ToString();
+            //WaterLevelTextBox.Text = cityGameEngine.waterLevel.ToString();
+            //RoughnessTextBox.Text = cityGameEngine.roughness.ToString();
 
-            TerrainImage.Width = TerrainImage.Height = cityGameEngine.terrainSize * SpriteRepository.SizeInPixels * zoom;
+            TerrainImage.Width = TerrainImage.Height = cityGameEngine.GetTerrainSize() * SpriteRepository.SizeInPixels * zoom;
             
             TerrainScroll.ScrollToVerticalOffset(TerrainImage.Width / 2.0f);
             TerrainScroll.ScrollToHorizontalOffset(TerrainImage.Height / 2.0f);
@@ -81,7 +82,7 @@ namespace CityGame
         {
             using (DrawingContext drawingContext = drawingVisual.RenderOpen())
             {
-                drawingContext.DrawImage(cityGameEngine.bitmapSource, new Rect(0, 0, cityGameEngine.terrainSize, cityGameEngine.terrainSize));
+                drawingContext.DrawImage(cityGameEngine.GetTerrainBitmap(), new Rect(0, 0, cityGameEngine.GetTerrainSize(), cityGameEngine.GetTerrainSize()));
                 drawingContext.Close();
             }
             TerrainImage.Source = new DrawingImage(drawingVisual.Drawing);
@@ -195,12 +196,12 @@ namespace CityGame
 
         private void GenerateMapButton_Click(object sender, RoutedEventArgs e)
         {
-            cityGameEngine.GenerateNewTerrain();
+            cityGameEngine.GenerateTerrain();
         }
 
         private void GenerateLandButton_Click(object sender, RoutedEventArgs e)
         {
-            cityGameEngine.GenerateNewTerrain();
+            cityGameEngine.GenerateTerrain();
         }
 
 
@@ -209,12 +210,12 @@ namespace CityGame
             int wl;
             if (int.TryParse(WaterLevelTextBox.Text, out wl))
             {
-                cityGameEngine.waterLevel = wl;
-                cityGameEngine.GenerateNewTerrain();
+                //cityGameEngine.waterLevel = wl;
+                //cityGameEngine.GenerateNewTerrain();
             }
             else
             {
-                WaterLevelTextBox.Text = cityGameEngine.waterLevel.ToString();
+                //WaterLevelTextBox.Text = cityGameEngine.waterLevel.ToString();
             }
         }
 
@@ -223,12 +224,12 @@ namespace CityGame
             int r;
             if (int.TryParse(RoughnessTextBox.Text, out r))
             {
-                cityGameEngine.roughness = r;
-                cityGameEngine.GenerateNewTerrain();
+                //cityGameEngine.roughness = r;
+                //cityGameEngine.GenerateNewTerrain();
             }
             else
             {
-                RoughnessTextBox.Text = cityGameEngine.roughness.ToString();
+                //RoughnessTextBox.Text = cityGameEngine.roughness.ToString();
             }
         }
 
@@ -249,12 +250,12 @@ namespace CityGame
                 }
             }
 
-            if ((cityGameEngine.terrainSize * SpriteRepository.SizeInPixels * zoom > TerrainGrid.ActualWidth)
+            if ((cityGameEngine.GetTerrainSize() * SpriteRepository.SizeInPixels * zoom > TerrainGrid.ActualWidth)
                 &&
-                ((cityGameEngine.terrainSize * SpriteRepository.SizeInPixels * zoom > TerrainGrid.ActualHeight)))
+                ((cityGameEngine.GetTerrainSize() * SpriteRepository.SizeInPixels * zoom > TerrainGrid.ActualHeight)))
             {
 
-                TerrainImage.Width = TerrainImage.Height = cityGameEngine.terrainSize * SpriteRepository.SizeInPixels * zoom;
+                TerrainImage.Width = TerrainImage.Height = cityGameEngine.GetTerrainSize() * SpriteRepository.SizeInPixels * zoom;
             }
 
             //lock scroll view            
@@ -299,7 +300,7 @@ namespace CityGame
             }
 
 
-            double actualSpriteSizeInPixels = TerrainImage.ActualWidth / cityGameEngine.terrainSize;
+            double actualSpriteSizeInPixels = TerrainImage.ActualWidth / cityGameEngine.GetTerrainSize();
 
             double x = e.GetPosition(TerrainImage).X - (e.GetPosition(TerrainImage).X % actualSpriteSizeInPixels); // + TerrainScroll.HorizontalOffset;
             double y = e.GetPosition(TerrainImage).Y - (e.GetPosition(TerrainImage).Y % actualSpriteSizeInPixels); // + TerrainScroll.VerticalOffset;
@@ -313,7 +314,7 @@ namespace CityGame
 
         private void TerrainGrid_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            double actualSpriteSizeInPixels = TerrainImage.ActualWidth / cityGameEngine.terrainSize;
+            double actualSpriteSizeInPixels = TerrainImage.ActualWidth / cityGameEngine.GetTerrainSize();
 
             int x = (int)((e.GetPosition(TerrainImage).X - (e.GetPosition(TerrainImage).X % actualSpriteSizeInPixels)) / actualSpriteSizeInPixels);
             int y = (int)((e.GetPosition(TerrainImage).Y - (e.GetPosition(TerrainImage).Y % actualSpriteSizeInPixels)) / actualSpriteSizeInPixels);

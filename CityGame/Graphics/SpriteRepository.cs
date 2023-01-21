@@ -54,13 +54,13 @@ namespace CityGame.Graphics
         /// Size of one sprite at sprite's image
         /// </summary>
         /// 
-        public static int SizeInPixels = 16;
+        public static ushort SizeInPixels = 16;
         /// <summary>
         /// sprite's count at row 
         /// </summary>
-        private static int _Width = -1;
+        private static short _Width = -1;
 
-        private static int _Height = -1;
+        private static short _Height = -1;
 
         public static int Width
         {
@@ -102,8 +102,8 @@ namespace CityGame.Graphics
                 source = new Bitmap(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + spritesImageFilePath);
             }
 
-            _Width = source.Width / SizeInPixels;
-            _Height = source.Height / SizeInPixels;
+            _Width = (short)(source.Width / SizeInPixels);
+            _Height = (short)(source.Height / SizeInPixels);
         }
 
         public static byte[] GetPixels(int x, int y)

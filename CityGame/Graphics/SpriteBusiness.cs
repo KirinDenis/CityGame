@@ -111,16 +111,21 @@ namespace CityGame.Graphics
             return targetSprites?.FindAll(p => p.groupPosition != null && (p.groupPosition.x == gx && p.groupPosition.y == gy));
         }
 
-        public int GetSpriteOffsetByGroupPosition(List<SpriteModel>? targetSprites, int gx, int gy, int spriteIndex = 0)
+        public PositionModel GetSpriteOffsetByGroupPosition(List<SpriteModel>? targetSprites, int gx, int gy, int spriteIndex = 0)
         {
             SpriteModel? spriteModel = targetSprites?.FindAll(p => p.groupPosition != null && (p.groupPosition.x == gx && p.groupPosition.y == gy))[spriteIndex];
             if (spriteModel != null)
             {
-                return (spriteModel.position.x << 0x10) + spriteModel.position.y;
+                //return (spriteModel.position.x << 0x10) + spriteModel.position.y;
+                return spriteModel.position;
             }
             else
             {
-                return 0;
+                return new PositionModel()
+                {
+                    x = 0,
+                    y = 0
+                };
             }
         }
         public List<SpriteModel>? GetSpriteByGroupIndexAnimationOnly(int gorupId)
@@ -133,15 +138,15 @@ namespace CityGame.Graphics
             return new List<SpriteModel>();
         }
 
-        public List<SpriteModel> GetSpritesByOffsets(int[] offsets)
+        public List<SpriteModel> GetSpritesByOffsets(PositionModel[] offsets)
         {
             List<SpriteModel> findSprites = new List<SpriteModel>();
-            foreach (int offset in offsets)
+            foreach (PositionModel offset in offsets)
             {
                 SpriteModel? spriteItemModel = GetSpriteByPosition(new PositionModel()
                 {
-                    x = offset >> 0x10,
-                    y = offset & 0xFF
+                    x = offset.x,
+                    y = offset.y
                 }
                 );
                 if (spriteItemModel == null)
@@ -154,7 +159,7 @@ namespace CityGame.Graphics
             return findSprites;
         }
 
-        public SpriteModel[,] GetSpritesByOffsets(int[,] offsets)
+        public SpriteModel[,] GetSpritesByOffsets(PositionModel[,] offsets)
         {
             SpriteModel[,] findSprites = new SpriteModel[offsets.GetLength(0), offsets.GetLength(1)];
 
@@ -165,8 +170,8 @@ namespace CityGame.Graphics
 
                     SpriteModel? spriteItemModel = GetSpriteByPosition(new PositionModel()
                     {
-                        x = offsets[x, y] >> 0x10,
-                        y = offsets[x, y] & 0xFF
+                        x = offsets[x, y].x,
+                        y = offsets[x, y].y
                     }
                 );
                     if (spriteItemModel == null)

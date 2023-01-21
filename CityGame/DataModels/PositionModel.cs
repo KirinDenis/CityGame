@@ -8,11 +8,11 @@
         /// <summary>
         /// sprite x location
         /// </summary>
-        public int x { get; set; } = 0;
+        public ushort x { get; set; } = 0;
 
         /// <summary>
         /// sprite y location
         /// </summary>
-        public int y { get; set; } = 0;
+        public ushort y { get; set; } = 0;
     }
 }

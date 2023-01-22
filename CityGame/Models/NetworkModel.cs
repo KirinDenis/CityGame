@@ -1,16 +1,11 @@
 ﻿using CityGame.DataModels;
 using CityGame.DataModels.Enum;
 using CityGame.Graphics;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CityGame.Models
 {
-    internal class NetworkModel: BaseModel
+    internal class NetworkModel : BaseModel
     {
         private SpriteBusiness spriteBusiness = new SpriteBusiness();
         private TerrainModel terrainModel;
@@ -116,18 +111,18 @@ namespace CityGame.Models
             return sprites;
         }
 
-        public void PutNetworkItem(int x, int y, NetworkType networkType)
+        public void PutNetworkItem(int x, int y, ObjectType networkType)
         {
             int? networkGroupId;
             List<SpriteModel>? networkGroup;
 
             switch (networkType)
             {
-                case NetworkType.road:
+                case ObjectType.road:
                     networkGroupId = spriteBusiness.GetGroupId("road");
                     networkGroup = groupsModel.GetGroup(SpritesGroupEnum.road);
                     break;
-                case NetworkType.rail:
+                case ObjectType.rail:
                     networkGroupId = spriteBusiness.GetGroupId("rail");
                     networkGroup = groupsModel.GetGroup(SpritesGroupEnum.rail);
                     break;

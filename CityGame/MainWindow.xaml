@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:CityGame"
         mc:Ignorable="d"
         Title="City Game" Height="800" Width="800" WindowStartupLocation="CenterScreen">
-    <Grid >
+    <Grid ContextMenuClosing="Grid_ContextMenuClosing" >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="167*"/>
             <ColumnDefinition Width="250"/>
@@ -45,6 +45,24 @@
             <Canvas x:Name="Canvas" Width="500" Height="500" />
         </Viewbox>
 
+        <Grid Grid.Column="0" Grid.Row="1" Width="70" Height="200" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#FFF6F6F6" Margin="20,20,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="35"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50*"/>
+                <ColumnDefinition Width="50*"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="RoadButton" Grid.Column="0" Grid.Row="0" Content="Road" Click="RoadButton_Click"/>
+            <Button x:Name="RailButton" Grid.Column="1" Grid.Row="0" Content="Rail" Click="RailButton_Click"/>
+            <Button x:Name="WireButton" Grid.Column="0" Grid.Row="1" Content="Wire" Click="WireButton_Click"/>
+            <Button x:Name="ResidentButton" Grid.Column="1" Grid.Row="1" Content="R/T" Click="ResidentButton_Click" />
+            <Button x:Name="IndustrialButton" Grid.Column="0" Grid.Row="2" Content="I/L" Click="IndustrialButton_Click"/>
+            <Button x:Name="PoliceDepartmentButton" Grid.Column="1" Grid.Row="2" Content="P.D." Click="PoliceDepartmentButton_Click"/>
+        </Grid>
 
     </Grid>
 </Window>

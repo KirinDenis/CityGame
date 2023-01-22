@@ -17,6 +17,7 @@ namespace CityGame.Models
 
         private TerrainModel terrainModel;
         private NetworkModel networkModel;
+        private ResidentModel residentModel;
         private GroupsModel groupsModel;
 
 
@@ -28,6 +29,7 @@ namespace CityGame.Models
             groupsModel = new GroupsModel();
             terrainModel = new TerrainModel(groupsModel, size);
             networkModel = new NetworkModel(groupsModel, terrainModel);
+            residentModel = new ResidentModel(groupsModel, terrainModel);
 
             DispatcherTimer timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(100);
@@ -50,9 +52,18 @@ namespace CityGame.Models
             terrainModel.GenerateNewTerrain();
         }
 
-        public void PutNetworkItem(int x, int y, NetworkType networkType)
+        public void PutObject(ushort x, ushort y, ObjectType objectType)
         {
-            networkModel.PutNetworkItem(x, y, networkType);
+            switch (objectType)
+            {
+                case ObjectType.road:
+                case ObjectType.rail:
+                case ObjectType.wire: networkModel.PutNetworkItem(x, y, objectType); break;
+                case ObjectType.resident:
+                case ObjectType.industrial:
+                case ObjectType.policeDepartment: residentModel.Put(x, y, objectType); break;
+
+            }
         }
 
         private void Timer_Tick(object? sender, EventArgs e)

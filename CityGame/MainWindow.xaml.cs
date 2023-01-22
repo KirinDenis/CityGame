@@ -27,6 +27,7 @@ namespace CityGame
         forest = 4
     }
 
+   
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -50,6 +51,7 @@ namespace CityGame
         DateTime enter;
         private int animationFrame = 0;
 
+        public ObjectType selectedType = ObjectType.rail;
 
         public MainWindow()
         {
@@ -316,10 +318,45 @@ namespace CityGame
         {
             double actualSpriteSizeInPixels = TerrainImage.ActualWidth / cityGameEngine.GetTerrainSize();
 
-            int x = (int)((e.GetPosition(TerrainImage).X - (e.GetPosition(TerrainImage).X % actualSpriteSizeInPixels)) / actualSpriteSizeInPixels);
-            int y = (int)((e.GetPosition(TerrainImage).Y - (e.GetPosition(TerrainImage).Y % actualSpriteSizeInPixels)) / actualSpriteSizeInPixels);
+            ushort x = (ushort)((e.GetPosition(TerrainImage).X - (e.GetPosition(TerrainImage).X % actualSpriteSizeInPixels)) / actualSpriteSizeInPixels);
+            ushort y = (ushort)((e.GetPosition(TerrainImage).Y - (e.GetPosition(TerrainImage).Y % actualSpriteSizeInPixels)) / actualSpriteSizeInPixels);
 
-            cityGameEngine.PutNetworkItem(x, y, NetworkType.rail);
+            cityGameEngine.PutObject(x, y, selectedType);
+        }
+
+        private void RoadButton_Click(object sender, RoutedEventArgs e)
+        {
+            selectedType = ObjectType.road;
+        }
+
+        private void RailButton_Click(object sender, RoutedEventArgs e)
+        {
+            selectedType = ObjectType.rail;
+        }
+
+        private void WireButton_Click(object sender, RoutedEventArgs e)
+        {
+            selectedType = ObjectType.wire;
+        }
+
+        private void ResidentButton_Click(object sender, RoutedEventArgs e)
+        {
+            selectedType = ObjectType.resident;
+        }
+
+        private void IndustrialButton_Click(object sender, RoutedEventArgs e)
+        {
+            selectedType = ObjectType.industrial;
+        }
+
+        private void Grid_ContextMenuClosing(object sender, ContextMenuEventArgs e)
+        {
+            
+        }
+
+        private void PoliceDepartmentButton_Click(object sender, RoutedEventArgs e)
+        {
+            selectedType = ObjectType.policeDepartment;
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace CityGame.Graphics
 {
-    internal class SpriteBusiness
+    public class SpriteBusiness
     {
         private string spritesFile = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\Resources\Blocks{0}.json";
         private string groupsFile = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\Resources\Groups.json";

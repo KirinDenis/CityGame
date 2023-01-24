@@ -16,7 +16,8 @@ namespace CityGame.Models
     {
 
         private TerrainModel terrainModel;
-        private NetworkModel networkModel;
+        private RoadGameObjectModel roadGameObjectModel;
+        private RailGameObjectModel railGameObjectModel;
         private ResidentModel residentModel;
         private GroupsModel groupsModel;
 
@@ -28,7 +29,8 @@ namespace CityGame.Models
         {
             groupsModel = new GroupsModel();
             terrainModel = new TerrainModel(groupsModel, size);
-            networkModel = new NetworkModel(groupsModel, terrainModel);
+            roadGameObjectModel = new RoadGameObjectModel(groupsModel, terrainModel, ObjectType.road);
+            railGameObjectModel = new RailGameObjectModel(groupsModel, terrainModel, ObjectType.rail);
             residentModel = new ResidentModel(groupsModel, terrainModel);
 
             DispatcherTimer timer = new DispatcherTimer();
@@ -56,9 +58,9 @@ namespace CityGame.Models
         {
             switch (objectType)
             {
-                case ObjectType.road:
-                case ObjectType.rail:
-                case ObjectType.wire: networkModel.PutNetworkItem(x, y, objectType); break;
+                case ObjectType.road: roadGameObjectModel.Put(x, y); break;
+                case ObjectType.rail: railGameObjectModel.Put(x, y); break;
+                case ObjectType.wire: railGameObjectModel.Put(x, y); break;
                 case ObjectType.resident:
                 case ObjectType.industrial:
                 case ObjectType.policeDepartment: residentModel.Put(x, y, objectType); break;

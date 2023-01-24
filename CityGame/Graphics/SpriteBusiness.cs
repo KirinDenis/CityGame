@@ -1,4 +1,4 @@
-﻿using CityGame.DataModels;
+﻿using CityGame.DTOs;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
@@ -16,18 +16,18 @@ namespace CityGame.Graphics
         private string developmnetGroupsFile = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"..\..\..\..\Resources\Groups.json";
 #endif
 
-        private List<SpriteModel>? _sprites;
-        public List<SpriteModel> sprites
+        private List<SpriteDTO>? _sprites;
+        public List<SpriteDTO> sprites
         {
             get
             {
                 if (File.Exists(string.Format(spritesFile, string.Empty)))
                 {
-                    _sprites = JsonConvert.DeserializeObject<List<SpriteModel>>(File.ReadAllText(string.Format(spritesFile, string.Empty)));
+                    _sprites = JsonConvert.DeserializeObject<List<SpriteDTO>>(File.ReadAllText(string.Format(spritesFile, string.Empty)));
                 }
                 if (_sprites == null)
                 {
-                    return new List<SpriteModel>();
+                    return new List<SpriteDTO>();
                 }
                 return _sprites;
             }
@@ -45,8 +45,17 @@ namespace CityGame.Graphics
                 if (_groups == null)
                 {
                     _groups = new List<string>();
-                    _groups.Add("NoGroup");
+                    _groups.Add("nogroup");
                 }
+                else
+                {
+                    for(int i = 0; i < _groups.Count; i++)
+                    {
+                        //fix case
+                        _groups[i] = _groups[i].ToLower();
+                    }
+                }
+
                 return _groups;
             }
         }
@@ -73,27 +82,27 @@ namespace CityGame.Graphics
 #endif
         }
 
-        public SpriteModel? GetSpriteByPosition(PositionModel position)
+        public SpriteDTO? GetSpriteByPosition(PositionDTO position)
         {
-            SpriteModel? sprite = _sprites?.FirstOrDefault(p => p.position.x == position.x && p.position.y == position.y);
+            SpriteDTO? sprite = _sprites?.FirstOrDefault(p => p.position.x == position.x && p.position.y == position.y);
 
             if (sprite == null)
             {
-                sprite = new SpriteModel() { position = position };
+                sprite = new SpriteDTO() { position = position };
                 _sprites?.Add(sprite);
                 SetSprites();
             }
             return sprite;
         }
 
-        public List<SpriteModel>? GetSpriteByGroupIndex(int? gorupId)
+        public List<SpriteDTO>? GetSpriteByGroupIndex(int? gorupId)
         {
             if (gorupId > 0)
             {
                 return _sprites?.FindAll(p => p.groupId == gorupId);
             }
 
-            return new List<SpriteModel>();
+            return new List<SpriteDTO>();
         }
 
         public int? GetGroupId(string groupItemName)
@@ -101,19 +110,19 @@ namespace CityGame.Graphics
             return groups?.IndexOf(groupItemName);
         }
 
-        public List<SpriteModel>? GetSpriteByGroupName(string groupItemName)
+        public List<SpriteDTO>? GetSpriteByGroupName(string groupItemName)
         {
             return GetSpriteByGroupIndex(GetGroupId(groupItemName));
         }
 
-        public List<SpriteModel>? GetSpritesByGroupPosition(List<SpriteModel>? targetSprites, int gx, int gy)
+        public List<SpriteDTO>? GetSpritesByGroupPosition(List<SpriteDTO>? targetSprites, int gx, int gy)
         {
             return targetSprites?.FindAll(p => p.groupPosition != null && (p.groupPosition.x == gx && p.groupPosition.y == gy));
         }
 
-        public PositionModel GetSpriteOffsetByGroupPosition(List<SpriteModel>? targetSprites, int gx, int gy, int spriteIndex = 0)
+        public PositionDTO GetSpriteOffsetByGroupPosition(List<SpriteDTO>? targetSprites, int gx, int gy, int spriteIndex = 0)
         {
-            SpriteModel? spriteModel = targetSprites?.FindAll(p => p.groupPosition != null && (p.groupPosition.x == gx && p.groupPosition.y == gy))[spriteIndex];
+            SpriteDTO? spriteModel = targetSprites?.FindAll(p => p.groupPosition != null && (p.groupPosition.x == gx && p.groupPosition.y == gy))[spriteIndex];
             if (spriteModel != null)
             {
                 //return (spriteModel.position.x << 0x10) + spriteModel.position.y;
@@ -121,29 +130,29 @@ namespace CityGame.Graphics
             }
             else
             {
-                return new PositionModel()
+                return new PositionDTO()
                 {
                     x = 0,
                     y = 0
                 };
             }
         }
-        public List<SpriteModel>? GetSpriteByGroupIndexAnimationOnly(int gorupId)
+        public List<SpriteDTO>? GetSpriteByGroupIndexAnimationOnly(int gorupId)
         {
             if (gorupId > 0)
             {
                 return _sprites?.FindAll(p => p.groupId == gorupId && p.animationFrame != 0);
             }
 
-            return new List<SpriteModel>();
+            return new List<SpriteDTO>();
         }
 
-        public List<SpriteModel> GetSpritesByOffsets(PositionModel[] offsets)
+        public List<SpriteDTO> GetSpritesByOffsets(PositionDTO[] offsets)
         {
-            List<SpriteModel> findSprites = new List<SpriteModel>();
-            foreach (PositionModel offset in offsets)
+            List<SpriteDTO> findSprites = new List<SpriteDTO>();
+            foreach (PositionDTO offset in offsets)
             {
-                SpriteModel? spriteItemModel = GetSpriteByPosition(new PositionModel()
+                SpriteDTO? spriteItemModel = GetSpriteByPosition(new PositionDTO()
                 {
                     x = offset.x,
                     y = offset.y
@@ -159,16 +168,16 @@ namespace CityGame.Graphics
             return findSprites;
         }
 
-        public SpriteModel[,] GetSpritesByOffsets(PositionModel[,] offsets)
+        public SpriteDTO[,] GetSpritesByOffsets(PositionDTO[,] offsets)
         {
-            SpriteModel[,] findSprites = new SpriteModel[offsets.GetLength(0), offsets.GetLength(1)];
+            SpriteDTO[,] findSprites = new SpriteDTO[offsets.GetLength(0), offsets.GetLength(1)];
 
             for (int x = 0; x < offsets.GetLength(0); x++)
             {
                 for (int y = 0; y < offsets.GetLength(1); y++)
                 {
 
-                    SpriteModel? spriteItemModel = GetSpriteByPosition(new PositionModel()
+                    SpriteDTO? spriteItemModel = GetSpriteByPosition(new PositionDTO()
                     {
                         x = offsets[x, y].x,
                         y = offsets[x, y].y

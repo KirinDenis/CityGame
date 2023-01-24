@@ -1,4 +1,4 @@
-﻿using CityGame.DataModels;
+﻿using CityGame.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +18,7 @@ namespace CityGame.Models.Interfaces
     {
         public int? GroupId { get; set; }
 
-        public List<SpriteModel>? SpritesGroup { get; set; }
+        public List<SpriteDTO>? SpritesGroup { get; set; }
 
     public CheckPositionDTO CheckPosition(ushort x, ushort y);
 

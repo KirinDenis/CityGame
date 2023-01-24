@@ -1,5 +1,5 @@
-﻿using CityGame.DataModels;
-using CityGame.DataModels.Enum;
+﻿using CityGame.DTOs;
+using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,14 +9,14 @@ namespace CityGame.Models
     public class GroupsModel
     {
         /*
-        private List<SpriteModel>? waterGroup;
-        private List<SpriteModel>? forestGroup;
-        private List<SpriteModel>? roadGroup;
-        private List<SpriteModel>? railGroup;
-        private List<SpriteModel>? wireGroup;
+        private List<SpriteDTO>? waterGroup;
+        private List<SpriteDTO>? forestGroup;
+        private List<SpriteDTO>? roadGroup;
+        private List<SpriteDTO>? railGroup;
+        private List<SpriteDTO>? wireGroup;
         */
 
-        private Dictionary<string, List<SpriteModel>?> Groups = new Dictionary<string, List<SpriteModel>?>();
+        private Dictionary<string, List<SpriteDTO>?> Groups = new Dictionary<string, List<SpriteDTO>?>();
 
         //TODO: injection
         private SpriteBusiness spriteBusiness = new SpriteBusiness();
@@ -29,7 +29,7 @@ namespace CityGame.Models
             }
         }
 
-        public List<SpriteModel>? GetGroup(string groupName)
+        public List<SpriteDTO>? GetGroup(string groupName)
         {
             return Groups.FirstOrDefault(g => g.Key.Equals(groupName)).Value;
         }

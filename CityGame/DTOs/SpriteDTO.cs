@@ -1,15 +1,15 @@
-﻿namespace CityGame.DataModels
+﻿namespace CityGame.DTOs
 {
 
     /// <summary>
     /// Resource sprite item model
     /// </summary>
-    public class SpriteModel
+    public class SpriteDTO
     {
         /// <summary>
         /// sprite position inside resource (image)
         /// </summary>
-        public PositionModel position { get; set; } = new PositionModel();
+        public PositionDTO position { get; set; } = new PositionDTO();
 
         /// <summary>
         /// sprite name for human
@@ -24,7 +24,7 @@
         /// <summary>
         /// sprite location inside group, null by default
         /// </summary>
-        public PositionModel? groupPosition { get; set; }
+        public PositionDTO? groupPosition { get; set; }
 
         /// <summary>
         /// Sprite animation frame index (if 0 - it is not animation frame)

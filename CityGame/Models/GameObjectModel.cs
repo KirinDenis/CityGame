@@ -1,5 +1,5 @@
-﻿using CityGame.DataModels;
-using CityGame.DataModels.Enum;
+﻿using CityGame.DTOs;
+using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 using CityGame.Models.Interfaces;
 using System;
@@ -18,7 +18,7 @@ namespace CityGame.Models
         protected GroupsModel groupsModel;
 
         public int? GroupId { get; set; }
-        public List<SpriteModel>? SpritesGroup { get; set; }
+        public List<SpriteDTO>? SpritesGroup { get; set; }
 
 
         public GameObjectModel(GroupsModel groupsModel, TerrainModel terrainModel, ObjectType objectType)

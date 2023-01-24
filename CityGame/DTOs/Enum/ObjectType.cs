@@ -1,4 +1,4 @@
-﻿namespace CityGame.DataModels.Enum
+﻿namespace CityGame.DTOs.Enum
 {
     public enum ObjectType
     {

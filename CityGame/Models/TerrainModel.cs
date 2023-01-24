@@ -6,8 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using System.Windows;
-using CityGame.DataModels.Enum;
-using CityGame.DataModels;
+using CityGame.DTOs.Enum;
+using CityGame.DTOs;
 
 namespace CityGame.Models
 {
@@ -30,7 +30,7 @@ namespace CityGame.Models
         private const bool fackeDiomand = false;
 
         //Terrain map - sprite offsets
-        public PositionModel[,] terrain;
+        public PositionDTO[,] terrain;
 
         public int waterLevel = 120;
 
@@ -50,7 +50,7 @@ namespace CityGame.Models
 
             this.terrainSize = terrainSize;
 
-            terrain = new PositionModel[terrainSize, terrainSize];
+            terrain = new PositionDTO[terrainSize, terrainSize];
 
 
             BitmapImage sImage = SpriteRepository.GetSprite(0, 0);
@@ -185,7 +185,7 @@ namespace CityGame.Models
                         case (int)terrainType.land:
                             {
                                 //TODO: terrain sprite
-                                terrain[x, y] = new PositionModel()
+                                terrain[x, y] = new PositionDTO()
                                 {
                                     x = 0,
                                     y = 0

@@ -1,5 +1,5 @@
-﻿using CityGame.DataModels;
-using CityGame.DataModels.Enum;
+﻿using CityGame.DTOs;
+using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 using CityGame.Models.Interfaces;
 using System;

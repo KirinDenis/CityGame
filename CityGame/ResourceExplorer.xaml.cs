@@ -1,10 +1,10 @@
-﻿using CityGame.DataModels;
+﻿using CityGame.DTOs;
+using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -30,7 +30,7 @@ namespace CityGame
             SourceImageInfoTextBlock.Text = string.Format("Image {0}x{1}", ResourceImage.Source.Width, ResourceImage.Source.Height);
             SourceSpriteInfoTextBlock.Text = string.Format("Sprite {0}x{1}", SpriteRepository.SizeInPixels, SpriteRepository.SizeInPixels);
             SourceCountsInfoTextBlock.Text = string.Format("Counts {0}x{1}", SpriteRepository.Width, SpriteRepository.Height);
-           
+
             RefreshGroupsList();
 
             for (int x = 0; x < 7; x++)
@@ -57,7 +57,7 @@ namespace CityGame
 
                     textBlock.Text = string.Format("{0}:{1}", x, y);
 
-                    textBlock.Tag = new PositionModel()
+                    textBlock.Tag = new PositionDTO()
                     {
                         x = (ushort)x,
                         y = (ushort)y
@@ -65,6 +65,9 @@ namespace CityGame
                     textBlock.MouseDown += ResourceExplorer_MouseDown;
 
                     GroupViewGrid.Children.Add(textBlock);
+
+                    textBlock.SetValue(Panel.ZIndexProperty, -1);
+                    groupsPreviewImages[x, y].SetValue(Panel.ZIndexProperty, -1);
 
                 }
             }
@@ -78,14 +81,14 @@ namespace CityGame
 
         private void AnimationFrameTimer_Tick(object? sender, EventArgs e)
         {
-            SpriteModel sprite = (SpriteModel)PreviewImage.Tag;
+            SpriteDTO sprite = (SpriteDTO)PreviewImage.Tag;
             if (sprite != null)
             {
                 animationFrame++;
-                List<SpriteModel>? spriteItemModels = spriteBusiness.GetSpriteByGroupIndexAnimationOnly(sprite.groupId);
+                List<SpriteDTO>? spriteItemModels = spriteBusiness.GetSpriteByGroupIndexAnimationOnly(sprite.groupId);
                 if ((spriteItemModels != null) && (spriteItemModels.Count > 0))
                 {
-                    List<SpriteModel>? nextFrameSprites = spriteItemModels?.FindAll(p => p.animationFrame == animationFrame);
+                    List<SpriteDTO>? nextFrameSprites = spriteItemModels?.FindAll(p => p.animationFrame == animationFrame);
 
                     if ((nextFrameSprites == null) || (nextFrameSprites?.Count == 0))
                     {
@@ -110,20 +113,20 @@ namespace CityGame
 
         private void ResourceExplorer_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            SpriteModel sprite = (SpriteModel)PreviewImage.Tag;
+            SpriteDTO sprite = (SpriteDTO)PreviewImage.Tag;
 
             if (sprite != null)
             {
-                sprite.groupPosition = (PositionModel)((TextBlock)sender).Tag;
+                sprite.groupPosition = (PositionDTO)((TextBlock)sender).Tag;
                 spriteBusiness.SetSprites();
                 RefreshGroupImages(sprite);
             }
         }
 
-        private PositionModel GetSpritePositionByMouse(MouseEventArgs e)
+        private PositionDTO GetSpritePositionByMouse(MouseEventArgs e)
         {
             Point mousePosition = e.GetPosition(ResourceImage);
-            return new PositionModel()
+            return new PositionDTO()
             {
                 x = (ushort)((mousePosition.X / (ResourceImage.ActualWidth / ResourceImage.Source.Width)) / SpriteRepository.SizeInPixels),
                 y = (ushort)((mousePosition.Y / (ResourceImage.ActualHeight / ResourceImage.Source.Height)) / SpriteRepository.SizeInPixels)
@@ -139,8 +142,8 @@ namespace CityGame
         {
             if (!spriteEditMode)
             {
-                PositionModel position = GetSpritePositionByMouse(e);
-                SpriteModel? sprite = spriteBusiness.GetSpriteByPosition(GetSpritePositionByMouse(e));
+                PositionDTO position = GetSpritePositionByMouse(e);
+                SpriteDTO? sprite = spriteBusiness.GetSpriteByPosition(GetSpritePositionByMouse(e));
 
                 PreviewImage.Tag = sprite;
                 PreviewImage.Source = SpriteRepository.GetSprite(position.x, position.y);
@@ -167,7 +170,7 @@ namespace CityGame
 
                 ResourceSelectorBorder.Width = ResourceSelectorBorder.Height = actualSpriteSizeInPixels;
 
-                ResourceSelectorBorder.Margin = new Thickness(x, y, 0, 0);             
+                ResourceSelectorBorder.Margin = new Thickness(x, y, 0, 0);
             }
         }
 
@@ -176,7 +179,7 @@ namespace CityGame
             SpriteInfoGroupComboBox.ItemsSource = spriteBusiness.groups;
         }
 
-        private void RefreshGroupImages(SpriteModel sprite)
+        private void RefreshGroupImages(SpriteDTO sprite)
         {
 
             for (int x = 0; x < 7; x++)
@@ -189,10 +192,10 @@ namespace CityGame
 
             if (sprite != null)
             {
-                List<SpriteModel>? spritesItems = spriteBusiness.GetSpriteByGroupIndex(sprite.groupId);
+                List<SpriteDTO>? spritesItems = spriteBusiness.GetSpriteByGroupIndex(sprite.groupId);
                 if (spritesItems != null)
                 {
-                    foreach (SpriteModel spriteItem in spritesItems)
+                    foreach (SpriteDTO spriteItem in spritesItems)
                     {
                         if (spriteItem.groupPosition != null)
                         {
@@ -235,7 +238,7 @@ namespace CityGame
                 SpriteInfoGroupComboBox.ItemsSource = spriteBusiness.groups;
                 SpriteInfoGroupComboBox.SelectedIndex = SpriteInfoGroupComboBox.Items.Count - 1;
 
-                SpriteModel sprite = (SpriteModel)PreviewImage.Tag;
+                SpriteDTO sprite = (SpriteDTO)PreviewImage.Tag;
                 sprite.groupId = SpriteInfoGroupComboBox.SelectedIndex;
                 spriteBusiness.SetSprites();
                 RefreshGroupImages(sprite);
@@ -250,7 +253,22 @@ namespace CityGame
 
         private void SpriteInfoGroupComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            SpriteModel sprite = (SpriteModel)PreviewImage.Tag;
+
+            if (SpritesGroupEnum.CheckGroupName(SpriteInfoGroupComboBox.Text))
+            {
+                GroupNotLinkedTextBlock.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                GroupNotLinkedTextBlock.Visibility = Visibility.Hidden;
+            }
+
+            //TODO: read current size
+            GroupWidthTextBlock.Text = 1.ToString();
+            GroupHeightTextBlock.Text = 1.ToString();
+            RefreshGridSizeSelector();
+
+            SpriteDTO sprite = (SpriteDTO)PreviewImage.Tag;
             if (sprite != null)
             {
                 sprite.groupId = SpriteInfoGroupComboBox.SelectedIndex;
@@ -261,7 +279,7 @@ namespace CityGame
 
         private void AnimationFrameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            SpriteModel sprite = (SpriteModel)PreviewImage.Tag;
+            SpriteDTO sprite = (SpriteDTO)PreviewImage.Tag;
             if (sprite != null)
             {
                 sprite.animationFrame = AnimationFrameComboBox.SelectedIndex;
@@ -272,13 +290,60 @@ namespace CityGame
 
         private void SpriteInfoNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            SpriteModel sprite = (SpriteModel)PreviewImage.Tag;
+            SpriteDTO sprite = (SpriteDTO)PreviewImage.Tag;
             if (sprite != null)
             {
                 sprite.name = SpriteInfoNameTextBox.Text;
                 spriteBusiness.SetSprites();
                 RefreshGroupImages(sprite);
             }
+        }
+
+        private void SpriteInfoGroupComboBox_TextInput(object sender, TextCompositionEventArgs e)
+        {
+            SpriteInfoNameTextBox.Text = SpriteInfoNameTextBox.Text.ToLower();
+        }
+
+        private void GroupWidthUpButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (int.Parse(GroupWidthTextBlock.Text) < 7)
+            {
+                GroupWidthTextBlock.Text = (int.Parse(GroupWidthTextBlock.Text) + 1).ToString();
+            }
+            RefreshGridSizeSelector();
+        }
+
+        private void GroupWidthDownButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (int.Parse(GroupWidthTextBlock.Text) > 1)
+            {
+                GroupWidthTextBlock.Text = (int.Parse(GroupWidthTextBlock.Text) - 1).ToString();
+            }
+            RefreshGridSizeSelector();
+        }
+
+        private void GroupHeightDownButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (int.Parse(GroupHeightTextBlock.Text) > 1)
+            {
+                GroupHeightTextBlock.Text = (int.Parse(GroupHeightTextBlock.Text) - 1).ToString();
+            }
+            RefreshGridSizeSelector();
+        }
+
+        private void GroupHeightUpButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (int.Parse(GroupHeightTextBlock.Text) < 7)
+            {
+                GroupHeightTextBlock.Text = (int.Parse(GroupHeightTextBlock.Text) + 1).ToString();
+            }
+            RefreshGridSizeSelector();
+        }
+
+        private void RefreshGridSizeSelector()
+        {
+            GroupSizeSelectorBorder.SetValue(Grid.ColumnSpanProperty, int.Parse(GroupWidthTextBlock.Text));
+            GroupSizeSelectorBorder.SetValue(Grid.RowSpanProperty, int.Parse(GroupHeightTextBlock.Text));
         }
     }
 }

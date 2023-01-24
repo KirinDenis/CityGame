@@ -1,5 +1,5 @@
-﻿using CityGame.DataModels;
-using CityGame.DataModels.Enum;
+﻿using CityGame.DTOs;
+using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 using CityGame.Models.Interfaces;
 using System.Collections.Generic;
@@ -12,9 +12,9 @@ namespace CityGame.Models
         {
         }
 
-        public SpriteModel[,] BuildNetworkItem(int x, int y, int? GroupId, List<SpriteModel>? SpritesGroup)
+        public SpriteDTO[,] BuildNetworkItem(int x, int y, int? GroupId, List<SpriteDTO>? SpritesGroup)
         {
-            PositionModel[,] offsets = new PositionModel[3, 3];
+            PositionDTO[,] offsets = new PositionDTO[3, 3];
             int ox = 0;
             for (int tx = CLeft(x); tx < CRight(x) + 1; tx++, ox++)
             {
@@ -24,7 +24,7 @@ namespace CityGame.Models
                     offsets[ox, oy] = terrainModel.terrain[tx, ty];
                 }
             }
-            SpriteModel[,] sprites = spriteBusiness.GetSpritesByOffsets(offsets);
+            SpriteDTO[,] sprites = spriteBusiness.GetSpritesByOffsets(offsets);
 
             terrainModel.terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(SpritesGroup, 4, 0);
 
@@ -111,7 +111,7 @@ namespace CityGame.Models
         {
 
 
-            SpriteModel[,] sprites = BuildNetworkItem(x, y, GroupId, SpritesGroup);
+            SpriteDTO[,] sprites = BuildNetworkItem(x, y, GroupId, SpritesGroup);
 
 
             //Rebuild near roads            

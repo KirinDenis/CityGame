@@ -1,4 +1,4 @@
-﻿using CityGame.DataModels.Enum;
+﻿using CityGame.DTOs.Enum;
 
 namespace CityGame.Models
 {

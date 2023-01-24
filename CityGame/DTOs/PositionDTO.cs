@@ -1,9 +1,9 @@
-﻿namespace CityGame.DataModels
+﻿namespace CityGame.DTOs
 {
     /// <summary>
     /// Position model class
     /// </summary>
-    public class PositionModel
+    public class PositionDTO
     {
         /// <summary>
         /// sprite x location

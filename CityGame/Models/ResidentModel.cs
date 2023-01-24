@@ -1,5 +1,5 @@
-﻿using CityGame.DataModels;
-using CityGame.DataModels.Enum;
+﻿using CityGame.DTOs;
+using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 using System;
 using System.Collections.Generic;
@@ -23,12 +23,12 @@ namespace CityGame.Models
 
         public void Put(ushort x, ushort y, ObjectType objectType)
         {
-            List<SpriteModel>? group = null;
+            List<SpriteDTO>? group = null;
             switch (objectType)
             {
                 case ObjectType.resident: group = groupsModel.GetGroup(SpritesGroupEnum.resident0); break;
                 case ObjectType.industrial: group = groupsModel.GetGroup(SpritesGroupEnum.industrial1); break;
-                case ObjectType.policeDepartment: group = groupsModel.GetGroup(SpritesGroupEnum.policeDepartment); break;
+                case ObjectType.policeDepartment: group = groupsModel.GetGroup(SpritesGroupEnum.policedepartment); break;
             }
             
             if (group == null) 
@@ -39,7 +39,7 @@ namespace CityGame.Models
 
             for (int i=0; i < group?.Count; i++)
             {
-                SpriteModel? spriteModel = group[i];
+                SpriteDTO? spriteModel = group[i];
                 if (spriteModel?.groupPosition != null)
                 {
                     terrainModel.terrain[x + spriteModel.groupPosition.x, y + spriteModel.groupPosition.y] = spriteModel.position;

@@ -40,6 +40,7 @@ OWLOS распространяется в надежде, что она буде
 --------------------------------------------------------------------------------------*/
 
 
+using CityGame.DTOs;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -177,6 +178,18 @@ namespace CityGame.Graphics
                 bufferBitmaps[new Point(x, y)] = bitmapimage;
             }
             return bitmapimage;
+        }
+
+        public static BitmapImage? GetSprite(PositionDTO position)
+        {
+            if (position != null)
+            {
+                return GetSprite(position.x, position.y);
+            }
+            else
+            {
+                return null;
+            }        
         }
 
         /// <summary>

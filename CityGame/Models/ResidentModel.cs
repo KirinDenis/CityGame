@@ -13,11 +13,10 @@ namespace CityGame.Models
     {
         private SpriteBusiness spriteBusiness = new SpriteBusiness();
         private TerrainModel terrainModel;
-        private GroupsModel groupsModel;
+        
 
-        public ResidentModel(GroupsModel groupsModel, TerrainModel terrainModel)
-        {
-            this.groupsModel = groupsModel;
+        public ResidentModel(TerrainModel terrainModel)
+        {            
             this.terrainModel = terrainModel;
         }
 
@@ -26,9 +25,9 @@ namespace CityGame.Models
             List<SpriteDTO>? group = null;
             switch (objectType)
             {
-                case ObjectType.resident: group = groupsModel.GetGroup(SpritesGroupEnum.resident0); break;
-                case ObjectType.industrial: group = groupsModel.GetGroup(SpritesGroupEnum.industrial1); break;
-                case ObjectType.policeDepartment: group = groupsModel.GetGroup(SpritesGroupEnum.policedepartment); break;
+                //case ObjectType.resident: group = groupsModel.GetGroup(SpritesGroupEnum.resident0); break;
+                //case ObjectType.industrial: group = groupsModel.GetGroup(SpritesGroupEnum.industrial1); break;
+                //case ObjectType.policeDepartment: group = groupsModel.GetGroup(SpritesGroupEnum.policedepartment); break;
             }
             
             if (group == null) 

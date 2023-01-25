@@ -16,9 +16,7 @@ namespace CityGame.Models.Interfaces
 
     internal interface IGameObjectModel
     {
-        public int? GroupId { get; set; }
-
-        public List<SpriteDTO>? SpritesGroup { get; set; }
+        public GroupDTO? Group { get; set; }
 
     public CheckPositionDTO CheckPosition(ushort x, ushort y);
 

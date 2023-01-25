@@ -64,6 +64,7 @@
                         <RowDefinition Height="24"/>
                         <RowDefinition Height="24"/>
                         <RowDefinition Height="24"/>
+                        <RowDefinition Height="24"/>
                         <RowDefinition Height="32"/>
                     </Grid.RowDefinitions>
 
@@ -109,8 +110,20 @@
                         <Button x:Name="GroupHeightDownButton" Content="-H" Width="25" Click="GroupHeightDownButton_Click"/>
                         <TextBlock x:Name="GroupHeightTextBlock" Text="1" Width="25" VerticalAlignment="Center" FontWeight="Bold" HorizontalAlignment="Center" TextAlignment="Center" />
                         <Button x:Name="GroupHeightUpButton" Content="H+" Width="25" Click="GroupHeightUpButton_Click"/>
-
+                        <TextBlock Text="Group area size" VerticalAlignment="Center" Margin="10,0" />
                     </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="7">
+                        <Button x:Name="GroupCenterXDownButton" Content="-X" Width="25" Click="GroupCenterXDownButton_Click"  />
+                        <TextBlock x:Name="GroupCenterXTextBlock" Text="1" Width="25" VerticalAlignment="Center" FontWeight="Bold" HorizontalAlignment="Center" TextAlignment="Center" />
+                        <Button x:Name="GroupCenterXhUpButton" Content="X+" Width="25" Click="GroupCenterXhUpButton_Click" />
+                        <StackPanel Width="25" />
+                        <Button x:Name="GroupCenterYDownButton" Content="-Y" Width="25" Click="GroupCenterYDownButton_Click" />
+                        <TextBlock x:Name="GroupCenterYTextBlock" Text="1" Width="25" VerticalAlignment="Center" FontWeight="Bold" HorizontalAlignment="Center" TextAlignment="Center" />
+                        <Button x:Name="GroupCenterYUpButton" Content="Y+" Width="25" Click="GroupCenterYUpButton_Click" />
+                        <TextBlock Text="Group position of center" VerticalAlignment="Center" Margin="10,0" />
+                    </StackPanel>
+
                 </Grid>
 
                 <Grid x:Name="GroupViewGrid" >
@@ -134,6 +147,7 @@
                         <RowDefinition Height="50"/>
                     </Grid.RowDefinitions>
                     <Border x:Name="GroupSizeSelectorBorder" Background="#3F00E604" ></Border>
+                    <Border x:Name="GroupCenterSelectorBorder" Grid.Column="1" Grid.Row="1" Background="#57FF0000" ></Border>
                 </Grid>
             </StackPanel>
 

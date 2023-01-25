@@ -19,19 +19,18 @@ namespace CityGame.Models
         private RoadGameObjectModel roadGameObjectModel;
         private RailGameObjectModel railGameObjectModel;
         private ResidentModel residentModel;
-        private GroupsModel groupsModel;
+        
 
 
         public event EventHandler RenderCompleted;
 
 
         public CityGameEngine(string cityName, int size = 400)
-        {
-            groupsModel = new GroupsModel();
-            terrainModel = new TerrainModel(groupsModel, size);
-            roadGameObjectModel = new RoadGameObjectModel(groupsModel, terrainModel, ObjectType.road);
-            railGameObjectModel = new RailGameObjectModel(groupsModel, terrainModel, ObjectType.rail);
-            residentModel = new ResidentModel(groupsModel, terrainModel);
+        {        
+            terrainModel = new TerrainModel(size);
+            roadGameObjectModel = new RoadGameObjectModel(terrainModel, ObjectType.road);
+            railGameObjectModel = new RailGameObjectModel(terrainModel, ObjectType.rail);
+            residentModel = new ResidentModel(terrainModel);
 
             DispatcherTimer timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(100);

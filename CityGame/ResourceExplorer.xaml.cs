@@ -110,7 +110,6 @@ namespace CityGame
             }
         }
 
-
         private void ResourceExplorer_MouseDown(object sender, MouseButtonEventArgs e)
         {
             SpriteDTO sprite = (SpriteDTO)PreviewImage.Tag;
@@ -182,14 +181,16 @@ namespace CityGame
         private void RefreshGroupImages(SpriteDTO sprite)
         {
 
+            GroupSpritesDTO sprites = spriteBusiness.GetSpritesByGroupIndex(sprite.groupId);
             for (int x = 0; x < 7; x++)
             {
                 for (int y = 0; y < 7; y++)
                 {
-                    groupsPreviewImages[x, y].Source = null;
+                    groupsPreviewImages[x, y].Source = SpriteRepository.GetSprite(sprites.Sprites[x,y]);
                 }
             }
 
+            /*
             if (sprite != null)
             {
                 List<SpriteDTO>? spritesItems = spriteBusiness.GetSpriteByGroupIndex(sprite.groupId);
@@ -207,6 +208,7 @@ namespace CityGame
                     }
                 }
             }
+            */
         }
 
         private void ResourceImage_MouseDown(object sender, MouseButtonEventArgs e)
@@ -232,7 +234,17 @@ namespace CityGame
         {
             if (spriteBusiness.groups.Find(p => p.Equals(SpriteInfoGroupComboBox.Text)) == null)
             {
-                spriteBusiness.groups.Add(SpriteInfoGroupComboBox.Text);
+                GroupDTO groupDTO = new GroupDTO()
+                {
+                    Name = SpriteInfoGroupComboBox.Text,
+                    Width = ushort.Parse(GroupWidthTextBlock.Text),
+                    Height = ushort.Parse(GroupHeightTextBlock.Text),
+                    CenterX = ushort.Parse(GroupCenterXTextBlock.Text),
+                    CenterY = ushort.Parse(GroupCenterYTextBlock.Text),
+
+                };
+
+                spriteBusiness.AddGroup(groupDTO);
                 spriteBusiness.SetGroups();
 
                 SpriteInfoGroupComboBox.ItemsSource = spriteBusiness.groups;
@@ -344,6 +356,46 @@ namespace CityGame
         {
             GroupSizeSelectorBorder.SetValue(Grid.ColumnSpanProperty, int.Parse(GroupWidthTextBlock.Text));
             GroupSizeSelectorBorder.SetValue(Grid.RowSpanProperty, int.Parse(GroupHeightTextBlock.Text));
+        }
+
+        private void GroupCenterXDownButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (int.Parse(GroupCenterXTextBlock.Text) > 0)
+            {
+                GroupCenterXTextBlock.Text = (int.Parse(GroupCenterXTextBlock.Text) - 1).ToString();
+            }
+            RefreshGridCenterSelector();
+        }
+        private void GroupCenterXhUpButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (int.Parse(GroupCenterXTextBlock.Text) < 6)
+            {
+                GroupCenterXTextBlock.Text = (int.Parse(GroupCenterXTextBlock.Text) + 1).ToString();
+            }
+            RefreshGridCenterSelector();
+        }
+
+        private void GroupCenterYDownButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (int.Parse(GroupCenterYTextBlock.Text) > 0)
+            {
+                GroupCenterYTextBlock.Text = (int.Parse(GroupCenterYTextBlock.Text) - 1).ToString();
+            }
+            RefreshGridCenterSelector();
+        }
+
+        private void GroupCenterYUpButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (int.Parse(GroupCenterYTextBlock.Text) < 6)
+            {
+                GroupCenterYTextBlock.Text = (int.Parse(GroupCenterYTextBlock.Text) + 1).ToString();
+            }
+            RefreshGridCenterSelector();
+        }
+        private void RefreshGridCenterSelector()
+        {
+            GroupCenterSelectorBorder.SetValue(Grid.ColumnProperty, int.Parse(GroupCenterXTextBlock.Text));
+            GroupCenterSelectorBorder.SetValue(Grid.RowProperty, int.Parse(GroupCenterYTextBlock.Text));
         }
     }
 }

@@ -8,11 +8,11 @@ namespace CityGame.Models
 {
     internal class NetworkGameObjectModel : GameObjectModel
     {
-        public NetworkGameObjectModel(GroupsModel groupsModel, TerrainModel terrainModel, ObjectType networkType):base(groupsModel, terrainModel, networkType)
+        public NetworkGameObjectModel(TerrainModel terrainModel, ObjectType networkType):base(terrainModel, networkType)
         {
         }
 
-        public SpriteDTO[,] BuildNetworkItem(int x, int y, int? GroupId, List<SpriteDTO>? SpritesGroup)
+        public SpriteDTO[,] BuildNetworkItem(int x, int y)
         {
             PositionDTO[,] offsets = new PositionDTO[3, 3];
             int ox = 0;
@@ -26,7 +26,7 @@ namespace CityGame.Models
             }
             SpriteDTO[,] sprites = spriteBusiness.GetSpritesByOffsets(offsets);
 
-            terrainModel.terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(SpritesGroup, 4, 0);
+            terrainModel.terrain[x, y] = Group.Sprites[0].Sprites[4, 0];
 
             int l = 0;
             int c = 1;
@@ -36,69 +36,69 @@ namespace CityGame.Models
 
 
             //Central cross of 4 roads
-            if ((sprites[c, t].groupId & sprites[c, b].groupId & sprites[l, c].groupId & sprites[r, c].groupId) == GroupId)
+            if ((sprites[c, t].groupId & sprites[c, b].groupId & sprites[l, c].groupId & sprites[r, c].groupId) == Group.Id)
             {
-                terrainModel.terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(SpritesGroup, 1, 1);
+                terrainModel.terrain[x, y] = Group.Sprites[0].Sprites[1, 1];
             }
             //Left Right Top cross of 3 roads  
             else
-            if ((sprites[c, t].groupId & sprites[l, c].groupId & sprites[r, c].groupId) == GroupId)
+            if ((sprites[c, t].groupId & sprites[l, c].groupId & sprites[r, c].groupId) == Group.Id)
             {
-                terrainModel.terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(SpritesGroup, 1, 2);
+                terrainModel.terrain[x, y] = Group.Sprites[0].Sprites[ 1, 2];
             }
             //Left Right Bottom cross of 3 roads 
             else
-            if ((sprites[c, b].groupId & sprites[l, c].groupId & sprites[r, c].groupId) == GroupId)
+            if ((sprites[c, b].groupId & sprites[l, c].groupId & sprites[r, c].groupId) == Group.Id)
             {
-                terrainModel.terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(SpritesGroup, 1, 0);
+                terrainModel.terrain[x, y] = Group.Sprites[0].Sprites[ 1, 0];
             }
             //Left Top Bottom cross of 3 roads 
             else
-            if ((sprites[c, t].groupId & sprites[c, b].groupId & sprites[l, c].groupId) == GroupId)
+            if ((sprites[c, t].groupId & sprites[c, b].groupId & sprites[l, c].groupId) == Group.Id)
             {
-                terrainModel.terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(SpritesGroup, 2, 1);
+                terrainModel.terrain[x, y] = Group.Sprites[0].Sprites[ 2, 1];
             }
             //Right Top Bottom cross of 3 roads 
             else
-            if ((sprites[c, t].groupId & sprites[c, b].groupId & sprites[r, c].groupId) == GroupId)
+            if ((sprites[c, t].groupId & sprites[c, b].groupId & sprites[r, c].groupId) == Group.Id)
             {
-                terrainModel.terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(SpritesGroup, 0, 1);
+                terrainModel.terrain[x, y] = Group.Sprites[0].Sprites[ 0, 1];
             }
             //Right Top turn of 2 roads 
             else
-            if ((sprites[c, b].groupId & sprites[r, c].groupId) == GroupId)
+            if ((sprites[c, b].groupId & sprites[r, c].groupId) == Group.Id)
             {
-                terrainModel.terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(SpritesGroup, 0, 0);
+                terrainModel.terrain[x, y] = Group.Sprites[0].Sprites[ 0, 0];
             }
             //Left Top turn of 2 roads 
             else
-            if ((sprites[c, b].groupId & sprites[l, c].groupId) == GroupId)
+            if ((sprites[c, b].groupId & sprites[l, c].groupId) == Group.Id)
             {
-                terrainModel.terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(SpritesGroup, 2, 0);
+                terrainModel.terrain[x, y] = Group.Sprites[0].Sprites[ 2, 0];
             }
             //Right Bottom turn of 2 roads 
             else
-            if ((sprites[c, t].groupId & sprites[r, c].groupId) == GroupId)
+            if ((sprites[c, t].groupId & sprites[r, c].groupId) == Group.Id)
             {
-                terrainModel.terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(SpritesGroup, 0, 2);
+                terrainModel.terrain[x, y] = Group.Sprites[0].Sprites[ 0, 2];
             }
             //Left Bottom turn of 2 roads 
             else
-            if ((sprites[c, t].groupId & sprites[l, c].groupId) == GroupId)
+            if ((sprites[c, t].groupId & sprites[l, c].groupId) == Group.Id)
             {
-                terrainModel.terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(SpritesGroup, 2, 2);
+                terrainModel.terrain[x, y] = Group.Sprites[0].Sprites[ 2, 2];
             }
             //Horisontal road
             else
-            if ((sprites[r, c].groupId == GroupId) || (sprites[l, c].groupId == GroupId))
+            if ((sprites[r, c].groupId == Group.Id) || (sprites[l, c].groupId == Group.Id))
             {
-                terrainModel.terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(SpritesGroup, 3, 0);
+                terrainModel.terrain[x, y] = Group.Sprites[0].Sprites[ 3, 0];
             }
             //Vertical road
             else
-            if ((sprites[c, t].groupId == GroupId) || (sprites[c, b].groupId == GroupId))
+            if ((sprites[c, t].groupId == Group.Id) || (sprites[c, b].groupId == Group.Id))
             {
-                terrainModel.terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(SpritesGroup, 4, 0);
+                terrainModel.terrain[x, y] = Group.Sprites[0].Sprites[ 4, 0];
             }
             //else default single road
 
@@ -111,7 +111,7 @@ namespace CityGame.Models
         {
 
 
-            SpriteDTO[,] sprites = BuildNetworkItem(x, y, GroupId, SpritesGroup);
+            SpriteDTO[,] sprites = BuildNetworkItem(x, y);
 
 
             //Rebuild near roads            
@@ -121,9 +121,9 @@ namespace CityGame.Models
                 int oy = 0;
                 for (int ty = CLeft(y); ty < CRight(y) + 1; ty++, oy++)
                 {
-                    if (sprites[ox, oy].groupId == GroupId)
+                    if (sprites[ox, oy].groupId == Group?.Id)
                     {
-                        BuildNetworkItem(tx, ty, GroupId, SpritesGroup);
+                        BuildNetworkItem(tx, ty);
                     }
                 }
             }

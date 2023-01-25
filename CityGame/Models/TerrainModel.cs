@@ -12,10 +12,7 @@ using CityGame.DTOs;
 namespace CityGame.Models
 {
     public class TerrainModel: BaseModel
-    {
-
-        private GroupsModel groupsModel;
-
+    {       
         /// <summary>
         /// Terrain width and height at sprites
         /// Current sprite size is 16x16 piexels
@@ -44,10 +41,9 @@ namespace CityGame.Models
 
         public WriteableBitmap bitmapSource;
 
-        public TerrainModel(GroupsModel groupsModel, int terrainSize)
+        public TerrainModel(int terrainSize)
         {
-            this.groupsModel = groupsModel;
-
+            
             this.terrainSize = terrainSize;
 
             terrain = new PositionDTO[terrainSize, terrainSize];
@@ -132,53 +128,62 @@ namespace CityGame.Models
 
                     randomIndex = randomIndex != 0 ? (byte)0 : (byte)1;
 
+                    //TEMP
+                    terrain[x, y] = new PositionDTO()
+                    {
+                        x = 0,
+                        y = 0
+                    };
+
+
+
                     switch (sourceTerraing[x, y])
                     {
                         case (int)terrainType.water:
                             {
                                 if ((sourceTerraing[CLeft(x), y] != (int)terrainType.water) && (sourceTerraing[x, CTop(y)] != (int)terrainType.water))
                                 {
-                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(groupsModel.GetGroup(SpritesGroupEnum.water), 0, 0, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpritesByGroupName(SpritesGroupEnum.water, randomIndex).Sprites[0, 0];
                                 }
                                 else
                                 if ((sourceTerraing[CLeft(x), y] != (int)terrainType.water) && (sourceTerraing[x, CBottom(y)] != (int)terrainType.water))
                                 {
-                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(groupsModel.GetGroup(SpritesGroupEnum.water), 0, 2, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpritesByGroupName(SpritesGroupEnum.water, randomIndex).Sprites[0, 2];
                                 }
                                 else
                                 if ((sourceTerraing[CRight(x), y] != (int)terrainType.water) && (sourceTerraing[x, CTop(y)] != (int)terrainType.water))
                                 {
-                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(groupsModel.GetGroup(SpritesGroupEnum.water), 2, 0, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpritesByGroupName(SpritesGroupEnum.water, randomIndex).Sprites[2, 0];
                                 }
                                 else
                                 if ((sourceTerraing[CRight(x), y] != (int)terrainType.water) && (sourceTerraing[x, CBottom(y)] != (int)terrainType.water))
                                 {
-                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(groupsModel.GetGroup(SpritesGroupEnum.water), 2, 2, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpritesByGroupName(SpritesGroupEnum.water, randomIndex).Sprites[2, 2];
                                 }
                                 else
                                 if ((sourceTerraing[CLeft(x), y] != (int)terrainType.water))
                                 {
-                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(groupsModel.GetGroup(SpritesGroupEnum.water), 0, 1, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpritesByGroupName(SpritesGroupEnum.water, randomIndex).Sprites[0, 1];
                                 }
                                 else
                                 if ((sourceTerraing[x, CTop(y)] != (int)terrainType.water))
                                 {
-                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(groupsModel.GetGroup(SpritesGroupEnum.water), 1, 0, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpritesByGroupName(SpritesGroupEnum.water, randomIndex).Sprites[1, 0];
                                 }
                                 else
                                 if ((sourceTerraing[x, CBottom(y)] != (int)terrainType.water))
                                 {
-                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(groupsModel.GetGroup(SpritesGroupEnum.water), 1, 2, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpritesByGroupName(SpritesGroupEnum.water, randomIndex).Sprites[1, 2];
                                 }
                                 else
                                 if ((sourceTerraing[CRight(x), y] != (int)terrainType.water))
                                 {
-                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(groupsModel.GetGroup(SpritesGroupEnum.water), 2, 1, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpritesByGroupName(SpritesGroupEnum.water, randomIndex).Sprites[2, 1];
                                 }
 
                                 else
                                 {
-                                    terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(groupsModel.GetGroup(SpritesGroupEnum.water), 1, 1, randomIndex);
+                                    terrain[x, y] = spriteBusiness.GetSpritesByGroupName(SpritesGroupEnum.water, randomIndex).Sprites[1, 1];
                                 }
                                 break;
                             }
@@ -194,6 +199,8 @@ namespace CityGame.Models
                             }
                         default:
                             {
+
+                                /*
                                 if ((sourceTerraing[CLeft(x), y] != (int)terrainType.forest) && (sourceTerraing[x, CTop(y)] != (int)terrainType.forest))
                                 {
                                     terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(groupsModel.GetGroup(SpritesGroupEnum.forest), 0, 0, randomIndex);
@@ -238,10 +245,20 @@ namespace CityGame.Models
                                 {
                                     terrain[x, y] = spriteBusiness.GetSpriteOffsetByGroupPosition(groupsModel.GetGroup(SpritesGroupEnum.forest), 1, 1, randomIndex);
                                 }
+                                */
                             }
                             break;
                     }
 
+                    if (terrain[x,y] ==null)
+                    {
+                        terrain[x, y] = new PositionDTO()
+                        {
+                            x = 0,
+                            y = 0
+                        };
+
+                    }
                     //PutImage(x, y, terrain[x, y] >> 0x10, terrain[x, y] & 0xFF);
                     Int32Rect rect = new Int32Rect(x * 16, y * 16, 16, 16);
                     bitmapSource.WritePixels(rect, SpriteRepository.GetPixels(terrain[x, y].x, terrain[x, y].y), 16, 0);

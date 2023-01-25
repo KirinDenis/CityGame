@@ -15,20 +15,17 @@ namespace CityGame.Models
 
         protected SpriteBusiness spriteBusiness = new SpriteBusiness();
         protected TerrainModel terrainModel;
-        protected GroupsModel groupsModel;
 
-        public int? GroupId { get; set; }
-        public List<SpriteDTO>? SpritesGroup { get; set; }
+        public GroupDTO? Group { get; set; }
 
-
-        public GameObjectModel(GroupsModel groupsModel, TerrainModel terrainModel, ObjectType objectType)
-        {
-            this.groupsModel = groupsModel;
+        public GameObjectModel(TerrainModel terrainModel, ObjectType objectType)
+        {            
             this.terrainModel = terrainModel;
-
-            GroupId = spriteBusiness.GetGroupId(SpritesGroupEnum.ByObjectType(objectType));
-            SpritesGroup = groupsModel.GetGroup(SpritesGroupEnum.ByObjectType(objectType));
+            Group = spriteBusiness.GetGroupByName(SpritesGroupEnum.ByObjectType(objectType));            
         }
+
+        
+
         public CheckPositionDTO CheckPosition(ushort x, ushort y)
         {
             throw new NotImplementedException();

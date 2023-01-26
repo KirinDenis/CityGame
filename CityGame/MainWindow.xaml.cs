@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -357,6 +358,25 @@ namespace CityGame
         private void PoliceDepartmentButton_Click(object sender, RoutedEventArgs e)
         {
             selectedType = ObjectType.policeDepartment;
+        }
+
+        private void Window_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            {
+              switch (e.Key)
+                {
+                    case Key.R: new ResourceExplorer().Show(); break;
+                    case Key.T: cityGameEngine.GenerateTerrain(); break;
+                }            
+            }
+
+            switch (e.Key)
+            {
+                case Key.F2: new ResourceExplorer().Show(); break;            
+            }
+
+
         }
     }
 }

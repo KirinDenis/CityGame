@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CityGame"
         mc:Ignorable="d"
-        Title="City Game" Height="800" Width="800" WindowStartupLocation="CenterScreen">
+        Title="City Game" Height="800" Width="800" WindowStartupLocation="CenterScreen" PreviewKeyDown="Window_PreviewKeyDown">
     <Grid ContextMenuClosing="Grid_ContextMenuClosing" >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="167*"/>
@@ -16,7 +16,7 @@
             <RowDefinition Height="365*"/>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.ColumnSpan="2" >
-            <Button x:Name="ResourceExplorerButton" Content="Resource Explorer" Width="128" HorizontalAlignment="Left" Click="ResourceExplorerButton_Click" />
+            <Button x:Name="ResourceExplorerButton" Content="Resource Explorer (F2)" Width="128" HorizontalAlignment="Left" Click="ResourceExplorerButton_Click" />
             <Button x:Name="GenerateMapButton" Content="Generate map" Width="128" HorizontalAlignment="Left" Click="GenerateMapButton_Click"  />
             <Button x:Name="GenerateLandButton" Content="Generate land" Width="128" HorizontalAlignment="Left" Click="GenerateLandButton_Click"  />
 

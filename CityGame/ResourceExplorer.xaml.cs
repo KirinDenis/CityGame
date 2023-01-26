@@ -151,7 +151,7 @@ namespace CityGame
 
                 SpriteInfoNameTextBox.Text = sprite.name;
 
-                SpriteInfoGroupComboBox.SelectedIndex = sprite.groupId;
+                //SpriteInfoGroupComboBox.SelectedIndex = sprite.groupId;
 
                 AnimationFrameComboBox.SelectedIndex = sprite.animationFrame ?? 0;
 
@@ -175,7 +175,60 @@ namespace CityGame
 
         private void RefreshGroupsList()
         {
-            SpriteInfoGroupComboBox.ItemsSource = spriteBusiness.groups;
+            foreach (GroupDTO group in spriteBusiness.groups)
+            {
+                TreeViewItem groupItem = new TreeViewItem();
+                groupItem.Header = group.Name;
+                //Group sprites with animation frames to TreeViewItem 
+                foreach (GroupSpritesDTO groupSprites in group.Sprites)
+                {
+                    //Frame tree item
+                    TreeViewItem frameItem = new TreeViewItem();
+                    //Frame grid 8x8
+                    Grid frameGrid = new Grid();
+
+                    frameGrid.Width = frameGrid.Height = 16 * 7;
+
+                    for (int x = 0; x < groupSprites.Sprites.GetLength(0); x++)
+                    {
+                        frameGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(16) });
+                        for (int y = 0; y < groupSprites.Sprites.GetLength(1); y++)
+                        {
+                            frameGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(16) });
+                            if (groupSprites.Sprites[x, y] != null)
+                            {
+                                Image spriteImage = new Image();
+                                spriteImage.SetValue(Grid.ColumnProperty, x);
+                                spriteImage.SetValue(Grid.RowProperty, y);
+
+                                spriteImage.Width = spriteImage.Height = 16;
+
+                                RenderOptions.SetBitmapScalingMode(spriteImage, BitmapScalingMode.NearestNeighbor);
+
+                                spriteImage.Source = SpriteRepository.GetSprite(groupSprites.Sprites[x, y]);
+
+                                frameGrid.Children.Add(spriteImage);
+                            }
+                            else
+                            {
+                                Border border = new Border();
+                                border.BorderBrush = Brushes.Gray;
+                                border.BorderThickness = new Thickness(1);
+                                border.SetValue(Grid.ColumnProperty, x);
+                                border.SetValue(Grid.RowProperty, y);
+
+                                frameGrid.Children.Add(border);
+                            }
+                        }
+                    }                    
+                    frameItem.Items.Add(frameGrid);                    
+                    groupItem.Items.Add(frameItem);
+                    frameItem.Header = "Animation frame " + (groupItem.Items.Count);
+                }
+
+
+                SpriteGroupsTreeView.Items.Add(groupItem);
+            }
         }
 
         private void RefreshGroupImages(SpriteDTO sprite)
@@ -232,6 +285,7 @@ namespace CityGame
 
         private void NewSprite_Click(object sender, RoutedEventArgs e)
         {
+            /*
             if (spriteBusiness.groups.Find(p => p.Equals(SpriteInfoGroupComboBox.Text)) == null)
             {
                 GroupDTO groupDTO = new GroupDTO()
@@ -255,7 +309,7 @@ namespace CityGame
                 spriteBusiness.SetSprites();
                 RefreshGroupImages(sprite);
             }
-
+            */
         }
 
         private void SaveSpritesButton_Click(object sender, RoutedEventArgs e)
@@ -265,7 +319,7 @@ namespace CityGame
 
         private void SpriteInfoGroupComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            /*
             if (SpritesGroupEnum.CheckGroupName(SpriteInfoGroupComboBox.Text))
             {
                 GroupNotLinkedTextBlock.Visibility = Visibility.Visible;
@@ -287,6 +341,7 @@ namespace CityGame
                 spriteBusiness.SetSprites();
                 RefreshGroupImages(sprite);
             }
+            */
         }
 
         private void AnimationFrameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

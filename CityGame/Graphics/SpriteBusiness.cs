@@ -185,16 +185,16 @@ namespace CityGame.Graphics
         }
 
 
-        public GroupSpritesDTO GetSpritesByGroupIndex(int? gorupId, int? animationFrame = 0)
+        public GroupSpritesDTO GetSpritesByGroupIndex(int? gorupId, int animationFrame = 0)
         {
             if (gorupId != null)
             {
                 GroupDTO? groupDTO = groups.FirstOrDefault(g => g.Id == gorupId);
                 if (groupDTO != null)
                 {
-                    if (groupDTO.Sprites.Count < animationFrame)
+                    if (groupDTO.Sprites.Count > animationFrame)
                     {
-                        return groupDTO.Sprites[(int)animationFrame];
+                        return groupDTO.Sprites[animationFrame];
                     }
                 }
             }
@@ -202,7 +202,7 @@ namespace CityGame.Graphics
             return new GroupSpritesDTO();
         }
 
-        public GroupSpritesDTO GetSpritesByGroupName(string groupItemName, int? animationFrame = 0)
+        public GroupSpritesDTO GetSpritesByGroupName(string groupItemName, int animationFrame = 0)
         {
             return GetSpritesByGroupIndex(GetGroupId(groupItemName), animationFrame);
         }

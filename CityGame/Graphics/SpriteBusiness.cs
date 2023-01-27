@@ -4,42 +4,18 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows.Controls;
+using System.Windows;
 
 namespace CityGame.Graphics
 {
     public class SpriteBusiness
     {
-        private string spritesFile = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\Resources\Blocks{0}.json";
         private string groupsFile = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\Resources\Groups.json";
 
-#if DEBUG
-        private string developmnetSpritesFile = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"..\..\..\..\Resources\Blocks{0}.json";
+#if DEBUG     
         private string developmnetGroupsFile = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"..\..\..\..\Resources\Groups.json";
-
-        //TEMP: migration
-        //private string SGroupsFile = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"..\..\..\..\Resources\SGroups.json";
 #endif
-
-        private List<SpriteDTO>? _sprites;
-        public List<SpriteDTO> sprites
-        {
-            get
-            {
-                if (_sprites == null)
-                {
-                    if (File.Exists(string.Format(spritesFile, string.Empty)))
-                    {
-                        _sprites = JsonConvert.DeserializeObject<List<SpriteDTO>>(File.ReadAllText(string.Format(spritesFile, string.Empty)));
-                    }
-
-                    if (_sprites == null)
-                    {
-                        return new List<SpriteDTO>();
-                    }
-                }
-                return _sprites;
-            }
-        }
 
         private List<GroupDTO>? _groups;
         public List<GroupDTO> groups
@@ -68,7 +44,6 @@ namespace CityGame.Graphics
 
         public SpriteBusiness()
         {
-            _sprites = sprites;
             _groups = groups;
 
             //Create default groups if empty (Restore)
@@ -95,47 +70,6 @@ namespace CityGame.Graphics
             {
                 SetGroups();
             }
-
-
-            //Migrate grups temporary code 
-            /*
-            List<GroupDTO> sGroups = new List<GroupDTO>();
-
-            for(int i=0; i < groups.Count; i++)
-            {
-                GroupDTO groupDTO = new GroupDTO();
-                groupDTO.Id = i;
-                groupDTO.Name = groups[i];
-
-                List<SpriteDTO>? sprites = GetSpriteByGroupIndex(i);
-
-                foreach(SpriteDTO sprite in sprites)
-                {
-                    while (groupDTO.Sprites.Count - 1 <sprite.animationFrame)
-                    {
-                        groupDTO.Sprites.Add(new GroupSpritesDTO());
-                    }
-                    int frame = (int)sprite?.animationFrame;
-
-                    if (sprite.groupPosition == null)
-                    {
-                        sprite.groupPosition = new PositionDTO();
-                    }
-
-                    groupDTO.Sprites[frame].Sprites[(int)(sprite.groupPosition?.x), (int)(sprite.groupPosition?.y)] = sprite.position;
-                }
-                sGroups.Add(groupDTO);
-            }
-            File.WriteAllText(SGroupsFile, JsonConvert.SerializeObject(sGroups));
-            */
-        }
-
-        public void SetSprites(string? backupExt = null)
-        {
-            File.WriteAllText(string.Format(spritesFile, backupExt), JsonConvert.SerializeObject(_sprites));
-#if DEBUG
-            File.WriteAllText(string.Format(developmnetSpritesFile, backupExt), JsonConvert.SerializeObject(_sprites));
-#endif
         }
 
         public void SetGroups()
@@ -170,21 +104,6 @@ namespace CityGame.Graphics
             return 0; //no group by default        
         }
 
-
-        public SpriteDTO? GetSpriteByPosition(PositionDTO position)
-        {
-            SpriteDTO? sprite = _sprites?.FirstOrDefault(p => p.position.x == position.x && p.position.y == position.y);
-
-            if (sprite == null)
-            {
-                sprite = new SpriteDTO() { position = position };
-                _sprites?.Add(sprite);
-                SetSprites();
-            }
-            return sprite;
-        }
-
-
         public GroupSpritesDTO GetSpritesByGroupIndex(int? gorupId, int animationFrame = 0)
         {
             if (gorupId != null)
@@ -207,86 +126,25 @@ namespace CityGame.Graphics
             return GetSpritesByGroupIndex(GetGroupId(groupItemName), animationFrame);
         }
 
-        public List<SpriteDTO>? GetSpritesByGroupPosition(List<SpriteDTO>? targetSprites, int gx, int gy)
+        public GroupDTO? GetGroupBySpritePosition(PositionDTO position)
         {
-            return targetSprites?.FindAll(p => p.groupPosition != null && (p.groupPosition.x == gx && p.groupPosition.y == gy));
-        }
-
-        public PositionDTO GetSpriteOffsetByGroupPosition(List<SpriteDTO>? targetSprites, int gx, int gy, int spriteIndex = 0)
-        {
-            SpriteDTO? spriteModel = targetSprites?.FindAll(p => p.groupPosition != null && (p.groupPosition.x == gx && p.groupPosition.y == gy))[spriteIndex];
-            if (spriteModel != null)
+            foreach (GroupDTO group in groups)
             {
-                //return (spriteModel.position.x << 0x10) + spriteModel.position.y;
-                return spriteModel.position;
-            }
-            else
-            {
-                return new PositionDTO()
+                foreach (GroupSpritesDTO groupSprites in group.Sprites)
                 {
-                    x = 0,
-                    y = 0
-                };
-            }
-        }
-        public List<SpriteDTO>? GetSpriteByGroupIndexAnimationOnly(int gorupId)
-        {
-            if (gorupId > 0)
-            {
-                return _sprites?.FindAll(p => p.groupId == gorupId && p.animationFrame != 0);
-            }
-
-            return new List<SpriteDTO>();
-        }
-
-        public List<SpriteDTO> GetSpritesByOffsets(PositionDTO[] offsets)
-        {
-            List<SpriteDTO> findSprites = new List<SpriteDTO>();
-            foreach (PositionDTO offset in offsets)
-            {
-                SpriteDTO? spriteItemModel = GetSpriteByPosition(new PositionDTO()
-                {
-                    x = offset.x,
-                    y = offset.y
-                }
-                );
-                if (spriteItemModel == null)
-                {
-                    continue;
-                }
-                findSprites.Add(spriteItemModel);
-            }
-
-            return findSprites;
-        }
-
-        public SpriteDTO[,] GetSpritesByOffsets(PositionDTO[,] offsets)
-        {
-            SpriteDTO[,] findSprites = new SpriteDTO[offsets.GetLength(0), offsets.GetLength(1)];
-
-            for (int x = 0; x < offsets.GetLength(0); x++)
-            {
-                for (int y = 0; y < offsets.GetLength(1); y++)
-                {
-
-                    SpriteDTO? spriteItemModel = GetSpriteByPosition(new PositionDTO()
+                    for (int x = 0; x < groupSprites.Sprites.GetLength(0); x++)
                     {
-                        x = offsets[x, y].x,
-                        y = offsets[x, y].y
+                        for (int y = 0; y < groupSprites.Sprites.GetLength(1); y++)
+                        {
+                            if ((groupSprites.Sprites[x, y] != null) && (groupSprites.Sprites[x,y].x == position.x) && (groupSprites.Sprites[x,y].y == position.y))
+                            {
+                                return group;
+                            }
+                        }
                     }
-                );
-                    if (spriteItemModel == null)
-                    {
-                        continue;
-                    }
-                    findSprites[x, y] = spriteItemModel;
                 }
             }
-
-            return findSprites;
+            return null;
         }
-
-
-
     }
 }

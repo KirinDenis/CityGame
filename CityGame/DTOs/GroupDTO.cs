@@ -22,7 +22,7 @@ namespace CityGame.DTOs
 
         public ushort CenterX { get; set; } = 1;
         public ushort CenterY { get; set; } = 1;
-
+       
         public List<GroupSpritesDTO> Sprites { get; set; } = new List<GroupSpritesDTO>();
         
     }

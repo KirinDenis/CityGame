@@ -25,7 +25,7 @@
             <TextBlock Text="Sprite's groups" FontWeight="Bold"/>
         </StackPanel>
 
-        <TreeView x:Name="SpriteGroupsTreeView" Grid.Column="0" Grid.Row="1"/>
+        <TreeView x:Name="SpriteGroupsTreeView" Grid.Column="0" Grid.Row="1" />
 
 
 

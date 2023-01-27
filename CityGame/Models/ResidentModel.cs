@@ -22,6 +22,7 @@ namespace CityGame.Models
 
         public void Put(ushort x, ushort y, ObjectType objectType)
         {
+            /*
             List<SpriteDTO>? group = null;
             switch (objectType)
             {
@@ -45,6 +46,7 @@ namespace CityGame.Models
                     terrainModel.PutImage(x + spriteModel.groupPosition.x, y + spriteModel.groupPosition.y, spriteModel.position.x, spriteModel.position.y);
                 }
             }
+            */
 
         }
 

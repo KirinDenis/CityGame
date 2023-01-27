@@ -5,8 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
 namespace CityGame
@@ -23,6 +25,8 @@ namespace CityGame
         private bool spriteEditMode = false;
 
         private int animationFrame = 1;
+
+        private List<Border> groupSelectorBorders = new List<Border>();
         public ResourceExplorer()
         {
             InitializeComponent();
@@ -81,6 +85,9 @@ namespace CityGame
 
         private void AnimationFrameTimer_Tick(object? sender, EventArgs e)
         {
+
+            
+            /*
             SpriteDTO sprite = (SpriteDTO)PreviewImage.Tag;
             if (sprite != null)
             {
@@ -108,10 +115,12 @@ namespace CityGame
                     }
                 }
             }
+            */
         }
 
         private void ResourceExplorer_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            /*
             SpriteDTO sprite = (SpriteDTO)PreviewImage.Tag;
 
             if (sprite != null)
@@ -120,6 +129,7 @@ namespace CityGame
                 spriteBusiness.SetSprites();
                 RefreshGroupImages(sprite);
             }
+            */
         }
 
         private PositionDTO GetSpritePositionByMouse(MouseEventArgs e)
@@ -142,20 +152,27 @@ namespace CityGame
             if (!spriteEditMode)
             {
                 PositionDTO position = GetSpritePositionByMouse(e);
-                SpriteDTO? sprite = spriteBusiness.GetSpriteByPosition(GetSpritePositionByMouse(e));
 
-                PreviewImage.Tag = sprite;
+                GroupDTO? group = spriteBusiness.GetGroupBySpritePosition(position);
+                
+                PreviewImage.Tag = group;
                 PreviewImage.Source = SpriteRepository.GetSprite(position.x, position.y);
 
-                SpriteInfoPositionTextBlock.Text = string.Format("{0}:{1}", sprite.position.x, sprite.position.y);
+                SpriteInfoPositionTextBlock.Text = string.Format("{0}:{1}", position.x, position.y);
 
-                SpriteInfoNameTextBox.Text = sprite.name;
+                foreach(TreeViewItem treeViewItem in SpriteGroupsTreeView.Items)
+                {
+                    if (treeViewItem.Tag == group)
+                    {
+                        treeViewItem.IsSelected = true;
+                    }
+                }    
 
                 //SpriteInfoGroupComboBox.SelectedIndex = sprite.groupId;
 
-                AnimationFrameComboBox.SelectedIndex = sprite.animationFrame ?? 0;
+                //AnimationFrameComboBox.SelectedIndex = sprite.animationFrame ?? 0;
 
-                RefreshGroupImages(sprite);
+                RefreshGroupImages(group);
 
                 //Resourve image selector
                 Point actualMargin = ResourceImage.TransformToAncestor(MainGrid).Transform(new Point(0, 0));
@@ -178,6 +195,7 @@ namespace CityGame
             foreach (GroupDTO group in spriteBusiness.groups)
             {
                 TreeViewItem groupItem = new TreeViewItem();
+                groupItem.Tag = group;
                 groupItem.Header = group.Name;
                 //Group sprites with animation frames to TreeViewItem 
                 foreach (GroupSpritesDTO groupSprites in group.Sprites)
@@ -224,6 +242,8 @@ namespace CityGame
                     frameItem.Items.Add(frameGrid);                    
                     groupItem.Items.Add(frameItem);
                     frameItem.Header = "Animation frame " + (groupItem.Items.Count);
+
+                    groupItem.Selected += GroupItem_Selected;
                 }
 
 
@@ -231,10 +251,14 @@ namespace CityGame
             }
         }
 
-        private void RefreshGroupImages(SpriteDTO sprite)
+        private void RefreshGroupImages(GroupDTO group)
         {
-
-            GroupSpritesDTO sprites = spriteBusiness.GetSpritesByGroupIndex(sprite.groupId);
+            if (group == null) 
+            {
+                return;
+            } 
+                
+            GroupSpritesDTO sprites = spriteBusiness.GetSpritesByGroupIndex(group.Id);
             for (int x = 0; x < 7; x++)
             {
                 for (int y = 0; y < 7; y++)
@@ -314,7 +338,7 @@ namespace CityGame
 
         private void SaveSpritesButton_Click(object sender, RoutedEventArgs e)
         {
-            spriteBusiness.SetSprites(DateTime.Now.ToString(" dd-M-yyyy HH-mm-ss"));
+            //spriteBusiness.SetSprites(DateTime.Now.ToString(" dd-M-yyyy HH-mm-ss"));
         }
 
         private void SpriteInfoGroupComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -346,6 +370,7 @@ namespace CityGame
 
         private void AnimationFrameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            /*
             SpriteDTO sprite = (SpriteDTO)PreviewImage.Tag;
             if (sprite != null)
             {
@@ -353,10 +378,12 @@ namespace CityGame
                 spriteBusiness.SetSprites();
                 RefreshGroupImages(sprite);
             }
+            */
         }
 
         private void SpriteInfoNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            /*
             SpriteDTO sprite = (SpriteDTO)PreviewImage.Tag;
             if (sprite != null)
             {
@@ -364,6 +391,7 @@ namespace CityGame
                 spriteBusiness.SetSprites();
                 RefreshGroupImages(sprite);
             }
+            */
         }
 
         private void SpriteInfoGroupComboBox_TextInput(object sender, TextCompositionEventArgs e)
@@ -451,6 +479,78 @@ namespace CityGame
         {
             GroupCenterSelectorBorder.SetValue(Grid.ColumnProperty, int.Parse(GroupCenterXTextBlock.Text));
             GroupCenterSelectorBorder.SetValue(Grid.RowProperty, int.Parse(GroupCenterYTextBlock.Text));
+        }
+
+        private void GroupItem_Selected(object sender, RoutedEventArgs e)
+        {
+            GroupDTO group = (GroupDTO)((TreeViewItem)sender).Tag;
+            if (group != null)
+            {
+                for(int i=0; i< groupSelectorBorders.Count; i++)
+                {
+                    MainGrid.Children.Remove(groupSelectorBorders[i]);
+                    groupSelectorBorders[i] = null;
+                }
+                groupSelectorBorders.Clear();
+
+                // Create the Border that is the target of the animation.
+                SolidColorBrush animatedBrush = new SolidColorBrush();
+                animatedBrush.Color = Color.FromArgb(255, 0, 255, 0);
+
+
+                foreach (GroupSpritesDTO groupSprites in group.Sprites)
+                {
+                    for (int x = 0; x < groupSprites.Sprites.GetLength(0); x++)
+                    {
+                        for (int y = 0; y < groupSprites.Sprites.GetLength(1); y++)
+                        {
+                            if (groupSprites.Sprites[x, y] != null)
+                            {
+                                Border border = new Border();
+
+                                double WH = ResourceImage.ActualHeight / SpriteRepository.Width;
+
+            //SourceImageInfoTextBlock.Text = string.Format("Image {0}x{1}", ResourceImage.Source.Width, ResourceImage.Source.Height);
+              //                  SourceSpriteInfoTextBlock.Text = string.Format("Sprite {0}x{1}", SpriteRepository.SizeInPixels, SpriteRepository.SizeInPixels);
+                //                SourceCountsInfoTextBlock.Text = string.Format("Counts {0}x{1}", SpriteRepository.Width, SpriteRepository.Height);
+
+
+                                border.Width = border.Height = WH;
+
+                                Point actualMargin = ResourceImage.TransformToAncestor(MainGrid).Transform(new Point(0, 0));
+                                actualMargin.X -= MainGrid.ColumnDefinitions[0].ActualWidth;
+                                actualMargin.Y -= MainGrid.RowDefinitions[0].ActualHeight;
+
+                                border.Margin = new Thickness(groupSprites.Sprites[x, y].x * WH + actualMargin.X, groupSprites.Sprites[x, y].y * WH + actualMargin.Y, 0, 0);
+                                border.HorizontalAlignment = HorizontalAlignment.Left;
+                                border.VerticalAlignment = VerticalAlignment.Top;                                
+                                border.SetValue(Grid.ColumnProperty, 1);
+                                border.SetValue(Grid.RowProperty, 1);
+                                //border.BorderBrush = Brushes.Yellow;
+                                border.BorderThickness = new Thickness(1);
+
+                                
+
+
+                                SolidColorBrush brush = new SolidColorBrush(Colors.Red);
+                                border.Background = brush;
+
+                                ColorAnimation animation = new ColorAnimation(Color.FromArgb(0xA0, 0xFF, 0x00,0x00), Color.FromArgb(0x70, 0xFF, 0x00, 0x00),  new Duration(TimeSpan.FromSeconds(2)));
+                                animation.AutoReverse = true;
+                                animation.RepeatBehavior = RepeatBehavior.Forever;
+                                brush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+
+                                
+
+                                groupSelectorBorders.Add(border);
+                                MainGrid.Children.Add(border);
+
+
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

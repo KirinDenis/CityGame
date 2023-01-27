@@ -12,6 +12,7 @@ namespace CityGame.Models
         {
         }
 
+        /*
         public SpriteDTO[,] BuildNetworkItem(int x, int y)
         {
             PositionDTO[,] offsets = new PositionDTO[3, 3];
@@ -131,6 +132,7 @@ namespace CityGame.Models
             return true;
 
         }
+        */
 
     }
 }

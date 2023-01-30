@@ -65,7 +65,7 @@ namespace CityGame.Graphics
                 //fix case
                 _groups[i].Name = _groups[i].Name.ToLower();
             }
-
+            
             if (foundNotExists)
             {
                 SetGroups();
@@ -111,6 +111,11 @@ namespace CityGame.Graphics
                 GroupDTO? groupDTO = groups.FirstOrDefault(g => g.Id == gorupId);
                 if (groupDTO != null)
                 {
+                    if (animationFrame < 0)
+                    {
+                        animationFrame = 0;
+                    }
+
                     if (groupDTO.Sprites.Count > animationFrame)
                     {
                         return groupDTO.Sprites[animationFrame];

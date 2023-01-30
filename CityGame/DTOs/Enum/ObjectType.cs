@@ -6,6 +6,7 @@
         rail,
         wire,
         resident,
+        comercial,
         industrial,
         policeDepartment
     }

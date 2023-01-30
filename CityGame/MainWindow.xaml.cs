@@ -74,7 +74,7 @@ namespace CityGame
             //WaterLevelTextBox.Text = cityGameEngine.waterLevel.ToString();
             //RoughnessTextBox.Text = cityGameEngine.roughness.ToString();
 
-            TerrainImage.Width = TerrainImage.Height = cityGameEngine.GetTerrainSize() * SpriteRepository.SizeInPixels * zoom;
+            TerrainImage.Width = TerrainImage.Height = cityGameEngine.GetTerrainSize() * SpriteRepository.ResourceInfo.SpriteSize * zoom;
             
             TerrainScroll.ScrollToVerticalOffset(TerrainImage.Width / 2.0f);
             TerrainScroll.ScrollToHorizontalOffset(TerrainImage.Height / 2.0f);
@@ -253,12 +253,12 @@ namespace CityGame
                 }
             }
 
-            if ((cityGameEngine.GetTerrainSize() * SpriteRepository.SizeInPixels * zoom > TerrainGrid.ActualWidth)
+            if ((cityGameEngine.GetTerrainSize() * SpriteRepository.ResourceInfo.SpriteSize * zoom > TerrainGrid.ActualWidth)
                 &&
-                ((cityGameEngine.GetTerrainSize() * SpriteRepository.SizeInPixels * zoom > TerrainGrid.ActualHeight)))
+                ((cityGameEngine.GetTerrainSize() * SpriteRepository.ResourceInfo.SpriteSize * zoom > TerrainGrid.ActualHeight)))
             {
 
-                TerrainImage.Width = TerrainImage.Height = cityGameEngine.GetTerrainSize() * SpriteRepository.SizeInPixels * zoom;
+                TerrainImage.Width = TerrainImage.Height = cityGameEngine.GetTerrainSize() * SpriteRepository.ResourceInfo.SpriteSize * zoom;
             }
 
             //lock scroll view            

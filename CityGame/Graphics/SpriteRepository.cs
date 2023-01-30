@@ -23,20 +23,6 @@ with OWLOS. If not, see < https://www.gnu.org/licenses/>.
 
 GitHub: https://github.com/KirinDenis/owlos
 
-(Этот файл — часть Ready IoT Solution - OWLOS.
-
-OWLOS - свободная программа: вы можете перераспространять ее и/или изменять
-ее на условиях Стандартной общественной лицензии GNU в том виде, в каком она
-была опубликована Фондом свободного программного обеспечения; версии 3
-лицензии, любой более поздней версии.
-
-OWLOS распространяется в надежде, что она будет полезной, но БЕЗО ВСЯКИХ
-ГАРАНТИЙ; даже без неявной гарантии ТОВАРНОГО ВИДА или ПРИГОДНОСТИ ДЛЯ
-ОПРЕДЕЛЕННЫХ ЦЕЛЕЙ.
-Подробнее см.в Стандартной общественной лицензии GNU.
-
-Вы должны были получить копию Стандартной общественной лицензии GNU вместе с
-этой программой. Если это не так, см. <https://www.gnu.org/licenses/>.)
 --------------------------------------------------------------------------------------*/
 
 
@@ -51,64 +37,47 @@ namespace CityGame.Graphics
 {
     public class SpriteRepository
     {
-        /// <summary>
-        /// Size of one sprite at sprite's image
-        /// </summary>
-        /// 
-        public static ushort SizeInPixels = 16;
-        /// <summary>
-        /// sprite's count at row 
-        /// </summary>
-        private static short _Width = -1;
+        private static string spritesImageFilePath = @"\Resources\resources256.bmp";
 
-        private static short _Height = -1;
+        private const int spriteSize = 16;
 
-        public static int Width
+        private static ResourceInfoDTO _resourceInfo = GetResourceInfo();
+        public static ResourceInfoDTO ResourceInfo
         {
             get
             {
-                if (_Width == -1)
-                {
-                    CalcCounters();
-                }
-                return _Width;
+                return _resourceInfo;
             }
         }
-
-        public static int Height
-        {
-            get
-            {
-                if (_Height == -1)
-                {
-                    CalcCounters();
-                }
-                return _Height;
-            }
-        }
-
-        /// <summary>
-        /// Путь к файлу с иконками
-        /// </summary>
-        public static string spritesImageFilePath = @"\Resources\resources256.bmp";
         private static Bitmap? source = null;
 
         private static readonly Dictionary<Point, BitmapImage> bufferBitmaps = new Dictionary<Point, BitmapImage>();
         private static readonly Dictionary<Point, byte[]> bufferPixels = new Dictionary<Point, byte[]>();
 
-        private static void CalcCounters()
+        private static ResourceInfoDTO GetResourceInfo()
         {
             if (source == null)
             {
                 source = new Bitmap(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + spritesImageFilePath);
             }
 
-            _Width = (short)(source.Width / SizeInPixels);
-            _Height = (short)(source.Height / SizeInPixels);
+            return new ResourceInfoDTO()
+            {
+                Width = source.Width,
+                Height = source.Height,
+                CountX = source.Width / spriteSize,
+                CountY = source.Height / spriteSize,
+                SpriteSize = spriteSize
+            };
         }
 
         public static byte[] GetPixels(int x, int y)
         {
+            if ((x >= ResourceInfo.CountX) || (y >= ResourceInfo.CountY))
+            {
+                return null;
+            }
+
             if (bufferPixels.ContainsKey(new Point(x, y)))
             {
                 return bufferPixels[new Point(x, y)];
@@ -122,11 +91,9 @@ namespace CityGame.Graphics
 
             using (MemoryStream memory = new MemoryStream())
             {
-
-                source.Clone(new Rectangle(x * SizeInPixels, y * SizeInPixels, SizeInPixels, SizeInPixels), source.PixelFormat).Save(memory, System.Drawing.Imaging.ImageFormat.Png);
+                source.Clone(new Rectangle(x * spriteSize, y * spriteSize, spriteSize, spriteSize), source.PixelFormat).Save(memory, System.Drawing.Imaging.ImageFormat.Png);
                 memory.Position = 0;
                 BitmapImage bitmapimage = new BitmapImage();
-
 
                 bitmapimage.BeginInit();
                 bitmapimage.StreamSource = memory;
@@ -139,16 +106,12 @@ namespace CityGame.Graphics
             return bufferPixels[new Point(x, y)];
         }
 
-        /// <summary>
-        /// Получить иконку по относительным координатом внутри картинки с иконками
-        /// Координаты НЕ В ПИКСЕЛЯХ, а в количестве иконк
-        /// </summary>
-        /// <param name="x">номер иконки по X от 0..Width</param>
-        /// <param name="y">номер иконки по Y от 0..NULL POINTER EXCEPTION</param>
-        /// <returns></returns>
         public static BitmapImage? GetSprite(int x, int y)
         {
-
+            if ((x >= ResourceInfo.CountX) || (y >= ResourceInfo.CountY))
+            {
+                return null;
+            }
 
             if (bufferBitmaps.ContainsKey(new Point(x, y)))
             {
@@ -164,7 +127,7 @@ namespace CityGame.Graphics
             BitmapImage bitmapimage;
             using (MemoryStream memory = new MemoryStream())
             {
-                source.Clone(new Rectangle(x * SizeInPixels, y * SizeInPixels, SizeInPixels, SizeInPixels), source.PixelFormat).Save(memory, System.Drawing.Imaging.ImageFormat.Png);
+                source.Clone(new Rectangle(x * spriteSize, y * spriteSize, spriteSize, spriteSize), source.PixelFormat).Save(memory, System.Drawing.Imaging.ImageFormat.Png);
                 memory.Position = 0;
                 bitmapimage = new BitmapImage();
                 bitmapimage.BeginInit();
@@ -189,19 +152,7 @@ namespace CityGame.Graphics
             else
             {
                 return null;
-            }        
-        }
-
-        /// <summary>
-        /// Получить иконку по ее порядковому нимеру, слева направа сверху вниз
-        /// </summary>
-        /// <param name="number">номер иконки от 0..OUT OF RANGE</param>
-        /// <returns></returns>
-        public static BitmapImage? GetSprite(int number)
-        {
-            int x = number - number / Width * Width;
-            int y = number / Width;
-            return GetSprite(x, y);
+            }
         }
     }
 }

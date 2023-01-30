@@ -14,22 +14,22 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             
-            <ColumnDefinition Width="350"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="350"/>
             <ColumnDefinition Width="2"/>
             <ColumnDefinition Width="350"/>
             
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Background="#FFCCD5F0">
+        <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Background="#FFCCD5F0">
             <TextBlock Text="Sprite's groups" FontWeight="Bold"/>
         </StackPanel>
 
-        <TreeView x:Name="SpriteGroupsTreeView" Grid.Column="0" Grid.Row="1" />
+        <TreeView x:Name="SpriteGroupsTreeView" Grid.Column="1" Grid.Row="1" />
 
 
 
-        <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Background="#FFCCD5F0">
+        <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Background="#FFCCD5F0">
             <TextBlock Text="Resources map " FontWeight="Bold"/>
             <StackPanel Width="16" />
             <TextBlock x:Name="ResourceMapModeTextBlock" Text="[SELECT MODE]" FontWeight="Bold" Foreground="#FFFF004D"/>
@@ -39,10 +39,10 @@
             <TextBlock x:Name="SpriteModeTextBlock" Text="Selected sprite edit" FontWeight="Bold"/>
         </StackPanel>
 
-        <Image x:Name="ResourceImage" Source="/Resources/resources.png" MouseMove="ResourceImage_MouseMove" RenderOptions.BitmapScalingMode="NearestNeighbor" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1" MouseDown="ResourceImage_MouseDown" />
-        <Border x:Name="ResourceSelectorBorder" Width="16" Height="16" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="#FF00E600" BorderThickness="2,2,2,2"/>
+        <Image x:Name="ResourceImage" RenderOptions.BitmapScalingMode="NearestNeighbor" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1" PreviewMouseDown="ResourceImage_PreviewMouseDown" PreviewMouseMove="ResourceImage_PreviewMouseMove" />
+        <Border x:Name="ResourceSelectorBorder" Width="16" Height="16" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="#FF00E600" BorderThickness="2,2,2,2"/>
 
-        <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center">
+        <StackPanel Grid.Column="0" Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center">
             <TextBlock x:Name="SourceImageInfoTextBlock" Text="Image 1000x1000" FontWeight="Bold"/>
             <StackPanel Width="16" />
             <TextBlock x:Name="SourceSpriteInfoTextBlock" Text="Sprite 16x16" Foreground="#FF3B4F81"/>
@@ -69,9 +69,7 @@
                         <RowDefinition Height="24"/>
                         <RowDefinition Height="24"/>
                         <RowDefinition Height="24"/>
-                        <RowDefinition Height="24"/>
-                        <RowDefinition Height="24"/>
-                        <RowDefinition Height="24"/>
+
                         <RowDefinition Height="24"/>
                         <RowDefinition Height="24"/>
                         <RowDefinition Height="32"/>
@@ -80,33 +78,20 @@
                     <TextBlock Text="Position" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" />
                     <TextBlock x:Name="SpriteInfoPositionTextBlock" Text="1:1" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" />
 
-                    <TextBlock Text="Name" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" />
-                    <TextBox x:Name="SpriteInfoNameTextBox" Text="SpriteInfoNameTextBox" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" TextChanged="SpriteInfoNameTextBox_TextChanged" />
-                    <TextBlock x:Name="GroupNotLinkedTextBlock" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Text="Warning: Group not link to the game object"  VerticalAlignment="Center" Foreground="#FFF50808" FontWeight="Bold" Visibility="Hidden"/>
-
-                    <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Right">
-                        <Button x:Name="NewSprite" Content="New" Click="NewSprite_Click" />
-                    </StackPanel>
-
-                    <TextBlock Text="Animatione" Grid.Column="0" Grid.Row="4" VerticalAlignment="Center" />
-                    <ComboBox x:Name="AnimationFrameComboBox" Text="SpriteInfoNameTextBox" Grid.Column="1" Grid.Row="4" VerticalAlignment="Center"  SelectedIndex="0" SelectionChanged="AnimationFrameComboBox_SelectionChanged">
-                        <ComboBoxItem>0</ComboBoxItem>
-                        <ComboBoxItem>1</ComboBoxItem>
-                        <ComboBoxItem>2</ComboBoxItem>
-                        <ComboBoxItem>3</ComboBoxItem>
-                        <ComboBoxItem>4</ComboBoxItem>
-                        <ComboBoxItem>5</ComboBoxItem>
-                        <ComboBoxItem>6</ComboBoxItem>
-                        <ComboBoxItem>7</ComboBoxItem>
-                        <ComboBoxItem>7</ComboBoxItem>
-                        <ComboBoxItem>7</ComboBoxItem>
+                    <TextBlock Text="Animation frame" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" />
+                    <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
+                    <ComboBox x:Name="AnimationFrameComboBox" Text="SpriteInfoNameTextBox" VerticalAlignment="Center" Width="90"  SelectedIndex="0" SelectionChanged="AnimationFrameComboBox_SelectionChanged">
                     </ComboBox>
-
-                    <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="5" VerticalAlignment="Center" HorizontalAlignment="Right">
-                        <Button x:Name="SaveSpritesButton" Content="Backup"  Click="SaveSpritesButton_Click" />
+                        <Button x:Name="AddAnimationFrameButton" Width="24" Content="+" Margin="10,0" Click="AddAnimationFrameButton_Click"/>
+                        <Button x:Name="DeleteAnimationFrameButton" Width="24" Content="-" Click="DeleteAnimationFrameButton_Click" />
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="6">
+                    <StackPanel Orientation="Horizontal" Grid.ColumnSpan="2" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Right">
+                        <TextBlock Text="select sprites form group 0:0 position 3x3 ->" VerticalAlignment="Center" />
+                        <Button x:Name="AutoSelectSpritesButton" Content="Auto select" Click="AutoSelectSpritesButton_Click"   />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3">
                         <Button x:Name="GroupWidthDownButton" Content="-W" Width="25" Click="GroupWidthDownButton_Click" />
                         <TextBlock x:Name="GroupWidthTextBlock" Text="1" Width="25" VerticalAlignment="Center" FontWeight="Bold" HorizontalAlignment="Center" TextAlignment="Center" />
                         <Button x:Name="GroupWidthUpButton" Content="W+" Width="25" Click="GroupWidthUpButton_Click"/>
@@ -114,10 +99,10 @@
                         <Button x:Name="GroupHeightDownButton" Content="-H" Width="25" Click="GroupHeightDownButton_Click"/>
                         <TextBlock x:Name="GroupHeightTextBlock" Text="1" Width="25" VerticalAlignment="Center" FontWeight="Bold" HorizontalAlignment="Center" TextAlignment="Center" />
                         <Button x:Name="GroupHeightUpButton" Content="H+" Width="25" Click="GroupHeightUpButton_Click"/>
-                        <TextBlock Text="Group area size" VerticalAlignment="Center" Margin="10,0" />
+                        <TextBlock Text="Group area size" VerticalAlignment="Center" Margin="10,0" Foreground="#FF3FC80D" />
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="7">
+                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="4">
                         <Button x:Name="GroupCenterXDownButton" Content="-X" Width="25" Click="GroupCenterXDownButton_Click"  />
                         <TextBlock x:Name="GroupCenterXTextBlock" Text="1" Width="25" VerticalAlignment="Center" FontWeight="Bold" HorizontalAlignment="Center" TextAlignment="Center" />
                         <Button x:Name="GroupCenterXhUpButton" Content="X+" Width="25" Click="GroupCenterXhUpButton_Click" />
@@ -125,7 +110,7 @@
                         <Button x:Name="GroupCenterYDownButton" Content="-Y" Width="25" Click="GroupCenterYDownButton_Click" />
                         <TextBlock x:Name="GroupCenterYTextBlock" Text="1" Width="25" VerticalAlignment="Center" FontWeight="Bold" HorizontalAlignment="Center" TextAlignment="Center" />
                         <Button x:Name="GroupCenterYUpButton" Content="Y+" Width="25" Click="GroupCenterYUpButton_Click" />
-                        <TextBlock Text="Group position of center" VerticalAlignment="Center" Margin="10,0" />
+                        <TextBlock Text="Group position of center" VerticalAlignment="Center" Margin="10,0" Foreground="#FFE30E0E" />
                     </StackPanel>
 
                 </Grid>
@@ -150,8 +135,8 @@
                         <RowDefinition Height="50"/>
                         <RowDefinition Height="50"/>
                     </Grid.RowDefinitions>
-                    <Border x:Name="GroupSizeSelectorBorder" Background="#3F00E604" ></Border>
-                    <Border x:Name="GroupCenterSelectorBorder" Grid.Column="1" Grid.Row="1" Background="#57FF0000" ></Border>
+                    <Border x:Name="GroupSizeSelectorBorder" BorderBrush="#FF27FF14" BorderThickness="2,2,2,2"  ></Border>
+                    <Border x:Name="GroupCenterSelectorBorder" Grid.Column="1" Grid.Row="1" BorderThickness="2,2,2,2" BorderBrush="#FFFE1414" ></Border>
                 </Grid>
             </StackPanel>
 

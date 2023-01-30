@@ -1,15 +1,13 @@
 ﻿using CityGame.DTOs;
-using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Threading;
+using System.Windows.Media.Imaging;
 
 namespace CityGame
 {
@@ -27,14 +25,63 @@ namespace CityGame
         private int animationFrame = 1;
 
         private List<Border> groupSelectorBorders = new List<Border>();
+
+        /// <summary>
+        /// Sprite step for resource image view
+        /// </summary>
+        private const byte SP = 4;
+
+        private SolidColorBrush brush = new SolidColorBrush(Colors.Yellow);
+        private ColorAnimation animation = new ColorAnimation(Colors.Yellow, Color.FromArgb(0x00, 0xFF, 0xFF, 0xFF), new Duration(TimeSpan.FromSeconds(2)));
+
+        private GroupDTO? selectedGroup = null;
+        private PositionDTO selectedPosition = null;
+
         public ResourceExplorer()
         {
             InitializeComponent();
 
-            SourceImageInfoTextBlock.Text = string.Format("Image {0}x{1}", ResourceImage.Source.Width, ResourceImage.Source.Height);
-            SourceSpriteInfoTextBlock.Text = string.Format("Sprite {0}x{1}", SpriteRepository.SizeInPixels, SpriteRepository.SizeInPixels);
-            SourceCountsInfoTextBlock.Text = string.Format("Counts {0}x{1}", SpriteRepository.Width, SpriteRepository.Height);
+            SourceImageInfoTextBlock.Text = string.Format("Image {0}x{1}", SpriteRepository.ResourceInfo.Width, SpriteRepository.ResourceInfo.Height);
+            SourceSpriteInfoTextBlock.Text = string.Format("Sprite {0}x{1}", SpriteRepository.ResourceInfo.SpriteSize, SpriteRepository.ResourceInfo.SpriteSize);
+            SourceCountsInfoTextBlock.Text = string.Format("Counts {0}x{1}", SpriteRepository.ResourceInfo.CountX, SpriteRepository.ResourceInfo.CountY);
 
+
+            int resourceWidth = SpriteRepository.ResourceInfo.CountX * (SpriteRepository.ResourceInfo.SpriteSize + SP);
+            int resourceHeight = SpriteRepository.ResourceInfo.CountY * (SpriteRepository.ResourceInfo.SpriteSize + SP);
+
+            BitmapImage sImage = SpriteRepository.GetSprite(0, 0);
+            WriteableBitmap bitmapSource = new WriteableBitmap(
+                resourceWidth,
+                resourceHeight,
+                sImage.DpiX, sImage.DpiY, sImage.Format, sImage.Palette);
+
+            int spritePlaceSize = ((SpriteRepository.ResourceInfo.SpriteSize + SP) * (SpriteRepository.ResourceInfo.SpriteSize + SP)) * (sImage.Format.BitsPerPixel >> 0b10);
+            byte[] spriteBackground = new byte[spritePlaceSize];
+            for (int i = 0; i < spritePlaceSize; i++)
+            {
+                spriteBackground[i] = 0xFF;
+            }
+
+            for (int x = 0; x < SpriteRepository.ResourceInfo.CountX; x++)
+            {
+                for (int y = 0; y < SpriteRepository.ResourceInfo.CountY; y++)
+                {
+                    Int32Rect rect = new Int32Rect(x * (SpriteRepository.ResourceInfo.SpriteSize + SP), y * (SpriteRepository.ResourceInfo.SpriteSize + SP), SpriteRepository.ResourceInfo.SpriteSize + SP, SpriteRepository.ResourceInfo.SpriteSize + SP);
+                    bitmapSource.WritePixels(rect, spriteBackground, SpriteRepository.ResourceInfo.SpriteSize + SP, 0);
+
+                    rect = new Int32Rect(x * (SpriteRepository.ResourceInfo.SpriteSize + SP) + (SP >> 1), y * (SpriteRepository.ResourceInfo.SpriteSize + SP) + (SP >> 1), SpriteRepository.ResourceInfo.SpriteSize, SpriteRepository.ResourceInfo.SpriteSize);
+
+                    bitmapSource.WritePixels(rect, SpriteRepository.GetPixels(x, y), SpriteRepository.ResourceInfo.SpriteSize, 0);
+                }
+            }
+
+            DrawingVisual drawingVisual = new DrawingVisual();
+            using (DrawingContext drawingContext = drawingVisual.RenderOpen())
+            {
+                drawingContext.DrawImage(bitmapSource, new Rect(0, 0, resourceWidth, resourceHeight));
+                drawingContext.Close();
+            }
+            ResourceImage.Source = new DrawingImage(drawingVisual.Drawing);
             RefreshGroupsList();
 
             for (int x = 0; x < 7; x++)
@@ -66,7 +113,7 @@ namespace CityGame
                         x = (ushort)x,
                         y = (ushort)y
                     };
-                    textBlock.MouseDown += ResourceExplorer_MouseDown;
+                    textBlock.PreviewMouseDown += GroupSrite_MouseDown;
 
                     GroupViewGrid.Children.Add(textBlock);
 
@@ -76,60 +123,15 @@ namespace CityGame
                 }
             }
 
-            DispatcherTimer animationFrameTimer = new DispatcherTimer();
-            animationFrameTimer.Interval = TimeSpan.FromMilliseconds(300);
-            animationFrameTimer.Tick += AnimationFrameTimer_Tick;
-            animationFrameTimer.Start();
+            //GroupSizeSelectorBorder.SetValue(Panel.ZIndexProperty, -1);
+            //GroupCenterSelectorBorder.SetValue(Panel.ZIndexProperty, -1);
 
-        }
 
-        private void AnimationFrameTimer_Tick(object? sender, EventArgs e)
-        {
-
-            
-            /*
-            SpriteDTO sprite = (SpriteDTO)PreviewImage.Tag;
-            if (sprite != null)
-            {
-                animationFrame++;
-                List<SpriteDTO>? spriteItemModels = spriteBusiness.GetSpriteByGroupIndexAnimationOnly(sprite.groupId);
-                if ((spriteItemModels != null) && (spriteItemModels.Count > 0))
-                {
-                    List<SpriteDTO>? nextFrameSprites = spriteItemModels?.FindAll(p => p.animationFrame == animationFrame);
-
-                    if ((nextFrameSprites == null) || (nextFrameSprites?.Count == 0))
-                    {
-                        animationFrame = 1;
-                        nextFrameSprites = spriteItemModels?.FindAll(p => p.animationFrame == animationFrame);
-                    }
-                    if ((nextFrameSprites != null) || (nextFrameSprites?.Count == 0))
-                    {
-                        foreach (var spriteItemModel in nextFrameSprites)
-                        {
-                            if (spriteItemModel.groupPosition != null)
-                            {
-                                groupsPreviewImages[spriteItemModel.groupPosition.x, spriteItemModel.groupPosition.y].Source
-                                    = SpriteRepository.GetSprite(spriteItemModel.position.x, spriteItemModel.position.y);
-                            }
-                        }
-                    }
-                }
-            }
-            */
-        }
-
-        private void ResourceExplorer_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            /*
-            SpriteDTO sprite = (SpriteDTO)PreviewImage.Tag;
-
-            if (sprite != null)
-            {
-                sprite.groupPosition = (PositionDTO)((TextBlock)sender).Tag;
-                spriteBusiness.SetSprites();
-                RefreshGroupImages(sprite);
-            }
-            */
+            brush = new SolidColorBrush(Colors.Red);
+            animation = new ColorAnimation(Color.FromArgb(0xF0, 0xFF, 0x00, 0x00), Color.FromArgb(0x40, 0xFF, 0x00, 0x00), new Duration(TimeSpan.FromSeconds(0.5)));
+            animation.AutoReverse = true;
+            animation.RepeatBehavior = RepeatBehavior.Forever;
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
         }
 
         private PositionDTO GetSpritePositionByMouse(MouseEventArgs e)
@@ -137,66 +139,28 @@ namespace CityGame
             Point mousePosition = e.GetPosition(ResourceImage);
             return new PositionDTO()
             {
-                x = (ushort)((mousePosition.X / (ResourceImage.ActualWidth / ResourceImage.Source.Width)) / SpriteRepository.SizeInPixels),
-                y = (ushort)((mousePosition.Y / (ResourceImage.ActualHeight / ResourceImage.Source.Height)) / SpriteRepository.SizeInPixels)
+                x = (ushort)((mousePosition.X / (ResourceImage.ActualWidth / ResourceImage.Source.Width)) / (SpriteRepository.ResourceInfo.SpriteSize + SP)),
+                y = (ushort)((mousePosition.Y / (ResourceImage.ActualHeight / ResourceImage.Source.Height)) / (SpriteRepository.ResourceInfo.SpriteSize + SP))
             };
-        }
-
-        /// <summary>
-        /// Select sprite by mouse move over source image
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ResourceImage_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (!spriteEditMode)
-            {
-                PositionDTO position = GetSpritePositionByMouse(e);
-
-                GroupDTO? group = spriteBusiness.GetGroupBySpritePosition(position);
-                
-                PreviewImage.Tag = group;
-                PreviewImage.Source = SpriteRepository.GetSprite(position.x, position.y);
-
-                SpriteInfoPositionTextBlock.Text = string.Format("{0}:{1}", position.x, position.y);
-
-                foreach(TreeViewItem treeViewItem in SpriteGroupsTreeView.Items)
-                {
-                    if (treeViewItem.Tag == group)
-                    {
-                        treeViewItem.IsSelected = true;
-                    }
-                }    
-
-                //SpriteInfoGroupComboBox.SelectedIndex = sprite.groupId;
-
-                //AnimationFrameComboBox.SelectedIndex = sprite.animationFrame ?? 0;
-
-                RefreshGroupImages(group);
-
-                //Resourve image selector
-                Point actualMargin = ResourceImage.TransformToAncestor(MainGrid).Transform(new Point(0, 0));
-                actualMargin.X -= MainGrid.ColumnDefinitions[0].ActualWidth;
-                actualMargin.Y -= MainGrid.RowDefinitions[0].ActualHeight;
-
-                double actualSpriteSizeInPixels = ResourceImage.ActualWidth / SpriteRepository.Width;
-
-                double x = e.GetPosition(ResourceImage).X - (e.GetPosition(ResourceImage).X % actualSpriteSizeInPixels) + actualMargin.X;
-                double y = e.GetPosition(ResourceImage).Y - (e.GetPosition(ResourceImage).Y % actualSpriteSizeInPixels) + actualMargin.Y;
-
-                ResourceSelectorBorder.Width = ResourceSelectorBorder.Height = actualSpriteSizeInPixels;
-
-                ResourceSelectorBorder.Margin = new Thickness(x, y, 0, 0);
-            }
         }
 
         private void RefreshGroupsList()
         {
+
+            SpriteGroupsTreeView.Items.Clear();
+
+
             foreach (GroupDTO group in spriteBusiness.groups)
             {
                 TreeViewItem groupItem = new TreeViewItem();
                 groupItem.Tag = group;
                 groupItem.Header = group.Name;
+
+                if ((selectedGroup != null) && (selectedGroup == group))
+                {
+                    groupItem.IsSelected = true;
+                }
+
                 //Group sprites with animation frames to TreeViewItem 
                 foreach (GroupSpritesDTO groupSprites in group.Sprites)
                 {
@@ -238,57 +202,142 @@ namespace CityGame
                                 frameGrid.Children.Add(border);
                             }
                         }
-                    }                    
-                    frameItem.Items.Add(frameGrid);                    
+                    }
+                    frameItem.Items.Add(frameGrid);
                     groupItem.Items.Add(frameItem);
                     frameItem.Header = "Animation frame " + (groupItem.Items.Count);
 
-                    groupItem.Selected += GroupItem_Selected;
                 }
 
-
+                groupItem.Selected += GroupItem_Selected;
                 SpriteGroupsTreeView.Items.Add(groupItem);
             }
         }
 
-        private void RefreshGroupImages(GroupDTO group)
+        private void RefreshGroupSprites(GroupDTO? group)
         {
-            if (group == null) 
+            if (group == null)
             {
+                for (int x = 0; x < 7; x++)
+                {
+                    for (int y = 0; y < 7; y++)
+                    {
+                        groupsPreviewImages[x, y].Source = null;
+                    }
+                }
+
                 return;
-            } 
-                
-            GroupSpritesDTO sprites = spriteBusiness.GetSpritesByGroupIndex(group.Id);
+            }
+
+            GroupSpritesDTO sprites = spriteBusiness.GetSpritesByGroupIndex(group.Id, AnimationFrameComboBox.SelectedIndex);
             for (int x = 0; x < 7; x++)
             {
                 for (int y = 0; y < 7; y++)
                 {
-                    groupsPreviewImages[x, y].Source = SpriteRepository.GetSprite(sprites.Sprites[x,y]);
+                    groupsPreviewImages[x, y].Source = SpriteRepository.GetSprite(sprites.Sprites[x, y]);
                 }
             }
 
-            /*
-            if (sprite != null)
+        }
+
+        private void GroupSrite_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (selectedGroup != null)
             {
-                List<SpriteDTO>? spritesItems = spriteBusiness.GetSpriteByGroupIndex(sprite.groupId);
-                if (spritesItems != null)
+                PositionDTO groupPosition = (PositionDTO)((TextBlock)sender).Tag;
+
+                if (e.LeftButton == MouseButtonState.Pressed)
                 {
-                    foreach (SpriteDTO spriteItem in spritesItems)
+                    if (selectedPosition != null)
                     {
-                        if (spriteItem.groupPosition != null)
+                        if (selectedGroup.Sprites.Count == 0)
                         {
-                            if ((spriteItem.groupPosition.x >= 0) && (spriteItem.groupPosition.y >= 0))
-                            {
-                                groupsPreviewImages[spriteItem.groupPosition.x, spriteItem.groupPosition.y].Source = SpriteRepository.GetSprite(spriteItem.position.x, spriteItem.position.y);
-                            }
+                            AnimationFrameComboBox.Items.Add(1);
+                            AnimationFrameComboBox.SelectedIndex = 0;
+                            selectedGroup.Sprites.Add(new GroupSpritesDTO());
+                            spriteBusiness.SetGroups();
+                        }
+                        selectedGroup.Sprites[AnimationFrameComboBox.SelectedIndex].Sprites[groupPosition.x, groupPosition.y] = selectedPosition;
+                    }
+                }
+                else
+                if (e.RightButton == MouseButtonState.Pressed)
+                {
+                    selectedGroup.Sprites[AnimationFrameComboBox.SelectedIndex].Sprites[groupPosition.x, groupPosition.y] = null;
+                }
+                spriteBusiness.SetGroups();
+                RefreshGroupsList();
+                RefreshGroupSprites(selectedGroup);
+            }
+        }
+
+
+        /// <summary>
+        /// Select sprite by mouse move over source image
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ResourceImage_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            if (!spriteEditMode)
+            {
+                PositionDTO position = GetSpritePositionByMouse(e);
+
+                GroupDTO? group = spriteBusiness.GetGroupBySpritePosition(position);
+
+                if ((group == null) && (SpriteGroupsTreeView.SelectedItem != null))
+                {
+                    group = (GroupDTO)(((TreeViewItem)SpriteGroupsTreeView.SelectedItem).Tag);
+                }
+
+                selectedPosition = position;
+                selectedGroup = group;
+
+
+                PreviewImage.Source = SpriteRepository.GetSprite(position.x, position.y);
+
+                SpriteInfoPositionTextBlock.Text = string.Format("{0}:{1}", position.x, position.y);
+
+                if (group != null)
+                {
+                    foreach (TreeViewItem treeViewItem in SpriteGroupsTreeView.Items)
+                    {
+                        if (treeViewItem.Tag == group)
+                        {
+                            treeViewItem.IsSelected = true;
+                            break;
                         }
                     }
                 }
+                else
+                {
+                    //  (SpriteGroupsTreeView.Items[0] as TreeViewItem).IsSelected = true;
+                }
+
+                //SpriteInfoGroupComboBox.SelectedIndex = sprite.groupId;
+
+                //AnimationFrameComboBox.SelectedIndex = sprite.animationFrame ?? 0;
+
+
+
+                //Resourve image selector
+                Point actualMargin = ResourceImage.TransformToAncestor(MainGrid).Transform(new Point(0, 0));
+                // actualMargin.X -= MainGrid.ColumnDefinitions[0].ActualWidth;
+                actualMargin.Y -= MainGrid.RowDefinitions[0].ActualHeight;
+
+                double actualSpriteSizeInPixels = ResourceImage.ActualWidth / SpriteRepository.ResourceInfo.CountX;
+
+                double x = e.GetPosition(ResourceImage).X - (e.GetPosition(ResourceImage).X % actualSpriteSizeInPixels) + actualMargin.X;
+                double y = e.GetPosition(ResourceImage).Y - (e.GetPosition(ResourceImage).Y % actualSpriteSizeInPixels) + actualMargin.Y;
+
+                ResourceSelectorBorder.Width = ResourceSelectorBorder.Height = actualSpriteSizeInPixels;
+
+                ResourceSelectorBorder.Margin = new Thickness(x, y, 0, 0);
             }
-            */
         }
 
-        private void ResourceImage_MouseDown(object sender, MouseButtonEventArgs e)
+
+        private void ResourceImage_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             spriteEditMode = !spriteEditMode;
 
@@ -307,103 +356,87 @@ namespace CityGame
             }
         }
 
-        private void NewSprite_Click(object sender, RoutedEventArgs e)
-        {
-            /*
-            if (spriteBusiness.groups.Find(p => p.Equals(SpriteInfoGroupComboBox.Text)) == null)
-            {
-                GroupDTO groupDTO = new GroupDTO()
-                {
-                    Name = SpriteInfoGroupComboBox.Text,
-                    Width = ushort.Parse(GroupWidthTextBlock.Text),
-                    Height = ushort.Parse(GroupHeightTextBlock.Text),
-                    CenterX = ushort.Parse(GroupCenterXTextBlock.Text),
-                    CenterY = ushort.Parse(GroupCenterYTextBlock.Text),
-
-                };
-
-                spriteBusiness.AddGroup(groupDTO);
-                spriteBusiness.SetGroups();
-
-                SpriteInfoGroupComboBox.ItemsSource = spriteBusiness.groups;
-                SpriteInfoGroupComboBox.SelectedIndex = SpriteInfoGroupComboBox.Items.Count - 1;
-
-                SpriteDTO sprite = (SpriteDTO)PreviewImage.Tag;
-                sprite.groupId = SpriteInfoGroupComboBox.SelectedIndex;
-                spriteBusiness.SetSprites();
-                RefreshGroupImages(sprite);
-            }
-            */
-        }
-
-        private void SaveSpritesButton_Click(object sender, RoutedEventArgs e)
-        {
-            //spriteBusiness.SetSprites(DateTime.Now.ToString(" dd-M-yyyy HH-mm-ss"));
-        }
-
-        private void SpriteInfoGroupComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            /*
-            if (SpritesGroupEnum.CheckGroupName(SpriteInfoGroupComboBox.Text))
-            {
-                GroupNotLinkedTextBlock.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                GroupNotLinkedTextBlock.Visibility = Visibility.Hidden;
-            }
-
-            //TODO: read current size
-            GroupWidthTextBlock.Text = 1.ToString();
-            GroupHeightTextBlock.Text = 1.ToString();
-            RefreshGridSizeSelector();
-
-            SpriteDTO sprite = (SpriteDTO)PreviewImage.Tag;
-            if (sprite != null)
-            {
-                sprite.groupId = SpriteInfoGroupComboBox.SelectedIndex;
-                spriteBusiness.SetSprites();
-                RefreshGroupImages(sprite);
-            }
-            */
-        }
-
         private void AnimationFrameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            /*
-            SpriteDTO sprite = (SpriteDTO)PreviewImage.Tag;
-            if (sprite != null)
-            {
-                sprite.animationFrame = AnimationFrameComboBox.SelectedIndex;
-                spriteBusiness.SetSprites();
-                RefreshGroupImages(sprite);
-            }
-            */
+            RefreshGroupSprites(selectedGroup);
         }
 
-        private void SpriteInfoNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void GroupItem_Selected(object sender, RoutedEventArgs e)
         {
-            /*
-            SpriteDTO sprite = (SpriteDTO)PreviewImage.Tag;
-            if (sprite != null)
+            for (int i = 0; i < groupSelectorBorders.Count; i++)
             {
-                sprite.name = SpriteInfoNameTextBox.Text;
-                spriteBusiness.SetSprites();
-                RefreshGroupImages(sprite);
+                MainGrid.Children.Remove(groupSelectorBorders[i]);
+                groupSelectorBorders[i] = null;
             }
-            */
-        }
+            groupSelectorBorders.Clear();
 
-        private void SpriteInfoGroupComboBox_TextInput(object sender, TextCompositionEventArgs e)
-        {
-            SpriteInfoNameTextBox.Text = SpriteInfoNameTextBox.Text.ToLower();
+            selectedGroup = (GroupDTO)((TreeViewItem)sender).Tag;
+            if (selectedGroup != null)
+            {
+
+                // Create the Border that is the target of the animation.
+                SolidColorBrush animatedBrush = new SolidColorBrush();
+                animatedBrush.Color = Color.FromArgb(255, 0, 255, 0);
+
+                foreach (GroupSpritesDTO groupSprites in selectedGroup.Sprites)
+                {
+                    for (int x = 0; x < groupSprites.Sprites.GetLength(0); x++)
+                    {
+                        for (int y = 0; y < groupSprites.Sprites.GetLength(1); y++)
+                        {
+                            if (groupSprites.Sprites[x, y] != null)
+                            {
+                                Border border = new Border();
+
+                                double WH = ResourceImage.ActualHeight / SpriteRepository.ResourceInfo.CountX;
+
+                                border.Width = border.Height = WH;
+
+                                Point actualMargin = ResourceImage.TransformToAncestor(MainGrid).Transform(new Point(0, 0));
+                                actualMargin.X -= MainGrid.ColumnDefinitions[0].ActualWidth;
+                                actualMargin.Y -= MainGrid.RowDefinitions[0].ActualHeight;
+
+                                border.Margin = new Thickness(groupSprites.Sprites[x, y].x * WH + actualMargin.X, groupSprites.Sprites[x, y].y * WH + actualMargin.Y, 0, 0);
+                                border.HorizontalAlignment = HorizontalAlignment.Left;
+                                border.VerticalAlignment = VerticalAlignment.Top;
+                                border.SetValue(Grid.ColumnProperty, 1);
+                                border.SetValue(Grid.RowProperty, 1);
+                                border.BorderThickness = new Thickness(SP / 2);
+                                border.BorderBrush = brush;
+
+                                groupSelectorBorders.Add(border);
+                                MainGrid.Children.Add(border);
+                            }
+                        }
+                    }
+                }
+            }
+            
+
+
+            if (selectedGroup != null)
+            {
+                GroupWidthTextBlock.Text = selectedGroup.Width.ToString();
+                GroupHeightTextBlock.Text = selectedGroup.Height.ToString();
+                GroupCenterXTextBlock.Text = selectedGroup.CenterX.ToString();
+                GroupCenterYTextBlock.Text = selectedGroup.CenterY.ToString();
+                RefreshGridSizeSelector();
+
+                AnimationFrameComboBox.Items.Clear();
+                for(int i=0; i < selectedGroup.Sprites.Count;i++)
+                {
+                    AnimationFrameComboBox.Items.Add(i + 1);
+                }
+                AnimationFrameComboBox.SelectedIndex = 0;
+            }
+            RefreshGroupSprites(selectedGroup);
         }
 
         private void GroupWidthUpButton_Click(object sender, RoutedEventArgs e)
         {
             if (int.Parse(GroupWidthTextBlock.Text) < 7)
             {
-                GroupWidthTextBlock.Text = (int.Parse(GroupWidthTextBlock.Text) + 1).ToString();
+                GroupWidthTextBlock.Text = (ushort.Parse(GroupWidthTextBlock.Text) + 1).ToString();
             }
             RefreshGridSizeSelector();
         }
@@ -439,6 +472,17 @@ namespace CityGame
         {
             GroupSizeSelectorBorder.SetValue(Grid.ColumnSpanProperty, int.Parse(GroupWidthTextBlock.Text));
             GroupSizeSelectorBorder.SetValue(Grid.RowSpanProperty, int.Parse(GroupHeightTextBlock.Text));
+            GroupCenterSelectorBorder.SetValue(Grid.ColumnProperty, int.Parse(GroupCenterXTextBlock.Text));
+            GroupCenterSelectorBorder.SetValue(Grid.RowProperty, int.Parse(GroupCenterYTextBlock.Text));
+
+            if (selectedGroup != null)
+            {
+                selectedGroup.Width = ushort.Parse(GroupWidthTextBlock.Text);
+                selectedGroup.Height = ushort.Parse(GroupHeightTextBlock.Text);
+                selectedGroup.CenterX = ushort.Parse(GroupCenterXTextBlock.Text);
+                selectedGroup.CenterY = ushort.Parse(GroupCenterYTextBlock.Text);
+            }
+
         }
 
         private void GroupCenterXDownButton_Click(object sender, RoutedEventArgs e)
@@ -447,7 +491,7 @@ namespace CityGame
             {
                 GroupCenterXTextBlock.Text = (int.Parse(GroupCenterXTextBlock.Text) - 1).ToString();
             }
-            RefreshGridCenterSelector();
+            RefreshGridSizeSelector();
         }
         private void GroupCenterXhUpButton_Click(object sender, RoutedEventArgs e)
         {
@@ -455,7 +499,7 @@ namespace CityGame
             {
                 GroupCenterXTextBlock.Text = (int.Parse(GroupCenterXTextBlock.Text) + 1).ToString();
             }
-            RefreshGridCenterSelector();
+            RefreshGridSizeSelector();
         }
 
         private void GroupCenterYDownButton_Click(object sender, RoutedEventArgs e)
@@ -464,7 +508,7 @@ namespace CityGame
             {
                 GroupCenterYTextBlock.Text = (int.Parse(GroupCenterYTextBlock.Text) - 1).ToString();
             }
-            RefreshGridCenterSelector();
+            RefreshGridSizeSelector();
         }
 
         private void GroupCenterYUpButton_Click(object sender, RoutedEventArgs e)
@@ -473,84 +517,62 @@ namespace CityGame
             {
                 GroupCenterYTextBlock.Text = (int.Parse(GroupCenterYTextBlock.Text) + 1).ToString();
             }
-            RefreshGridCenterSelector();
-        }
-        private void RefreshGridCenterSelector()
-        {
-            GroupCenterSelectorBorder.SetValue(Grid.ColumnProperty, int.Parse(GroupCenterXTextBlock.Text));
-            GroupCenterSelectorBorder.SetValue(Grid.RowProperty, int.Parse(GroupCenterYTextBlock.Text));
+            RefreshGridSizeSelector();
         }
 
-        private void GroupItem_Selected(object sender, RoutedEventArgs e)
+        private void AddAnimationFrameButton_Click(object sender, RoutedEventArgs e)
         {
-            GroupDTO group = (GroupDTO)((TreeViewItem)sender).Tag;
-            if (group != null)
+            if (selectedGroup != null)
             {
-                for(int i=0; i< groupSelectorBorders.Count; i++)
+                selectedGroup.Sprites.Add(new GroupSpritesDTO());
+                spriteBusiness.SetGroups();
+                RefreshGroupsList();
+                GroupItem_Selected(SpriteGroupsTreeView.SelectedItem, null);
+                AnimationFrameComboBox.SelectedIndex = selectedGroup.Sprites.Count - 1;
+            }
+        }
+
+        private void DeleteAnimationFrameButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (selectedGroup != null)
+            {
+                selectedGroup.Sprites.RemoveAt(AnimationFrameComboBox.SelectedIndex);
+                spriteBusiness.SetGroups();
+                RefreshGroupsList();
+                GroupItem_Selected(SpriteGroupsTreeView.SelectedItem, null);
+            }
+
+        }
+
+        private void AutoSelectSpritesButton_Click(object sender, RoutedEventArgs e)
+        {
+            if ((selectedPosition != null) && (selectedGroup != null))
+            {
+                int offset = selectedPosition.y * SpriteRepository.ResourceInfo.CountX + selectedPosition.x;
+
+                int gx = 0;
+                int gy = 0;
+
+                for (int i= offset; i < offset + 3 * 3; i++)
                 {
-                    MainGrid.Children.Remove(groupSelectorBorders[i]);
-                    groupSelectorBorders[i] = null;
-                }
-                groupSelectorBorders.Clear();
-
-                // Create the Border that is the target of the animation.
-                SolidColorBrush animatedBrush = new SolidColorBrush();
-                animatedBrush.Color = Color.FromArgb(255, 0, 255, 0);
-
-
-                foreach (GroupSpritesDTO groupSprites in group.Sprites)
-                {
-                    for (int x = 0; x < groupSprites.Sprites.GetLength(0); x++)
+                    PositionDTO selPposition = new PositionDTO()
                     {
-                        for (int y = 0; y < groupSprites.Sprites.GetLength(1); y++)
-                        {
-                            if (groupSprites.Sprites[x, y] != null)
-                            {
-                                Border border = new Border();
-
-                                double WH = ResourceImage.ActualHeight / SpriteRepository.Width;
-
-            //SourceImageInfoTextBlock.Text = string.Format("Image {0}x{1}", ResourceImage.Source.Width, ResourceImage.Source.Height);
-              //                  SourceSpriteInfoTextBlock.Text = string.Format("Sprite {0}x{1}", SpriteRepository.SizeInPixels, SpriteRepository.SizeInPixels);
-                //                SourceCountsInfoTextBlock.Text = string.Format("Counts {0}x{1}", SpriteRepository.Width, SpriteRepository.Height);
-
-
-                                border.Width = border.Height = WH;
-
-                                Point actualMargin = ResourceImage.TransformToAncestor(MainGrid).Transform(new Point(0, 0));
-                                actualMargin.X -= MainGrid.ColumnDefinitions[0].ActualWidth;
-                                actualMargin.Y -= MainGrid.RowDefinitions[0].ActualHeight;
-
-                                border.Margin = new Thickness(groupSprites.Sprites[x, y].x * WH + actualMargin.X, groupSprites.Sprites[x, y].y * WH + actualMargin.Y, 0, 0);
-                                border.HorizontalAlignment = HorizontalAlignment.Left;
-                                border.VerticalAlignment = VerticalAlignment.Top;                                
-                                border.SetValue(Grid.ColumnProperty, 1);
-                                border.SetValue(Grid.RowProperty, 1);
-                                //border.BorderBrush = Brushes.Yellow;
-                                border.BorderThickness = new Thickness(1);
-
-                                
-
-
-                                SolidColorBrush brush = new SolidColorBrush(Colors.Red);
-                                border.Background = brush;
-
-                                ColorAnimation animation = new ColorAnimation(Color.FromArgb(0xA0, 0xFF, 0x00,0x00), Color.FromArgb(0x70, 0xFF, 0x00, 0x00),  new Duration(TimeSpan.FromSeconds(2)));
-                                animation.AutoReverse = true;
-                                animation.RepeatBehavior = RepeatBehavior.Forever;
-                                brush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-
-                                
-
-                                groupSelectorBorders.Add(border);
-                                MainGrid.Children.Add(border);
-
-
-                            }
-                        }
+                        x = (ushort)(i - (i / SpriteRepository.ResourceInfo.CountX * SpriteRepository.ResourceInfo.CountX)),
+                        y = (ushort)(i / SpriteRepository.ResourceInfo.CountX)
+                    };
+                    selectedGroup.Sprites[AnimationFrameComboBox.SelectedIndex].Sprites[gx, gy] = selPposition;
+                    gx++;
+                    if (gx > 2)
+                    {
+                        gx = 0;
+                        gy++;
                     }
                 }
             }
+            spriteBusiness.SetGroups();
+            RefreshGroupsList();
+            GroupItem_Selected(SpriteGroupsTreeView.SelectedItem, null);
+
         }
     }
 }

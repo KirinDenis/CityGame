@@ -106,7 +106,19 @@ namespace CityGame.Graphics
             return bufferPixels[new Point(x, y)];
         }
 
-        public static BitmapImage? GetSprite(int x, int y)
+        public static byte[]? GetPixels(PositionDTO position)
+        {
+            if (position != null)
+            {
+                return GetPixels(position.x, position.y);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+            public static BitmapImage? GetSprite(int x, int y)
         {
             if ((x >= ResourceInfo.CountX) || (y >= ResourceInfo.CountY))
             {

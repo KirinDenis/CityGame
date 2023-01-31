@@ -2,12 +2,16 @@
 using CityGame.Graphics;
 using System;
 using System.Collections.Generic;
+
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+using System.Xml.Linq;
 
 namespace CityGame
 {
@@ -37,6 +41,9 @@ namespace CityGame
         private GroupDTO? selectedGroup = null;
         private PositionDTO selectedPosition = null;
 
+        private int AnimationFrameCount = 0;
+        private WriteableBitmap animationPriviewBitmap = null;
+
         public ResourceExplorer()
         {
             InitializeComponent();
@@ -53,6 +60,11 @@ namespace CityGame
             WriteableBitmap bitmapSource = new WriteableBitmap(
                 resourceWidth,
                 resourceHeight,
+                sImage.DpiX, sImage.DpiY, sImage.Format, sImage.Palette);
+
+            animationPriviewBitmap = new WriteableBitmap(
+                SpriteRepository.ResourceInfo.SpriteSize * 7,
+                SpriteRepository.ResourceInfo.SpriteSize * 7,
                 sImage.DpiX, sImage.DpiY, sImage.Format, sImage.Palette);
 
             int spritePlaceSize = ((SpriteRepository.ResourceInfo.SpriteSize + SP) * (SpriteRepository.ResourceInfo.SpriteSize + SP)) * (sImage.Format.BitsPerPixel >> 0b10);
@@ -132,6 +144,12 @@ namespace CityGame
             animation.AutoReverse = true;
             animation.RepeatBehavior = RepeatBehavior.Forever;
             brush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(300);
+            timer.Tick += Timer_Tick;
+            timer.Start();
+
         }
 
         private PositionDTO GetSpritePositionByMouse(MouseEventArgs e)
@@ -271,6 +289,55 @@ namespace CityGame
             }
         }
 
+        private void Timer_Tick(object? sender, EventArgs e)
+        {
+            if (AnimationPreviewImage.Tag != selectedGroup)
+            {
+
+                animationPriviewBitmap.WritePixels(new Int32Rect()
+                {
+                    X = 0,
+                    Y = 0,
+                    Width = animationPriviewBitmap.PixelWidth,
+                    Height = animationPriviewBitmap.PixelHeight
+                }, Enumerable.Repeat((byte)0xFF, animationPriviewBitmap.PixelWidth * animationPriviewBitmap.PixelHeight * (animationPriviewBitmap.Format.BitsPerPixel / 8)).ToArray(), animationPriviewBitmap.PixelWidth, 0);
+                
+                AnimationPreviewImage.Tag = selectedGroup;
+            }
+            if (selectedGroup != null)
+            {
+                AnimationFrameCount++;
+                if (AnimationFrameCount > selectedGroup.Sprites.Count - 1)
+                {
+                    AnimationFrameCount = 0;
+                }
+
+                GroupSpritesDTO sprites = spriteBusiness.GetSpritesByGroupIndex(selectedGroup.Id, AnimationFrameCount);
+                for (int x = 0; x < 7; x++)
+                {
+                    for (int y = 0; y < 7; y++)
+                    {
+                        Int32Rect rect = new Int32Rect(x * SpriteRepository.ResourceInfo.SpriteSize, y * SpriteRepository.ResourceInfo.SpriteSize, SpriteRepository.ResourceInfo.SpriteSize, SpriteRepository.ResourceInfo.SpriteSize);
+
+                        byte[]? pixels = SpriteRepository.GetPixels(sprites.Sprites[x, y]);
+
+                        if (pixels != null)
+                        {
+                            animationPriviewBitmap.WritePixels(rect, pixels, SpriteRepository.ResourceInfo.SpriteSize, 0);
+                        }
+                    }
+                }
+                DrawingVisual drawingVisual = new DrawingVisual();
+                using (DrawingContext drawingContext = drawingVisual.RenderOpen())
+                {
+                    drawingContext.DrawImage(animationPriviewBitmap, new Rect(0, 0, SpriteRepository.ResourceInfo.SpriteSize * 7, SpriteRepository.ResourceInfo.SpriteSize * 7));
+                    drawingContext.Close();
+                }
+                AnimationPreviewImage.Source = new DrawingImage(drawingVisual.Drawing);
+
+
+            }
+        }
 
         /// <summary>
         /// Select sprite by mouse move over source image
@@ -411,7 +478,7 @@ namespace CityGame
                     }
                 }
             }
-            
+
 
 
             if (selectedGroup != null)
@@ -423,7 +490,7 @@ namespace CityGame
                 RefreshGridSizeSelector();
 
                 AnimationFrameComboBox.Items.Clear();
-                for(int i=0; i < selectedGroup.Sprites.Count;i++)
+                for (int i = 0; i < selectedGroup.Sprites.Count; i++)
                 {
                     AnimationFrameComboBox.Items.Add(i + 1);
                 }
@@ -553,7 +620,7 @@ namespace CityGame
                 int gx = 0;
                 int gy = 0;
 
-                for (int i= offset; i < offset + 3 * 3; i++)
+                for (int i = offset; i < offset + 3 * 3; i++)
                 {
                     PositionDTO selPposition = new PositionDTO()
                     {

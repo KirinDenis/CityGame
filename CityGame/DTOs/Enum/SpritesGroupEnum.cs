@@ -24,6 +24,17 @@
         public const string resident8 = "resident8";
         public const string resident9 = "resident9";
 
+        public const string resident10 = "resident10";
+        public const string resident11 = "resident11";
+        public const string resident12 = "resident12";
+        public const string resident13 = "resident13";
+        public const string resident14 = "resident14";
+        public const string resident15 = "resident15";
+        public const string resident16 = "resident16";
+        public const string resident17 = "resident17";
+        public const string resident18 = "resident18";
+        
+
         public const string comercial0 = "comercial0";
         public const string comercial1 = "comercial1";
         public const string comercial2 = "comercial2";
@@ -34,6 +45,19 @@
         public const string comercial7 = "comercial7";
         public const string comercial8 = "comercial8";
         public const string comercial9 = "comercial9";
+
+        public const string comercial10 = "comercial10";
+        public const string comercial11 = "comercial11";
+        public const string comercial12 = "comercial12";
+        public const string comercial13 = "comercial13";
+        public const string comercial14 = "comercial14";
+        public const string comercial15 = "comercial15";
+        public const string comercial16 = "comercial16";
+        public const string comercial17 = "comercial17";
+        public const string comercial18 = "comercial18";
+        public const string comercial19 = "comercial19";
+        public const string comercial20 = "comercial20";
+
 
         public const string industrial0 = "industrial0";
         public const string industrial1 = "industrial1";
@@ -56,6 +80,10 @@
         public const string airport = "airport";
 
         public const string garden = "garden";
+
+        public const string fire = "fire";
+
+        public const string explosion = "explosion";
 
         public const string stadium = "stadium";
 
@@ -80,6 +108,17 @@
             resident8,
             resident9,
 
+            resident10,
+            resident11,
+            resident12,
+            resident13,
+            resident14,
+            resident15,
+            resident16,
+            resident17,
+            resident18,
+            
+
             comercial0,
             comercial1,
             comercial2,
@@ -90,6 +129,19 @@
             comercial7,
             comercial8,
             comercial9,
+
+            comercial10,
+            comercial11,
+            comercial12,
+            comercial13,
+            comercial14,
+            comercial15,
+            comercial16,
+            comercial17,
+            comercial18,
+            comercial19,
+            comercial20,
+
 
             industrial0,
             industrial1,
@@ -112,6 +164,8 @@
             airport,
 
             garden,
+            fire,
+            explosion,
 
             stadium,
 

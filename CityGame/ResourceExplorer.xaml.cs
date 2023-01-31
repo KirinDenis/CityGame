@@ -628,6 +628,15 @@ namespace CityGame
                         x = (ushort)(i - (i / SpriteRepository.ResourceInfo.CountX * SpriteRepository.ResourceInfo.CountX)),
                         y = (ushort)(i / SpriteRepository.ResourceInfo.CountX)
                     };
+
+                    if (selectedGroup.Sprites.Count == 0)
+                    {
+                        selectedGroup.Sprites.Add(new GroupSpritesDTO());
+                        AnimationFrameComboBox.Items.Add(1);
+                        AnimationFrameComboBox.SelectedIndex = 0;
+                    }
+
+
                     selectedGroup.Sprites[AnimationFrameComboBox.SelectedIndex].Sprites[gx, gy] = selPposition;
                     gx++;
                     if (gx > 2)

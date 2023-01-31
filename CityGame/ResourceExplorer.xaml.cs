@@ -303,10 +303,11 @@ namespace CityGame
                 }, Enumerable.Repeat((byte)0xFF, animationPriviewBitmap.PixelWidth * animationPriviewBitmap.PixelHeight * (animationPriviewBitmap.Format.BitsPerPixel / 8)).ToArray(), animationPriviewBitmap.PixelWidth, 0);
                 
                 AnimationPreviewImage.Tag = selectedGroup;
+                AnimationFrameCount = 0;
             }
             if (selectedGroup != null)
             {
-                AnimationFrameCount++;
+                
                 if (AnimationFrameCount > selectedGroup.Sprites.Count - 1)
                 {
                     AnimationFrameCount = 0;
@@ -335,7 +336,7 @@ namespace CityGame
                 }
                 AnimationPreviewImage.Source = new DrawingImage(drawingVisual.Drawing);
 
-
+                AnimationFrameCount++;
             }
         }
 

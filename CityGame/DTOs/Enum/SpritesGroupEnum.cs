@@ -142,7 +142,6 @@
             comercial19,
             comercial20,
 
-
             industrial0,
             industrial1,
             industrial2,
@@ -178,11 +177,8 @@
             strange6,
             strange7 }; 
 
-
-
         public static string ByObjectType(ObjectType objectType)
-        {
-            
+        {            
             switch (objectType)
             {
                 case ObjectType.road: return road;

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -46,7 +47,7 @@ namespace CityGame
 
         private CityGameEngine cityGameEngine;
 
-        private int zoom = 2;
+        private double zoom = 2;
 
         int count = 0;
         DateTime enter;
@@ -60,16 +61,13 @@ namespace CityGame
 
             enter = DateTime.Now;
 
-            //new ResourceExplorer().Show();
+            if (SpriteRepository.ResourceInfo == null)
+            {
+                return;
+            }
 
             cityGameEngine = new CityGameEngine("new city", 100);
             cityGameEngine.RenderCompleted += CityGameEngine_RenderCompleted;
-
-
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(100);
-            timer.Tick += Timer_Tick;
-            timer.Start();
 
             //WaterLevelTextBox.Text = cityGameEngine.waterLevel.ToString();
             //RoughnessTextBox.Text = cityGameEngine.roughness.ToString();
@@ -79,6 +77,53 @@ namespace CityGame
             TerrainScroll.ScrollToVerticalOffset(TerrainImage.Width / 2.0f);
             TerrainScroll.ScrollToHorizontalOffset(TerrainImage.Height / 2.0f);
 
+            /*
+            this.Loaded += delegate
+            {
+                System.Timers.Timer timer = new System.Timers.Timer();
+                timer.Elapsed += delegate
+                {
+                    this.Dispatcher.Invoke(new Action(delegate
+                    {
+                        Mouse.Capture(this);
+                        Point pointToWindow = Mouse.GetPosition(this);
+                        Point pointToScreen = PointToScreen(pointToWindow);
+
+                        scrollBorder = (int)(TerrainGrid.ActualWidth + TerrainGrid.ActualHeight) / 20;
+
+                        //prior is x
+                        if (pointToScreen.X > this.Width + this.Left - scrollBorder)
+                        {
+                            double xLambda = (scrollBorder / (this.Width + this.Left - pointToScreen.X));
+                            TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset + xLambda);
+                        }
+                        else
+                        if (pointToScreen.X < this.Left)
+                        {
+                            double xLambda = (scrollBorder / (pointToScreen.X)) ;
+                            TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset - xLambda);
+                        }
+
+                        if (pointToScreen.Y > TerrainGrid.ActualHeight - scrollBorder)
+                        {
+                            double yLambda = (scrollBorder / (TerrainGrid.ActualHeight - pointToScreen.Y)) * startScrollSpeed;
+                            TerrainScroll.ScrollToVerticalOffset(TerrainScroll.VerticalOffset + yLambda);
+                        }
+                        else
+                        if (pointToScreen.Y < scrollBorder)
+                        {
+                            double yLambda = (scrollBorder / (pointToScreen.Y)) * startScrollSpeed;
+                            TerrainScroll.ScrollToVerticalOffset(TerrainScroll.VerticalOffset - yLambda);
+                        }
+
+
+                        Mouse.Capture(null);
+                    }));
+                };
+                timer.Interval = 1;
+                timer.Start();
+            };
+            */
         }
 
         private void CityGameEngine_RenderCompleted(object? sender, EventArgs e)
@@ -91,106 +136,6 @@ namespace CityGame
             TerrainImage.Source = new DrawingImage(drawingVisual.Drawing);
 
         }
-
-
-        private void Timer_Tick(object? sender, EventArgs e)
-        {
-
-            //random.NextBytes(pixels);
-
-            /*
-            byte[] array = new byte[16 * 16];
-
-            
-            for (int i = 0; i < 5000; i++)
-            {
-                Int32Rect rect = new Int32Rect(0, 0, 16, 16);
-                BitmapImage sImage = ResourcesManager.GetSprite(random.Next(20), random.Next(20));
-
-                sImage.CopyPixels(rect, array, 16, 0);
-                
-                rect.X = random.Next(terrainSize / 16) * 16;
-                rect.Y = random.Next(terrainSize / 16) * 16;
-                bitmapSource.WritePixels(rect, array, 16, 0);
-
-                //bitmapSource.WritePixels(new Int32Rect(0, 0, terrainSize, terrainSize), pixels, terrainSize, 0);
-
-            }
-            */
-
-            /*
-            Int32Rect rect = new Int32Rect(0, 0, 16, 16);
-            for (int x = 0; x < terrainSize - 16; x += 16)
-            {
-                for (int y = 0; y < terrainSize - 16; y += 16)
-                {
-                    //rect.X = 0;
-                    //rect.Y = 0;
-
-                    //BitmapImage sImage = ResourcesManager.GetSprite(random.Next(32), random.Next(32));
-
-                    //sImage.CopyPixels(rect, array, 16, 0);
-
-                    rect.X = x;
-                    rect.Y = y;
-                    bitmapSource.WritePixels(rect, ResourcesManager.GetPixels(random.Next(32), random.Next(32)), 16, 0);
-                }
-
-                //bitmapSource.WritePixels(new Int32Rect(0, 0, terrainSize, terrainSize), pixels, terrainSize, 0);
-
-            }
-            */
-
-            /*
-            animationFrame++;
-            List<SpriteItemModel>? spriteItemModels = spriteBusiness.GetSpriteByGroupName("Industrial1");
-            if ((spriteItemModels != null) && (spriteItemModels.Count > 0))
-            {
-                List<SpriteItemModel>? nextFrameSprites = spriteItemModels?.FindAll(p => p.animationFrame == 0);
-                foreach (var spriteItemModel in nextFrameSprites)
-                {
-                    if (spriteItemModel.groupPosition != null)
-                    {
-                        for (int x = 0; x < terrainSize - 10; x += 9)
-                        {
-                            for (int y = 0; y < terrainSize - 10; y += 9)
-                            {
-                                PutImage(spriteItemModel.groupPosition.x + x, spriteItemModel.groupPosition.y + y, spriteItemModel.position.x, spriteItemModel.position.y);
-                            }
-                        }
-                    }
-                }
-
-                nextFrameSprites = spriteItemModels?.FindAll(p => p.animationFrame == animationFrame);
-
-                if ((nextFrameSprites == null) || (nextFrameSprites?.Count == 0))
-                {
-                    animationFrame = 1;
-                    nextFrameSprites = spriteItemModels?.FindAll(p => p.animationFrame == animationFrame);
-                }
-                if ((nextFrameSprites != null) || (nextFrameSprites?.Count == 0))
-                {
-                    foreach (var spriteItemModel in nextFrameSprites)
-                    {
-                        if (spriteItemModel.groupPosition != null)
-                        {
-                            for (int x = 0; x < terrainSize - 10; x += 9)
-                            {
-                                for (int y = 0; y < terrainSize - 10; y += 9)
-                                {
-                                    PutImage(spriteItemModel.groupPosition.x + x, spriteItemModel.groupPosition.y + y, spriteItemModel.position.x, spriteItemModel.position.y);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            */
-            count++;
-            Title = (count / (DateTime.Now - enter).TotalSeconds) + " FPS";
-        }
-
-
 
         private void ResourceExplorerButton_Click(object sender, RoutedEventArgs e)
         {
@@ -242,14 +187,14 @@ namespace CityGame
             {
                 if (zoom < 4)
                 {
-                    zoom++;
+                    zoom+=1;
                 }
             }
             else
             {
                 if (zoom > 0)
                 {
-                    zoom--;
+                    zoom-= 1;
                 }
             }
 
@@ -310,7 +255,10 @@ namespace CityGame
 
             TerrainSelector.Width = TerrainSelector.Height = actualSpriteSizeInPixels;
 
-            TerrainSelector.Margin = new Thickness(x, y, 0, 0);
+            if ((x < TerrainImage.ActualWidth) && (y < TerrainImage.ActualHeight))
+            {
+                TerrainSelector.Margin = new Thickness(x, y, 0, 0);
+            }
 
         }
 

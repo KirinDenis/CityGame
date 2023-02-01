@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CityGame"
         mc:Ignorable="d"
-        Title="Resource Explorer" Height="750" Width="1094" Background="#FFF6F6F6" WindowState="Maximized" WindowStartupLocation="CenterOwner" >
+        Title="Resource Explorer" Height="750" Width="1094" Background="#FFF6F6F6" WindowState="Maximized" WindowStartupLocation="CenterOwner" Loaded="Window_Loaded" >
     <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="24"/>
@@ -13,12 +13,12 @@
             <RowDefinition Height="16"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            
+
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="350"/>
             <ColumnDefinition Width="2"/>
             <ColumnDefinition Width="350"/>
-            
+
         </Grid.ColumnDefinitions>
 
         <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Background="#FFCCD5F0">
@@ -27,12 +27,10 @@
 
         <TreeView x:Name="SpriteGroupsTreeView" Grid.Column="1" Grid.Row="1" />
 
-
-
         <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Background="#FFCCD5F0">
             <TextBlock Text="Resources map " FontWeight="Bold"/>
             <StackPanel Width="16" />
-            <TextBlock x:Name="ResourceMapModeTextBlock" Text="[SELECT MODE]" FontWeight="Bold" Foreground="#FFFF004D"/>
+            <TextBlock x:Name="ResourceMapModeTextBlock" Text="[SELECT MODE]" FontWeight="Bold" Foreground="#FF25B00E"/>
         </StackPanel>
 
         <StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Background="#FFCCD5F0">
@@ -41,6 +39,7 @@
 
         <Image x:Name="ResourceImage" RenderOptions.BitmapScalingMode="NearestNeighbor" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1" PreviewMouseDown="ResourceImage_PreviewMouseDown" PreviewMouseMove="ResourceImage_PreviewMouseMove" />
         <Border x:Name="ResourceSelectorBorder" Width="16" Height="16" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="#FF00E600" BorderThickness="2,2,2,2"/>
+        <TextBlock x:Name="ErrorTextBlock" Text="Error message" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FFEA1414" FontSize="24" TextWrapping="WrapWithOverflow" Visibility="Hidden"/>
 
         <StackPanel Grid.Column="0" Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center">
             <TextBlock x:Name="SourceImageInfoTextBlock" Text="Image 1000x1000" FontWeight="Bold"/>
@@ -50,14 +49,13 @@
             <TextBlock x:Name="SourceCountsInfoTextBlock" Text="Counts 16x16" Foreground="#FF3B4F81"/>
         </StackPanel>
 
-
         <Grid Grid.Column="3" Grid.Row="1" Background="#FFE7E8EC">
             <Grid.RowDefinitions>
                 <RowDefinition Height="183*"/>
 
             </Grid.RowDefinitions>
             <StackPanel>
-                <Image x:Name="PreviewImage"  Source="/Resources/resources.png" Height="128" Width="128" VerticalAlignment="Top" RenderOptions.BitmapScalingMode="NearestNeighbor" Margin="0,16"/>
+                <Image x:Name="PreviewImage"  Height="128" Width="128" VerticalAlignment="Top" RenderOptions.BitmapScalingMode="NearestNeighbor" Margin="0,16"/>
 
                 <Grid Grid.Column="2" Grid.Row="1" Margin="16,0">
                     <Grid.ColumnDefinitions>
@@ -80,8 +78,8 @@
 
                     <TextBlock Text="Animation frame" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" />
                     <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
-                    <ComboBox x:Name="AnimationFrameComboBox" Text="SpriteInfoNameTextBox" VerticalAlignment="Center" Width="90"  SelectedIndex="0" SelectionChanged="AnimationFrameComboBox_SelectionChanged">
-                    </ComboBox>
+                        <ComboBox x:Name="AnimationFrameComboBox" Text="SpriteInfoNameTextBox" VerticalAlignment="Center" Width="90"  SelectedIndex="0" SelectionChanged="AnimationFrameComboBox_SelectionChanged">
+                        </ComboBox>
                         <Button x:Name="AddAnimationFrameButton" Width="24" Content="+" Margin="10,0" Click="AddAnimationFrameButton_Click"/>
                         <Button x:Name="DeleteAnimationFrameButton" Width="24" Content="-" Click="DeleteAnimationFrameButton_Click" />
                     </StackPanel>
@@ -141,14 +139,9 @@
 
                 <TextBlock Text="Animation preview"/>
                 <Image x:Name="AnimationPreviewImage" Width="350" Height="350" RenderOptions.BitmapScalingMode="NearestNeighbor" />
-                
+
             </StackPanel>
-
-
-
-
         </Grid>
-
         <StackPanel Grid.Column="5" Grid.Row="1"/>
     </Grid>
 </Window>

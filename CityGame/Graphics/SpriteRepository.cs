@@ -27,6 +27,7 @@ GitHub: https://github.com/KirinDenis/owlos
 
 
 using CityGame.DTOs;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -37,12 +38,14 @@ namespace CityGame.Graphics
 {
     public class SpriteRepository
     {
+        public static string LastError = string.Empty;
+
         private static string spritesImageFilePath = @"\Resources\resources256.bmp";
 
         private const int spriteSize = 16;
 
-        private static ResourceInfoDTO _resourceInfo = GetResourceInfo();
-        public static ResourceInfoDTO ResourceInfo
+        private static ResourceInfoDTO? _resourceInfo = GetResourceInfo();
+        public static ResourceInfoDTO? ResourceInfo
         {
             get
             {
@@ -54,21 +57,38 @@ namespace CityGame.Graphics
         private static readonly Dictionary<Point, BitmapImage> bufferBitmaps = new Dictionary<Point, BitmapImage>();
         private static readonly Dictionary<Point, byte[]> bufferPixels = new Dictionary<Point, byte[]>();
 
-        private static ResourceInfoDTO GetResourceInfo()
+        private static ResourceInfoDTO? GetResourceInfo()
         {
-            if (source == null)
+            try
             {
-                source = new Bitmap(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + spritesImageFilePath);
-            }
+                if (source == null)
+                {
+                    string resourceFileName = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + spritesImageFilePath;
+                    if (File.Exists(resourceFileName))
+                    {
+                        source = new Bitmap(resourceFileName);
+                    }
+                    else
+                    {
+                        LastError = "Resource file not exists: " + resourceFileName;
+                        return null;
+                    }
+                }
 
-            return new ResourceInfoDTO()
+                return new ResourceInfoDTO()
+                {
+                    Width = source.Width,
+                    Height = source.Height,
+                    CountX = source.Width / spriteSize,
+                    CountY = source.Height / spriteSize,
+                    SpriteSize = spriteSize
+                };
+            }
+            catch(Exception e)
             {
-                Width = source.Width,
-                Height = source.Height,
-                CountX = source.Width / spriteSize,
-                CountY = source.Height / spriteSize,
-                SpriteSize = spriteSize
-            };
+                LastError = e.Message;
+            }
+            return null;
         }
 
         public static byte[] GetPixels(int x, int y)
@@ -106,7 +126,7 @@ namespace CityGame.Graphics
             return bufferPixels[new Point(x, y)];
         }
 
-        public static byte[]? GetPixels(PositionDTO position)
+        public static byte[]? GetPixels(PositionDTO? position)
         {
             if (position != null)
             {
@@ -120,7 +140,7 @@ namespace CityGame.Graphics
 
             public static BitmapImage? GetSprite(int x, int y)
         {
-            if ((x >= ResourceInfo.CountX) || (y >= ResourceInfo.CountY))
+            if ((ResourceInfo == null) || (x >= ResourceInfo.CountX) || (y >= ResourceInfo.CountY))
             {
                 return null;
             }
@@ -155,7 +175,7 @@ namespace CityGame.Graphics
             return bitmapimage;
         }
 
-        public static BitmapImage? GetSprite(PositionDTO position)
+        public static BitmapImage? GetSprite(PositionDTO? position)
         {
             if (position != null)
             {

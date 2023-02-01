@@ -25,7 +25,7 @@ namespace CityGame.Models
         public event EventHandler RenderCompleted;
 
 
-        public CityGameEngine(string cityName, int size = 10500)
+        public CityGameEngine(string cityName, int size = 100)
         {        
             terrainModel = new TerrainModel(size);
             roadGameObjectModel = new RoadGameObjectModel(terrainModel, ObjectType.road);

@@ -33,7 +33,8 @@ namespace CityGame.Models
 
         public virtual bool Put(ushort x, ushort y)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+            return false;
         }
     }
 }

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CityGame"
         mc:Ignorable="d"
-        Title="Resource Explorer" Height="750" Width="1094" Background="#FFF6F6F6" WindowState="Maximized" WindowStartupLocation="CenterOwner" Loaded="Window_Loaded" >
+        Title="Resource Explorer" Height="750" Width="1094" MinHeight="600" MinWidth="800" Background="#FFF6F6F6" WindowState="Maximized" WindowStartupLocation="CenterOwner" Loaded="Window_Loaded" >
     <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="24"/>
@@ -14,11 +14,9 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
 
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="350"/>
-            <ColumnDefinition Width="2"/>
-            <ColumnDefinition Width="350"/>
-
+            <ColumnDefinition Width="10*" MaxWidth="800" MinWidth="300"/>
+            <ColumnDefinition Width="*" MaxWidth="250" MinWidth="150"/>
+            <ColumnDefinition Width="10*"/>
         </Grid.ColumnDefinitions>
 
         <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Background="#FFCCD5F0">
@@ -33,7 +31,7 @@
             <TextBlock x:Name="ResourceMapModeTextBlock" Text="[SELECT MODE]" FontWeight="Bold" Foreground="#FF25B00E"/>
         </StackPanel>
 
-        <StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Background="#FFCCD5F0">
+        <StackPanel Grid.Column="2" Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Background="#FFCCD5F0">
             <TextBlock x:Name="SpriteModeTextBlock" Text="Selected sprite edit" FontWeight="Bold"/>
         </StackPanel>
 
@@ -49,15 +47,14 @@
             <TextBlock x:Name="SourceCountsInfoTextBlock" Text="Counts 16x16" Foreground="#FF3B4F81"/>
         </StackPanel>
 
-        <Grid Grid.Column="3" Grid.Row="1" Background="#FFE7E8EC">
+        <Grid Grid.Column="2" Grid.Row="1" Background="#FFE7E8EC">
             <Grid.RowDefinitions>
                 <RowDefinition Height="183*"/>
-
             </Grid.RowDefinitions>
             <StackPanel>
                 <Image x:Name="PreviewImage"  Height="128" Width="128" VerticalAlignment="Top" RenderOptions.BitmapScalingMode="NearestNeighbor" Margin="0,16"/>
 
-                <Grid Grid.Column="2" Grid.Row="1" Margin="16,0">
+                <Grid Grid.Column="2"  Grid.Row="1" Margin="16,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="50*"/>
                         <ColumnDefinition Width="50*"/>
@@ -122,6 +119,7 @@
                         <ColumnDefinition Width="50"/>
                         <ColumnDefinition Width="50"/>
                         <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
                     <Grid.RowDefinitions>
@@ -132,16 +130,17 @@
                         <RowDefinition Height="50"/>
                         <RowDefinition Height="50"/>
                         <RowDefinition Height="50"/>
+
                     </Grid.RowDefinitions>
+                    <StackPanel Grid.Column="7" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Center">
+                        <TextBlock Text="Animations"  Margin="80,0,0,0" FontSize="25" FontWeight="Bold"></TextBlock>
+                    </StackPanel>
+                    <Image x:Name="AnimationPreviewImage" Grid.Column="7" Grid.Row="1" Grid.RowSpan="5"  Height="Auto" Width="Auto" HorizontalAlignment="Center" Margin="100,0,0,0" RenderOptions.BitmapScalingMode="NearestNeighbor" />
                     <Border x:Name="GroupSizeSelectorBorder" BorderBrush="#FF27FF14" BorderThickness="2,2,2,2"  ></Border>
                     <Border x:Name="GroupCenterSelectorBorder" Grid.Column="1" Grid.Row="1" BorderThickness="2,2,2,2" BorderBrush="#FFFE1414" ></Border>
                 </Grid>
 
-                <TextBlock Text="Animation preview"/>
-                <Image x:Name="AnimationPreviewImage" Width="350" Height="350" RenderOptions.BitmapScalingMode="NearestNeighbor" />
-
             </StackPanel>
         </Grid>
-        <StackPanel Grid.Column="5" Grid.Row="1"/>
     </Grid>
 </Window>

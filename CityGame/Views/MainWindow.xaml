@@ -17,7 +17,7 @@
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.ColumnSpan="2" >
             <Button x:Name="ResourceExplorerButton" Content="Resource Explorer (F2)" Width="128" HorizontalAlignment="Left" Click="ResourceExplorerButton_Click" />
-            <Button x:Name="GenerateMapButton" Content="Generate map" Width="128" HorizontalAlignment="Left" Click="GenerateMapButton_Click"  />
+            <Button x:Name="GenerateMapButton" Content="Generate map (F5)" Width="128" HorizontalAlignment="Left" Click="GenerateMapButton_Click"  />
             <Button x:Name="GenerateLandButton" Content="Generate land" Width="128" HorizontalAlignment="Left" Click="GenerateLandButton_Click"  />
 
             <TextBlock Text="Water level" VerticalAlignment="Center" />
@@ -36,6 +36,14 @@
                 <Grid HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0,0">
                     <Image x:Name="TerrainImage" HorizontalAlignment="Left" VerticalAlignment="Top" RenderOptions.BitmapScalingMode="NearestNeighbor" Source="/Resources/resources.png" />
                     <Border x:Name="TerrainSelector" HorizontalAlignment="Left" VerticalAlignment="Top" Width="16" Height="16" BorderBrush="#FF4FEA25" BorderThickness="2,2,2,2" />
+                    <Border  BorderThickness="1">
+                        <Border BorderBrush="Black" BorderThickness="2 2 2 2" Margin="-6">
+                            <Border.Effect>
+                                <DropShadowEffect ShadowDepth="16" BlurRadius="16"/>
+                            </Border.Effect>
+                        </Border>
+                    </Border>
+
                 </Grid>
             </ScrollViewer>
         </Grid>

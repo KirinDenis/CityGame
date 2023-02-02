@@ -139,7 +139,7 @@ namespace CityGame
 
         private void ResourceExplorerButton_Click(object sender, RoutedEventArgs e)
         {
-            new ResourceExplorer().Show();
+            new ResourceExplorerWindow().Show();
         }
 
         private void GenerateMapButton_Click(object sender, RoutedEventArgs e)
@@ -314,14 +314,15 @@ namespace CityGame
             {
               switch (e.Key)
                 {
-                    case Key.R: new ResourceExplorer().Show(); break;
+                    case Key.R: new ResourceExplorerWindow().Show(); break;
                     case Key.T: cityGameEngine.GenerateTerrain(); break;
                 }            
             }
 
             switch (e.Key)
             {
-                case Key.F2: new ResourceExplorer().Show(); break;            
+                case Key.F2: new ResourceExplorerWindow().Show(); break;
+                case Key.F5: cityGameEngine.GenerateTerrain(); break;
             }
 
 

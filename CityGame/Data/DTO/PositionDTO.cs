@@ -1,4 +1,4 @@
-﻿namespace CityGame.DTOs
+﻿namespace CityGame.Data.DTO
 {
     /// <summary>
     /// Position model class

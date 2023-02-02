@@ -26,7 +26,7 @@ GitHub: https://github.com/KirinDenis/owlos
 --------------------------------------------------------------------------------------*/
 
 
-using CityGame.DTOs;
+using CityGame.Data.DTO;
 using System;
 using System.Collections.Generic;
 using System.Drawing;

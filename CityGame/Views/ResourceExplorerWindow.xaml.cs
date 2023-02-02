@@ -22,7 +22,7 @@ GitHub: https://github.com/KirinDenis/owlos
 
 --------------------------------------------------------------------------------------*/
 
-using CityGame.DTOs;
+using CityGame.Data.DTO;
 using CityGame.DTOs.Const;
 using CityGame.Graphics;
 using System;
@@ -42,7 +42,7 @@ namespace CityGame
     /// <summary>
     /// Interaction logic for ResourceExplorer.xaml
     /// </summary>
-    public partial class ResourceExplorer : Window
+    public partial class ResourceExplorerWindow : Window
     {
         private SpriteBusiness spriteBusiness = new SpriteBusiness();
 
@@ -71,7 +71,7 @@ namespace CityGame
             return SpriteRepository.ResourceInfo != null ? true : false;
         };
 
-        public ResourceExplorer()
+        public ResourceExplorerWindow()
         {
             InitializeComponent();
         }

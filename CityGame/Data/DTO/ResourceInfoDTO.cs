@@ -1,4 +1,4 @@
-﻿namespace CityGame.DTOs
+﻿namespace CityGame.Data.DTO
 {
     public class ResourceInfoDTO
     {

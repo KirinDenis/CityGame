@@ -1,11 +1,11 @@
-﻿using CityGame.DTOs;
-using CityGame.DTOs.Enum;
+﻿using CityGame.DTOs.Enum;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows;
+using CityGame.Data.DTO;
 
 namespace CityGame.Graphics
 {

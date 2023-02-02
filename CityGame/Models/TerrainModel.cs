@@ -1,4 +1,4 @@
-﻿using CityGame.DTOs;
+﻿using CityGame.Data.DTO;
 using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 using System;

@@ -4,6 +4,7 @@ using CityGame.Graphics;
 using CityGame.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -41,7 +42,7 @@ namespace CityGame
 
         private int scrollBorder = 100;
 
-        private double startScrollSpeed = 0.05f;
+        private double startScrollSpeed = 0.1f;
 
         private bool lockScroll = false;
 
@@ -187,14 +188,14 @@ namespace CityGame
             {
                 if (zoom < 4)
                 {
-                    zoom+=1;
+                    zoom+= 0.1;
                 }
             }
             else
             {
                 if (zoom > 0)
                 {
-                    zoom-= 1;
+                    zoom-= 0.1;
                 }
             }
 
@@ -202,8 +203,26 @@ namespace CityGame
                 &&
                 ((cityGameEngine.GetTerrainSize() * SpriteRepository.ResourceInfo.SpriteSize * zoom > TerrainGrid.ActualHeight)))
             {
+                 Point mousePosition = e.GetPosition((Grid)sender);
 
+                //  TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset + xLambda);
+
+
+                double saveImageSize = TerrainImage.Width;
                 TerrainImage.Width = TerrainImage.Height = cityGameEngine.GetTerrainSize() * SpriteRepository.ResourceInfo.SpriteSize * zoom;
+                double imageLamda = saveImageSize - TerrainImage.Width;
+
+                double xLambda = (mousePosition.X - this.ActualWidth / 2.0) * (this.ActualWidth / TerrainImage.ActualWidth);
+                double yLambda = (mousePosition.Y - this.ActualHeight / 2.0) * (this.ActualHeight / TerrainImage.ActualHeight);
+
+
+                TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset - imageLamda / 2.0  + xLambda / 2.0);
+                TerrainScroll.ScrollToVerticalOffset(TerrainScroll.VerticalOffset - imageLamda / 2.0 + yLambda / 2.0);
+
+                Debug.WriteLine("XL:" + xLambda);
+                Debug.WriteLine("IL:" + imageLamda / 2);
+                Debug.WriteLine("SBH:" + TerrainScroll.HorizontalOffset);
+
             }
 
             //lock scroll view            
@@ -212,16 +231,23 @@ namespace CityGame
 
         private void TerrainGrid_PreviewMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
+            
             if (!lockScroll)
             {
                 lockScroll = true;
 
                 Point mousePosition = e.GetPosition((Grid)sender);
 
-                scrollBorder = (int)(TerrainGrid.ActualWidth + TerrainGrid.ActualHeight) / 20;
+                if ((mousePosition.X <= 0) || (mousePosition.Y <= 0))
+                {
+                    lockScroll = false;
+                    return;
+                }
+
+                scrollBorder = (int)(this.ActualWidth + this.ActualHeight) / 10;
 
                 //prior is x
-                if (mousePosition.X > TerrainGrid.ActualWidth - scrollBorder)
+                if (mousePosition.X > this.ActualWidth - scrollBorder)
                 {
                     double xLambda = (scrollBorder / (TerrainGrid.ActualWidth - mousePosition.X)) * startScrollSpeed;
                     TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset + xLambda);
@@ -229,11 +255,13 @@ namespace CityGame
                 else
                 if (mousePosition.X < scrollBorder)
                 {
+                    
                     double xLambda = (scrollBorder / (mousePosition.X)) * startScrollSpeed;
                     TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset - xLambda);
+                    
                 }
 
-                if (mousePosition.Y > TerrainGrid.ActualHeight - scrollBorder)
+                if (mousePosition.Y > this.ActualHeight - scrollBorder)
                 {
                     double yLambda = (scrollBorder / (TerrainGrid.ActualHeight - mousePosition.Y)) * startScrollSpeed;
                     TerrainScroll.ScrollToVerticalOffset(TerrainScroll.VerticalOffset + yLambda);

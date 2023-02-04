@@ -1,4 +1,5 @@
-﻿using CityGame.DTOs;
+﻿using CityGame.Data.DTO;
+using CityGame.DTOs;
 using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 using System;
@@ -20,33 +21,29 @@ namespace CityGame.Models
             this.terrainModel = terrainModel;
         }
 
-        public void Put(ushort x, ushort y, ObjectType objectType)
+        public void Put(ushort x, ushort y, GroupDTO group)
         {
-            /*
-            List<SpriteDTO>? group = null;
-            switch (objectType)
-            {
-                //case ObjectType.resident: group = groupsModel.GetGroup(SpritesGroupEnum.resident0); break;
-                //case ObjectType.industrial: group = groupsModel.GetGroup(SpritesGroupEnum.industrial1); break;
-                //case ObjectType.policeDepartment: group = groupsModel.GetGroup(SpritesGroupEnum.policedepartment); break;
-            }
+            
             
             if (group == null) 
             { 
                 return; 
-            }  
-                
+            }
 
-            for (int i=0; i < group?.Count; i++)
+
+            for (int sx = 0; sx < group?.Width; sx++)
             {
-                SpriteDTO? spriteModel = group[i];
-                if (spriteModel?.groupPosition != null)
+                for (int sy = 0; sy < group?.Height; sy++)
+                { 
+                
+                if (group?.Sprites[0].Sprites[sx,sy] != null)
                 {
-                    terrainModel.terrain[x + spriteModel.groupPosition.x, y + spriteModel.groupPosition.y] = spriteModel.position;
-                    terrainModel.PutImage(x + spriteModel.groupPosition.x, y + spriteModel.groupPosition.y, spriteModel.position.x, spriteModel.position.y);
+                    terrainModel.terrain[x + sx, y + sy] = group?.Sprites[0].Sprites[sx, sy];
+                    terrainModel.PutImage(x + sx, y + sy, group?.Sprites[0].Sprites[sx, sy].x, group?.Sprites[0].Sprites[sx, sy].y) ;
                 }
             }
-            */
+            }
+            
 
         }
 

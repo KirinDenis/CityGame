@@ -59,10 +59,10 @@ namespace CityGame.Models
 
         }
 
-        public void PutImage(int x, int y, int bx, int by)
+        public void PutImage(int x, int y, ushort? bx, ushort? by)
         {
             Int32Rect rect = new Int32Rect(x * 16, y * 16, 16, 16);
-            bitmapSource.WritePixels(rect, SpriteRepository.GetPixels(bx, by), 16, 0);
+            bitmapSource.WritePixels(rect, SpriteRepository.GetPixels((int)bx, (int)by), 16, 0);
         }
 
 

@@ -1,4 +1,5 @@
-﻿using CityGame.DTOs;
+﻿using CityGame.Data.DTO;
+using CityGame.DTOs;
 using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 using CityGame.Models;
@@ -42,7 +43,7 @@ namespace CityGame
 
         private int scrollBorder = 100;
 
-        private double startScrollSpeed = 0.1f;
+        private double startScrollSpeed = 0.02f;
 
         private bool lockScroll = false;
 
@@ -54,7 +55,9 @@ namespace CityGame
         DateTime enter;
         private int animationFrame = 0;
 
-        public ObjectType selectedType = ObjectType.rail;
+        public GroupDTO selectedGroup = null;
+
+        private SpriteBusiness spriteBusiness = new SpriteBusiness();
 
         public MainWindow()
         {
@@ -78,53 +81,15 @@ namespace CityGame
             TerrainScroll.ScrollToVerticalOffset(TerrainImage.Width / 2.0f);
             TerrainScroll.ScrollToHorizontalOffset(TerrainImage.Height / 2.0f);
 
-            /*
-            this.Loaded += delegate
+            foreach(GroupDTO group in spriteBusiness.groups)
             {
-                System.Timers.Timer timer = new System.Timers.Timer();
-                timer.Elapsed += delegate
+                ObjectsListBox.Items.Add(new ListBoxItem()
                 {
-                    this.Dispatcher.Invoke(new Action(delegate
-                    {
-                        Mouse.Capture(this);
-                        Point pointToWindow = Mouse.GetPosition(this);
-                        Point pointToScreen = PointToScreen(pointToWindow);
+                    Content = group.Name,
+                    Tag = group
+                });
+            }
 
-                        scrollBorder = (int)(TerrainGrid.ActualWidth + TerrainGrid.ActualHeight) / 20;
-
-                        //prior is x
-                        if (pointToScreen.X > this.Width + this.Left - scrollBorder)
-                        {
-                            double xLambda = (scrollBorder / (this.Width + this.Left - pointToScreen.X));
-                            TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset + xLambda);
-                        }
-                        else
-                        if (pointToScreen.X < this.Left)
-                        {
-                            double xLambda = (scrollBorder / (pointToScreen.X)) ;
-                            TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset - xLambda);
-                        }
-
-                        if (pointToScreen.Y > TerrainGrid.ActualHeight - scrollBorder)
-                        {
-                            double yLambda = (scrollBorder / (TerrainGrid.ActualHeight - pointToScreen.Y)) * startScrollSpeed;
-                            TerrainScroll.ScrollToVerticalOffset(TerrainScroll.VerticalOffset + yLambda);
-                        }
-                        else
-                        if (pointToScreen.Y < scrollBorder)
-                        {
-                            double yLambda = (scrollBorder / (pointToScreen.Y)) * startScrollSpeed;
-                            TerrainScroll.ScrollToVerticalOffset(TerrainScroll.VerticalOffset - yLambda);
-                        }
-
-
-                        Mouse.Capture(null);
-                    }));
-                };
-                timer.Interval = 1;
-                timer.Start();
-            };
-            */
         }
 
         private void CityGameEngine_RenderCompleted(object? sender, EventArgs e)
@@ -188,14 +153,14 @@ namespace CityGame
             {
                 if (zoom < 4)
                 {
-                    zoom+= 0.1;
+                    zoom+= 1;
                 }
             }
             else
             {
                 if (zoom > 0)
                 {
-                    zoom-= 0.1;
+                    zoom-= 1;
                 }
             }
 
@@ -244,7 +209,7 @@ namespace CityGame
                     return;
                 }
 
-                scrollBorder = (int)(this.ActualWidth + this.ActualHeight) / 10;
+                scrollBorder = (int)(this.ActualWidth + this.ActualHeight) / 30;
 
                 //prior is x
                 if (mousePosition.X > this.ActualWidth - scrollBorder)
@@ -298,43 +263,12 @@ namespace CityGame
             ushort x = (ushort)((e.GetPosition(TerrainImage).X - (e.GetPosition(TerrainImage).X % actualSpriteSizeInPixels)) / actualSpriteSizeInPixels);
             ushort y = (ushort)((e.GetPosition(TerrainImage).Y - (e.GetPosition(TerrainImage).Y % actualSpriteSizeInPixels)) / actualSpriteSizeInPixels);
 
-            cityGameEngine.PutObject(x, y, selectedType);
+            cityGameEngine.PutObject(x, y, selectedGroup);
         }
 
-        private void RoadButton_Click(object sender, RoutedEventArgs e)
-        {
-            selectedType = ObjectType.road;
-        }
 
-        private void RailButton_Click(object sender, RoutedEventArgs e)
-        {
-            selectedType = ObjectType.rail;
-        }
 
-        private void WireButton_Click(object sender, RoutedEventArgs e)
-        {
-            selectedType = ObjectType.wire;
-        }
 
-        private void ResidentButton_Click(object sender, RoutedEventArgs e)
-        {
-            selectedType = ObjectType.resident;
-        }
-
-        private void IndustrialButton_Click(object sender, RoutedEventArgs e)
-        {
-            selectedType = ObjectType.industrial;
-        }
-
-        private void Grid_ContextMenuClosing(object sender, ContextMenuEventArgs e)
-        {
-            
-        }
-
-        private void PoliceDepartmentButton_Click(object sender, RoutedEventArgs e)
-        {
-            selectedType = ObjectType.policeDepartment;
-        }
 
         private void Window_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
@@ -353,6 +287,14 @@ namespace CityGame
                 case Key.F5: cityGameEngine.GenerateTerrain(); break;
             }
 
+
+        }
+
+
+        private void ObjectsListBox_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            ListBoxItem item = ObjectsListBox.SelectedItem as ListBoxItem;
+            selectedGroup = item.Tag as GroupDTO;
 
         }
     }

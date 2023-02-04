@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:CityGame"
         mc:Ignorable="d"
         Title="City Game" Height="800" Width="800" WindowStartupLocation="CenterScreen" PreviewKeyDown="Window_PreviewKeyDown">
-    <Grid ContextMenuClosing="Grid_ContextMenuClosing" >
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="167*"/>
             <ColumnDefinition Width="250"/>
@@ -34,7 +34,16 @@
         <Grid x:Name="TerrainGrid"  PreviewMouseWheel="Terrain_PreviewMouseWheel" PreviewMouseMove="TerrainGrid_PreviewMouseMove" Background="#FFF6F6F6" Grid.Row="1" Grid.ColumnSpan="2" PreviewMouseDown="TerrainGrid_PreviewMouseDown">
             <ScrollViewer x:Name="TerrainScroll" HorizontalScrollBarVisibility="Visible"  HorizontalContentAlignment="Stretch" PanningMode="Both"  >
                 <Grid HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0,0">
-                    <Image x:Name="TerrainImage" HorizontalAlignment="Left" VerticalAlignment="Top" RenderOptions.BitmapScalingMode="NearestNeighbor" Source="/Resources/resources.png" />
+                    <Image x:Name="TerrainImage" HorizontalAlignment="Left" VerticalAlignment="Top" RenderOptions.BitmapScalingMode="NearestNeighbor" Source="/Resources/resources.png" RenderTransformOrigin="1,0" >
+                        <Image.RenderTransform>
+                            <TransformGroup>
+                                
+                                
+                                
+                                
+                            </TransformGroup>
+                        </Image.RenderTransform>
+                    </Image>
                     <Border x:Name="TerrainSelector" HorizontalAlignment="Left" VerticalAlignment="Top" Width="16" Height="16" BorderBrush="#FF4FEA25" BorderThickness="2,2,2,2" />
                     <Border  BorderThickness="1">
                         <Border BorderBrush="Black" BorderThickness="2 2 2 2" Margin="-6">
@@ -53,23 +62,8 @@
             <Canvas x:Name="Canvas" Width="500" Height="500" />
         </Viewbox>
 
-        <Grid Grid.Column="0" Grid.Row="1" Width="70" Height="200" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#FFF6F6F6" Margin="20,20,0,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="35"/>
-                <RowDefinition Height="35"/>
-                <RowDefinition Height="35"/>
-                <RowDefinition Height="35"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="50*"/>
-                <ColumnDefinition Width="50*"/>
-            </Grid.ColumnDefinitions>
-            <Button x:Name="RoadButton" Grid.Column="0" Grid.Row="0" Content="Road" Click="RoadButton_Click"/>
-            <Button x:Name="RailButton" Grid.Column="1" Grid.Row="0" Content="Rail" Click="RailButton_Click"/>
-            <Button x:Name="WireButton" Grid.Column="0" Grid.Row="1" Content="Wire" Click="WireButton_Click"/>
-            <Button x:Name="ResidentButton" Grid.Column="1" Grid.Row="1" Content="R/T" Click="ResidentButton_Click" />
-            <Button x:Name="IndustrialButton" Grid.Column="0" Grid.Row="2" Content="I/L" Click="IndustrialButton_Click"/>
-            <Button x:Name="PoliceDepartmentButton" Grid.Column="1" Grid.Row="2" Content="P.D." Click="PoliceDepartmentButton_Click"/>
+        <Grid Grid.Column="0" Grid.Row="1" Width="150" Height="450" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#FFF6F6F6" Margin="20,20,0,0">
+            <ListBox x:Name="ObjectsListBox"  PreviewMouseUp="ObjectsListBox_PreviewMouseUp" />
         </Grid>
 
     </Grid>

@@ -1,4 +1,5 @@
-﻿using CityGame.DTOs;
+﻿using CityGame.Data.DTO;
+using CityGame.DTOs;
 using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 using System;
@@ -53,16 +54,15 @@ namespace CityGame.Models
             terrainModel.GenerateNewTerrain();
         }
 
-        public void PutObject(ushort x, ushort y, ObjectType objectType)
+        public void PutObject(ushort x, ushort y, GroupDTO group)
         {
-            switch (objectType)
+            switch (group.Name)
             {
-                case ObjectType.road: roadGameObjectModel.Put(x, y); break;
-                case ObjectType.rail: railGameObjectModel.Put(x, y); break;
-                case ObjectType.wire: railGameObjectModel.Put(x, y); break;
-                case ObjectType.resident:
-                case ObjectType.industrial:
-                case ObjectType.policeDepartment: residentModel.Put(x, y, objectType); break;
+                case SpritesGroupEnum.road : roadGameObjectModel.Put(x, y); break;
+                case SpritesGroupEnum.rail: railGameObjectModel.Put(x, y); break;
+                case SpritesGroupEnum.wire: railGameObjectModel.Put(x, y); break;
+                default:
+                 residentModel.Put(x, y, group); break;
 
             }
         }

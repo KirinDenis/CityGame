@@ -5,7 +5,7 @@ namespace CityGame.Models
 {
     internal class NetworkGameObjectModel : GameObjectModel
     {
-        public NetworkGameObjectModel(TerrainModel terrainModel, ObjectType networkType) : base(terrainModel, networkType)
+        public NetworkGameObjectModel(TerrainModel terrainModel) : base(terrainModel)
         {
         }
 

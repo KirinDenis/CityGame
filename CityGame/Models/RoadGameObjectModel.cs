@@ -4,8 +4,9 @@ namespace CityGame.Models
 {
     internal class RoadGameObjectModel : NetworkGameObjectModel
     {
-        public RoadGameObjectModel(TerrainModel terrainModel, ObjectType networkType) : base(terrainModel, networkType)
+        public RoadGameObjectModel(TerrainModel terrainModel) : base(terrainModel)
         {
+            Group = spriteBusiness.GetGroupByName(SpritesGroupEnum.road);
         }
     }
 }

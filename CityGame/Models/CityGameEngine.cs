@@ -29,8 +29,8 @@ namespace CityGame.Models
         public CityGameEngine(string cityName, int size = 100)
         {        
             terrainModel = new TerrainModel(size);
-            roadGameObjectModel = new RoadGameObjectModel(terrainModel, ObjectType.road);
-            railGameObjectModel = new RailGameObjectModel(terrainModel, ObjectType.rail);
+            roadGameObjectModel = new RoadGameObjectModel(terrainModel);
+            railGameObjectModel = new RailGameObjectModel(terrainModel);
             residentModel = new ResidentModel(terrainModel);
 
             DispatcherTimer timer = new DispatcherTimer();
@@ -66,6 +66,12 @@ namespace CityGame.Models
 
             }
         }
+
+        public ObjectType[,] TestPosition(GroupDTO? group, int x, int y)
+        {
+            return this.terrainModel.TestPosition(group, x, y);
+        }
+
 
         private void Timer_Tick(object? sender, EventArgs e)
         {

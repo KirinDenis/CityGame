@@ -65,6 +65,27 @@ namespace CityGame.Models
             bitmapSource.WritePixels(rect, SpriteRepository.GetPixels((int)bx, (int)by), 16, 0);
         }
 
+        public ObjectType[,] TestPosition(GroupDTO? group, int x, int y)
+        {
+            if (group == null)
+            {
+                return null;
+            }
+
+            ObjectType[,] result = new ObjectType[group.Width, group.Height];
+
+            int rx, ry;
+            rx = 0;
+            for (int sx = x; sx < x + group.Width; sx++, rx++)
+            {
+                ry = 0;
+                for (int sy = y; sy < y + group.Height; sy++, ry++)
+                {
+                    result[rx, ry] = SpritesGroupEnum.GetObjectTypeByGroupName(spriteBusiness.GetGroupBySpritePosition(terrain[sx, sy]).Name);
+                }
+            }
+            return result;
+        }
 
         protected Func<TerrainModel, int, int, int[,], terrainType, GroupSpritesDTO, bool> PutTerrainBlock = delegate (TerrainModel terrainModel, int x, int y, int[,] sourceTerraing, terrainType groupType, GroupSpritesDTO groupSprites)
         {

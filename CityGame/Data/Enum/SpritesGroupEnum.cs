@@ -8,6 +8,7 @@
     public static class SpritesGroupEnum
     {
         public const string nogroup = "nogroup";
+        public const string terrain = "terrain";
         public const string water = "water";
         public const string forest = "forest";
         public const string road = "road";
@@ -96,7 +97,7 @@
         public const string strange6 = "strange6";
         public const string strange7 = "strange7";
 
-        public static string[] groups = { water , forest, road, rail, wire,
+        public static string[] groups = { terrain, water , forest, road, rail, wire,
             resident0,
             resident1,
             resident2,
@@ -177,6 +178,7 @@
             strange6,
             strange7 }; 
 
+        /*
         public static string ByObjectType(ObjectType objectType)
         {            
             switch (objectType)
@@ -189,6 +191,27 @@
                 case ObjectType.industrial: return industrial0;
                 case ObjectType.policeDepartment: return policedepartment;
                 default: return road;
+            }
+        }
+        */
+
+       public static ObjectType GetObjectTypeByGroupName(string groupName)
+        {
+            switch(groupName)
+            {
+                case road:
+                case rail:
+                case wire:
+                    return ObjectType.network; 
+                case terrain:
+                    return ObjectType.terrain;
+                case forest:
+                    return ObjectType.forest;
+                case water:
+                    return ObjectType.water;
+                default:
+                    return ObjectType.building;
+
             }
         }
 

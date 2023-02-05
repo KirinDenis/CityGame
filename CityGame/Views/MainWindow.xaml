@@ -33,14 +33,14 @@
 
         <Grid x:Name="TerrainGrid"  PreviewMouseWheel="Terrain_PreviewMouseWheel" PreviewMouseMove="TerrainGrid_PreviewMouseMove" Background="#FFF6F6F6" Grid.Row="1" Grid.ColumnSpan="2" PreviewMouseDown="TerrainGrid_PreviewMouseDown">
             <ScrollViewer x:Name="TerrainScroll" HorizontalScrollBarVisibility="Visible"  HorizontalContentAlignment="Stretch" PanningMode="Both"  >
-                <Grid HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0,0">
+                <Grid x:Name="GameViewGrid" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0,0">
                     <Image x:Name="TerrainImage" HorizontalAlignment="Left" VerticalAlignment="Top" RenderOptions.BitmapScalingMode="NearestNeighbor" Source="/Resources/resources.png" RenderTransformOrigin="1,0" >
                         <Image.RenderTransform>
                             <TransformGroup>
-                                
-                                
-                                
-                                
+
+
+
+
                             </TransformGroup>
                         </Image.RenderTransform>
                     </Image>

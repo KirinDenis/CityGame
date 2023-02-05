@@ -17,9 +17,5 @@ namespace CityGame.Models.Interfaces
     internal interface IGameObjectModel
     {
         public GroupDTO? Group { get; set; }
-
-    public CheckPositionDTO CheckPosition(ushort x, ushort y);
-
-        public bool Put(ushort x, ushort y);
     }
 }

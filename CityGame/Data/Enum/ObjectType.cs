@@ -2,12 +2,10 @@
 {
     public enum ObjectType
     {
-        road,
-        rail,
-        wire,
-        resident,
-        comercial,
-        industrial,
-        policeDepartment
+        terrain, 
+        forest,
+        water,
+        network,
+        building        
     }
 }

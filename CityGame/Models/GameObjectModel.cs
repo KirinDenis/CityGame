@@ -18,17 +18,10 @@ namespace CityGame.Models
 
         public GroupDTO? Group { get; set; }
 
-        public GameObjectModel(TerrainModel terrainModel, ObjectType objectType)
+        public GameObjectModel(TerrainModel terrainModel)
         {            
             this.terrainModel = terrainModel;
-            Group = spriteBusiness.GetGroupByName(SpritesGroupEnum.ByObjectType(objectType));            
-        }
-
-        
-
-        public CheckPositionDTO CheckPosition(ushort x, ushort y)
-        {
-            throw new NotImplementedException();
+            
         }
 
         public virtual bool Put(ushort x, ushort y)

@@ -70,11 +70,17 @@ namespace CityGame.Models
                 return; 
             }
 
+            if (group?.Sprites.Count-1 < frame)
+            {
+                return;
+            }    
+
             positionDTO = new PositionDTO()
             {
                 x = x,
                 y = y
             };
+
 
             for (int sx = 0; sx < group?.Width; sx++)
             {

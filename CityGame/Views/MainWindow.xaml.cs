@@ -1,5 +1,4 @@
 ﻿using CityGame.Data.DTO;
-using CityGame.DTOs;
 using CityGame.DTOs.Const;
 using CityGame.DTOs.Enum;
 using CityGame.Graphics;
@@ -9,11 +8,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 
 
 namespace CityGame
@@ -32,13 +28,13 @@ namespace CityGame
         forest = 4
     }
 
-   
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-
+        private int terrainSize = 400;
 
         private DrawingVisual drawingVisual = new DrawingVisual();
 
@@ -73,18 +69,18 @@ namespace CityGame
                 return;
             }
 
-            cityGameEngine = new CityGameEngine("new city", 100);
+            cityGameEngine = new CityGameEngine("new city", terrainSize);
             cityGameEngine.RenderCompleted += CityGameEngine_RenderCompleted;
 
             //WaterLevelTextBox.Text = cityGameEngine.waterLevel.ToString();
             //RoughnessTextBox.Text = cityGameEngine.roughness.ToString();
 
             TerrainImage.Width = TerrainImage.Height = cityGameEngine.GetTerrainSize() * SpriteRepository.ResourceInfo.SpriteSize * zoom;
-            
+
             TerrainScroll.ScrollToVerticalOffset(TerrainImage.Width / 2.0f);
             TerrainScroll.ScrollToHorizontalOffset(TerrainImage.Height / 2.0f);
 
-            foreach(GroupDTO group in spriteBusiness.groups)
+            foreach (GroupDTO group in spriteBusiness.groups)
             {
                 ObjectsListBox.Items.Add(new ListBoxItem()
                 {
@@ -93,7 +89,7 @@ namespace CityGame
                 });
             }
 
-            for (int x=0; x < GameConsts.GroupSize; x++)
+            for (int x = 0; x < GameConsts.GroupSize; x++)
             {
                 for (int y = 0; y < GameConsts.GroupSize; y++)
                 {
@@ -129,9 +125,24 @@ namespace CityGame
             cityGameEngine.GenerateTerrain();
         }
 
-        private void GenerateLandButton_Click(object sender, RoutedEventArgs e)
+        private void BenchmarkButton_Click(object sender, RoutedEventArgs e)
         {
-            cityGameEngine.GenerateTerrain();
+            int groupIndex = 0;
+            for (int x = 3; x < terrainSize-7; x+=3, groupIndex++)
+            {
+                for (int y = 3; y < terrainSize - 7; y += 3, groupIndex++)
+                {
+                    if (groupIndex >= spriteBusiness.groups.Count-1)
+                    {
+                        groupIndex = 0;
+                    }
+                    cityGameEngine.PutObject((ushort)x, (ushort)y, spriteBusiness.groups[groupIndex]);
+
+
+                    System.GC.Collect();
+                }    
+            }
+                
         }
 
 
@@ -169,14 +180,14 @@ namespace CityGame
             {
                 if (zoom < 4)
                 {
-                    zoom+= 1;
+                    zoom += 1;
                 }
             }
             else
             {
                 if (zoom > 0)
                 {
-                    zoom-= 1;
+                    zoom -= 1;
                 }
             }
 
@@ -184,7 +195,7 @@ namespace CityGame
                 &&
                 ((cityGameEngine.GetTerrainSize() * SpriteRepository.ResourceInfo.SpriteSize * zoom > TerrainGrid.ActualHeight)))
             {
-                 Point mousePosition = e.GetPosition((Grid)sender);
+                Point mousePosition = e.GetPosition((Grid)sender);
 
                 //  TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset + xLambda);
 
@@ -197,7 +208,7 @@ namespace CityGame
                 double yLambda = (mousePosition.Y - this.ActualHeight / 2.0) * (this.ActualHeight / TerrainImage.ActualHeight);
 
 
-                TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset - imageLamda / 2.0  + xLambda / 2.0);
+                TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset - imageLamda / 2.0 + xLambda / 2.0);
                 TerrainScroll.ScrollToVerticalOffset(TerrainScroll.VerticalOffset - imageLamda / 2.0 + yLambda / 2.0);
 
                 Debug.WriteLine("XL:" + xLambda);
@@ -212,7 +223,7 @@ namespace CityGame
 
         private void TerrainGrid_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            
+
             if (!lockScroll)
             {
                 lockScroll = true;
@@ -236,10 +247,10 @@ namespace CityGame
                 else
                 if (mousePosition.X < scrollBorder)
                 {
-                    
+
                     double xLambda = (scrollBorder / (mousePosition.X)) * startScrollSpeed;
                     TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset - xLambda);
-                    
+
                 }
 
                 if (mousePosition.Y > this.ActualHeight - scrollBorder)
@@ -282,13 +293,13 @@ namespace CityGame
                     previewImages[px, py].Width = previewImages[px, py].Height = actualSpriteSizeInPixels;
                     previewImages[px, py].Margin = new Thickness(x + px * actualSpriteSizeInPixels, y + py * actualSpriteSizeInPixels, 0, 0);
 
-                    
-                    if ((newPositionMap != null) 
+
+                    if ((newPositionMap != null)
                         && (px < newPositionMap.GetLength(0))
                         && (py < newPositionMap.GetLength(1))
                         &&
                         (newPositionMap != null) && (newPositionMap[px, py] != null))
-                       
+
                     {
                         switch (newPositionMap[px, py])
                         {
@@ -336,11 +347,11 @@ namespace CityGame
         {
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
-              switch (e.Key)
+                switch (e.Key)
                 {
                     case Key.R: new ResourceExplorerWindow().Show(); break;
                     case Key.T: cityGameEngine.GenerateTerrain(); break;
-                }            
+                }
             }
 
             switch (e.Key)

@@ -18,7 +18,7 @@
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.ColumnSpan="2" >
             <Button x:Name="ResourceExplorerButton" Content="Resource Explorer (F2)" Width="128" HorizontalAlignment="Left" Click="ResourceExplorerButton_Click" />
             <Button x:Name="GenerateMapButton" Content="Generate map (F5)" Width="128" HorizontalAlignment="Left" Click="GenerateMapButton_Click"  />
-            <Button x:Name="GenerateLandButton" Content="Generate land" Width="128" HorizontalAlignment="Left" Click="GenerateLandButton_Click"  />
+            <Button x:Name="BenchmarkButton" Content="Benchmark test" Width="128" HorizontalAlignment="Left" Click="BenchmarkButton_Click"  />
 
             <TextBlock Text="Water level" VerticalAlignment="Center" />
             <TextBox x:Name="WaterLevelTextBox" Text="0.3" VerticalAlignment="Center"  />

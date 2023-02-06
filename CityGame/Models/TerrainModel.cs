@@ -62,7 +62,7 @@ namespace CityGame.Models
         public void PutImage(int x, int y, ushort? bx, ushort? by)
         {
             Int32Rect rect = new Int32Rect(x * 16, y * 16, 16, 16);
-            bitmapSource.WritePixels(rect, SpriteRepository.GetPixels((int)bx, (int)by), 16, 0);
+            bitmapSource.WritePixels(rect, SpriteRepository.GetPixels((int)bx, (int)by), 16 * 4, 0);
         }
 
         public ObjectType[,] TestPosition(GroupDTO? group, int x, int y)
@@ -216,7 +216,7 @@ namespace CityGame.Models
                     }
 
                     Int32Rect rect = new Int32Rect(x * 16, y * 16, 16, 16);
-                    bitmapSource.WritePixels(rect, SpriteRepository.GetPixels(terrain[x, y]), 16, 0);
+                    bitmapSource.WritePixels(rect, SpriteRepository.GetPixels(terrain[x, y]), 16 * 4, 0);
                 }
             }
 

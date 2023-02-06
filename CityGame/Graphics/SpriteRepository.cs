@@ -40,7 +40,7 @@ namespace CityGame.Graphics
     {
         public static string LastError = string.Empty;
 
-        private static string spritesImageFilePath = @"\Resources\resources256.bmp";
+        private static string spritesImageFilePath = @"\Resources\resources.png";
 
         private const int spriteSize = 16;
 
@@ -120,8 +120,8 @@ namespace CityGame.Graphics
                 bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
                 bitmapimage.EndInit();
 
-                bufferPixels[new Point(x, y)] = new byte[16 * 16];
-                bitmapimage.CopyPixels(new System.Windows.Int32Rect(0, 0, 16, 16), bufferPixels[new Point(x, y)], 16, 0);
+                bufferPixels[new Point(x, y)] = new byte[16 * 16 * 4];
+                bitmapimage.CopyPixels(new System.Windows.Int32Rect(0, 0, 16, 16), bufferPixels[new Point(x, y)], 16 * 4, 0);
             }
             return bufferPixels[new Point(x, y)];
         }

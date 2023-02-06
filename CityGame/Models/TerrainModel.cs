@@ -1,4 +1,5 @@
 ﻿using CityGame.Data.DTO;
+using CityGame.Data.Enum;
 using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 using System;
@@ -87,47 +88,47 @@ namespace CityGame.Models
             return result;
         }
 
-        protected Func<TerrainModel, int, int, int[,], terrainType, GroupSpritesDTO, bool> PutTerrainBlock = delegate (TerrainModel terrainModel, int x, int y, int[,] sourceTerraing, terrainType groupType, GroupSpritesDTO groupSprites)
+        protected Func<TerrainModel, int, int, int[,], TerrainType, GroupSpritesDTO, GroupSpritesDTO, bool> PutTerrainBlock = delegate (TerrainModel terrainModel, int x, int y, int[,] sourceTerraing, TerrainType groupType, GroupSpritesDTO groupSprites, GroupSpritesDTO borderSprites)
         {
 
             if ((x > 0) && (y > 0) && (sourceTerraing[terrainModel.CLeft(x), y] != (int)groupType) && (sourceTerraing[x, terrainModel.CTop(y)] != (int)groupType))
             {
-                terrainModel.terrain[x, y] = groupSprites.Sprites[0, 0];
+                terrainModel.terrain[x, y] = borderSprites.Sprites[0, 0];
             }
             else
             if ((x > 0) && (y < terrainModel.terrainSize - 1) && (sourceTerraing[terrainModel.CLeft(x), y] != (int)groupType) && (sourceTerraing[x, terrainModel.CBottom(y)] != (int)groupType))
             {
-                terrainModel.terrain[x, y] = groupSprites.Sprites[0, 2];
+                terrainModel.terrain[x, y] = borderSprites.Sprites[0, 2];
             }
             else
             if ((x < terrainModel.terrainSize - 1) && (y > 0) && (sourceTerraing[terrainModel.CRight(x), y] != (int)groupType) && (sourceTerraing[x, terrainModel.CTop(y)] != (int)groupType))
             {
-                terrainModel.terrain[x, y] = groupSprites.Sprites[2, 0];
+                terrainModel.terrain[x, y] = borderSprites.Sprites[2, 0];
             }
             else
             if ((x < terrainModel.terrainSize - 1) && (y < terrainModel.terrainSize - 1) && (sourceTerraing[terrainModel.CRight(x), y] != (int)groupType) && (sourceTerraing[x, terrainModel.CBottom(y)] != (int)groupType))
             {
-                terrainModel.terrain[x, y] = groupSprites.Sprites[2, 2];
+                terrainModel.terrain[x, y] = borderSprites.Sprites[2, 2];
             }
             else
             if ((x > 0) && (sourceTerraing[terrainModel.CLeft(x), y] != (int)groupType))
             {
-                terrainModel.terrain[x, y] = groupSprites.Sprites[0, 1];
+                terrainModel.terrain[x, y] = borderSprites.Sprites[0, 1];
             }
             else
             if ((y > 0) && (sourceTerraing[x, terrainModel.CTop(y)] != (int)groupType))
             {
-                terrainModel.terrain[x, y] = groupSprites.Sprites[1, 0];
+                terrainModel.terrain[x, y] = borderSprites.Sprites[1, 0];
             }
             else
             if ((y < terrainModel.terrainSize - 1) && (sourceTerraing[x, terrainModel.CBottom(y)] != (int)groupType))
             {
-                terrainModel.terrain[x, y] = groupSprites.Sprites[1, 2];
+                terrainModel.terrain[x, y] = borderSprites.Sprites[1, 2];
             }
             else
             if ((x < terrainModel.terrainSize - 1) && (sourceTerraing[terrainModel.CRight(x), y] != (int)groupType))
             {
-                terrainModel.terrain[x, y] = groupSprites.Sprites[2, 1];
+                terrainModel.terrain[x, y] = borderSprites.Sprites[2, 1];
             }
             else
             {
@@ -139,8 +140,15 @@ namespace CityGame.Models
         public void GenerateNewTerrain()
         {
             List<GroupSpritesDTO> water = new List<GroupSpritesDTO>();
+            water.Add(spriteBusiness.GetSpritesByGroupName(SpritesGroupEnum.water, 0));
             water.Add(spriteBusiness.GetSpritesByGroupName(SpritesGroupEnum.water, 1));
             water.Add(spriteBusiness.GetSpritesByGroupName(SpritesGroupEnum.water, 2));
+
+            List<GroupSpritesDTO> coast = new List<GroupSpritesDTO>();
+            
+            coast.Add(spriteBusiness.GetSpritesByGroupName(SpritesGroupEnum.coast, 0));
+            coast.Add(spriteBusiness.GetSpritesByGroupName(SpritesGroupEnum.coast, 1));
+
 
             List<GroupSpritesDTO> forest = new List<GroupSpritesDTO>();
             forest.Add(spriteBusiness.GetSpritesByGroupName(SpritesGroupEnum.forest, 1));
@@ -157,15 +165,15 @@ namespace CityGame.Models
 
                     if (sourceTerraing[x, y] <= waterLevel)
                     {
-                        sourceTerraing[x, y] = (int)terrainType.water;
+                        sourceTerraing[x, y] = (int)TerrainType.water;
                     }
                     else
                     if (sourceTerraing[x, y] <= landLevel)
                     {
-                        sourceTerraing[x, y] = (int)terrainType.land;
+                        sourceTerraing[x, y] = (int)TerrainType.land;
                     }
                     else
-                        sourceTerraing[x, y] = (int)terrainType.forest;
+                        sourceTerraing[x, y] = (int)TerrainType.forest;
                 }
             }
 
@@ -187,19 +195,19 @@ namespace CityGame.Models
 
                         if (s != sourceTerraing[x, y])
                         {
-                            sourceTerraing[x, y] = (int)terrainType.land;
+                            sourceTerraing[x, y] = (int)TerrainType.land;
                         }
                     }
 
 
                     switch (sourceTerraing[x, y])
                     {
-                        case (int)terrainType.water:
+                        case (int)TerrainType.water:
 
-                            PutTerrainBlock(this, x, y, sourceTerraing, terrainType.water, water[randomIndex]);
+                            PutTerrainBlock(this, x, y, sourceTerraing, TerrainType.water, water[randomIndex], coast[randomIndex]);
                             break;
 
-                        case (int)terrainType.land:
+                        case (int)TerrainType.land:
                             {
                                 //TODO: terrain sprite
                                 terrain[x, y] = new PositionDTO()
@@ -211,12 +219,15 @@ namespace CityGame.Models
                                 break;
                             }
                         default:
-                            PutTerrainBlock(this, x, y, sourceTerraing, terrainType.forest, forest[randomIndex]);
+                            PutTerrainBlock(this, x, y, sourceTerraing, TerrainType.forest, forest[randomIndex], forest[randomIndex]);
                             break;
                     }
+                    if (SpriteRepository.GetPixels(terrain[x, y]) != null)
+                    {
+                        Int32Rect rect = new Int32Rect(x * 16, y * 16, 16, 16);
 
-                    Int32Rect rect = new Int32Rect(x * 16, y * 16, 16, 16);
-                    bitmapSource.WritePixels(rect, SpriteRepository.GetPixels(terrain[x, y]), 16 * 4, 0);
+                        bitmapSource.WritePixels(rect, SpriteRepository.GetPixels(terrain[x, y]), 16 * 4, 0);
+                    }
                 }
             }
 

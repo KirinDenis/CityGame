@@ -15,9 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Resources\Blocks.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Resources\Groups.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

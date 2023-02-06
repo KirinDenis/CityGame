@@ -46,6 +46,10 @@
                 <MenuItem Header="Save City as..."   Command="{Binding MenuCommand}" />
                 <MenuItem Header="Save City"   Command="{Binding MenuCommand}" />
                 <Separator />
+                <MenuItem Header="Develop"   Command="{Binding MenuCommand}" Click="MenuItem_Click">
+                    <MenuItem Header="Resource explorer"   Command="{Binding MenuCommand}" />
+                </MenuItem>
+                <Separator />
                 <MenuItem Header="Exit"   Command="{Binding MenuCommand}" />
             </MenuItem>
             <MenuItem Header="OPTIONS" HorizontalContentAlignment="Left">

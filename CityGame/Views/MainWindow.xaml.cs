@@ -14,20 +14,6 @@ using System.Windows.Media;
 
 namespace CityGame
 {
-    public class Graph
-    {
-        public Point from;
-        public Point to;
-        public List<Graph> child = new List<Graph>();
-    }
-
-    public enum terrainType : int
-    {
-        water = 1,
-        land = 2,
-        forest = 4
-    }
-
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -97,6 +83,7 @@ namespace CityGame
                     previewImages[x, y].Width = previewImages[x, y].Height = 16;
                     previewImages[x, y].HorizontalAlignment = HorizontalAlignment.Left;
                     previewImages[x, y].VerticalAlignment = VerticalAlignment.Top;
+                    previewImages[x, y].OpacityMask = (Brush)new BrushConverter().ConvertFrom("#90000000");
                     RenderOptions.SetBitmapScalingMode(previewImages[x, y], BitmapScalingMode.NearestNeighbor);
                     GameViewGrid.Children.Add(previewImages[x, y]);
                 }
@@ -275,13 +262,13 @@ namespace CityGame
                     {
                         switch (newPositionMap[px, py])
                         {
-                            case ObjectType.terrain:
+                            case ObjectType.terrain:                            
                             case ObjectType.forest:
                             case ObjectType.network:
-                                previewImages[px, py].OpacityMask = (Brush)new BrushConverter().ConvertFrom("#F000FF00");
+                                previewImages[px, py].Source = previewImages[px, py].Tag as ImageSource;
                                 break;
                             default:
-                                previewImages[px, py].OpacityMask = (Brush)new BrushConverter().ConvertFrom("#10FF0000");
+                                previewImages[px, py].Source = SpriteRepository.GetSprite(spriteBusiness.GetGroupByName(SpritesGroupEnum.select)?.Sprites[0].Sprites[0, 0]);
                                 break;
                         }
                     }
@@ -348,11 +335,17 @@ namespace CityGame
                     for (int y = 0; y < GameConsts.GroupSize; y++)
                     {
                         previewImages[x, y].Source = SpriteRepository.GetSprite(selectedGroup.Sprites[0].Sprites[x, y]);
+                        previewImages[x, y].Tag = previewImages[x, y].Source;
                     }
                 }
             }
 
 
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            new ResourceExplorerWindow().Show();
         }
     }
 }

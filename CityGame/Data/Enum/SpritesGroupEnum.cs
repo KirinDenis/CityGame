@@ -1,4 +1,6 @@
-﻿namespace CityGame.DTOs.Enum
+﻿using System.CodeDom;
+
+namespace CityGame.DTOs.Enum
 {
     /// <summary>
     /// Game object sprite's groups enum
@@ -96,6 +98,8 @@
         public const string strange5 = "strange5";
         public const string strange6 = "strange6";
         public const string strange7 = "strange7";
+        public const string select = "select";
+        public const string coast = "coast";
 
         public static string[] groups = { terrain, water , forest, road, rail, wire,
             resident0,
@@ -176,7 +180,10 @@
             strange4,
             strange5,
             strange6,
-            strange7 }; 
+            strange7,
+            select,
+            coast
+        }; 
 
         /*
         public static string ByObjectType(ObjectType objectType)
@@ -204,6 +211,7 @@
                 case wire:
                     return ObjectType.network; 
                 case terrain:
+                case coast:                
                     return ObjectType.terrain;
                 case forest:
                     return ObjectType.forest;

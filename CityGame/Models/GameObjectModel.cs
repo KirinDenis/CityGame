@@ -16,6 +16,8 @@ namespace CityGame.Models
         protected SpriteBusiness spriteBusiness = new SpriteBusiness();
         protected TerrainModel terrainModel;
 
+        protected PositionDTO positionDTO;
+
         public GroupDTO? Group { get; set; }
 
         public GameObjectModel(TerrainModel terrainModel)

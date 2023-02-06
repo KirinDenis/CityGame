@@ -31,7 +31,7 @@ namespace CityGame.Models
             terrainModel = new TerrainModel(size);
             roadGameObjectModel = new RoadGameObjectModel(terrainModel);
             railGameObjectModel = new RailGameObjectModel(terrainModel);
-            residentModel = new ResidentModel(terrainModel);
+            
 
             DispatcherTimer timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(100);
@@ -62,7 +62,11 @@ namespace CityGame.Models
                 case SpritesGroupEnum.rail: railGameObjectModel.Put(x, y); break;
                 case SpritesGroupEnum.wire: railGameObjectModel.Put(x, y); break;
                 default:
-                 residentModel.Put(x, y, group); break;
+                    residentModel = new ResidentModel(terrainModel);
+                    residentModel.Group = group;
+                    residentModel.Put(x, y, group);
+                    residentModel.Animate();
+                    break;
 
             }
         }

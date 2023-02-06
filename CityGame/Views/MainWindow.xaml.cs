@@ -101,6 +101,7 @@ namespace CityGame
                     previewImages[x, y].Width = previewImages[x, y].Height = 16;
                     previewImages[x, y].HorizontalAlignment = HorizontalAlignment.Left;
                     previewImages[x, y].VerticalAlignment = VerticalAlignment.Top;
+                    RenderOptions.SetBitmapScalingMode(previewImages[x, y], BitmapScalingMode.NearestNeighbor);
                     GameViewGrid.Children.Add(previewImages[x, y]);
                 }
             }

@@ -6,22 +6,62 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace CityGame.Models
 {
-    internal class ResidentModel
+    internal class ResidentModel: GameObjectModel
     {
         private SpriteBusiness spriteBusiness = new SpriteBusiness();
         private TerrainModel terrainModel;
-        
 
-        public ResidentModel(TerrainModel terrainModel)
+        private int animationFrame = 1;
+
+        public ResidentModel(TerrainModel terrainModel): base(terrainModel)
         {            
             this.terrainModel = terrainModel;
+
         }
 
-        public void Put(ushort x, ushort y, GroupDTO group)
+        public void Animate()
+        {
+            Task t = Task.Run(async delegate {                
+                if (Group?.Sprites.Count > 1)
+                {
+                    while (true)
+                    {
+
+                        if (animationFrame >= Group.Sprites.Count)
+                        {
+                            animationFrame = 1;
+                        }
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            {
+                                Put(positionDTO.x, positionDTO.y, Group, animationFrame);
+                            }
+                        });
+                        animationFrame++;
+                        await Task.Delay(300);
+                    }
+                }
+            });
+
+
+
+            //TimeSpan ts = TimeSpan.FromMilliseconds(150);
+            //if (!t.Wait(ts))
+            //    Console.WriteLine("The timeout interval elapsed.");
+
+        }
+
+
+
+        public void Put(ushort x, ushort y, GroupDTO group, int frame = 0)
         {
             
             
@@ -30,16 +70,21 @@ namespace CityGame.Models
                 return; 
             }
 
+            positionDTO = new PositionDTO()
+            {
+                x = x,
+                y = y
+            };
 
             for (int sx = 0; sx < group?.Width; sx++)
             {
                 for (int sy = 0; sy < group?.Height; sy++)
                 { 
                 
-                if (group?.Sprites[0].Sprites[sx,sy] != null)
+                if (group?.Sprites[frame].Sprites[sx,sy] != null)
                 {
-                    terrainModel.terrain[x + sx, y + sy] = group?.Sprites[0].Sprites[sx, sy];
-                    terrainModel.PutImage(x + sx, y + sy, group?.Sprites[0].Sprites[sx, sy].x, group?.Sprites[0].Sprites[sx, sy].y) ;
+                    terrainModel.terrain[x + sx, y + sy] = group?.Sprites[frame].Sprites[sx, sy];
+                    terrainModel.PutImage(x + sx, y + sy, group?.Sprites[frame].Sprites[sx, sy].x, group?.Sprites[frame].Sprites[sx, sy].y) ;
                 }
             }
             }

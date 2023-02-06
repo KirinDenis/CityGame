@@ -67,6 +67,11 @@ namespace CityGame.Models
                 return;
             }
 
+            if ((x > terrainModel.terrainSize - group?.Width) || (y > terrainModel.terrainSize - group?.Height))
+            {
+                return;
+            }
+
             positionDTO = new PositionDTO()
             {
                 x = x,

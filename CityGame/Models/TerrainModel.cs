@@ -82,7 +82,14 @@ namespace CityGame.Models
                 ry = 0;
                 for (int sy = y; sy < y + group.Height; sy++, ry++)
                 {
-                    result[rx, ry] = SpritesGroupEnum.GetObjectTypeByGroupName(spriteBusiness.GetGroupBySpritePosition(terrain[sx, sy]).Name);
+                    if ((sx < terrainSize) && (sy < terrainSize))
+                    {
+                        result[rx, ry] = SpritesGroupEnum.GetObjectTypeByGroupName(spriteBusiness.GetGroupBySpritePosition(terrain[sx, sy])?.Name);
+                    }
+                    else
+                    {
+                        result[rx, ry] = ObjectType.water;
+                    }
                 }
             }
             return result;

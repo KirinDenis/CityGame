@@ -54,9 +54,9 @@ namespace CityGame.Models
             terrainModel.GenerateNewTerrain();
         }
 
-        public void PutObject(ushort x, ushort y, GroupDTO group)
+        public void PutObject(ushort x, ushort y, GroupDTO? group)
         {
-            switch (group.Name)
+            switch (group?.Name)
             {
                 case SpritesGroupEnum.road : roadGameObjectModel.Put(x, y); break;
                 case SpritesGroupEnum.rail: railGameObjectModel.Put(x, y); break;

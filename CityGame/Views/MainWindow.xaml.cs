@@ -34,7 +34,7 @@ namespace CityGame
     /// </summary>
     public partial class MainWindow : Window
     {
-        private int terrainSize = 400;
+        private int terrainSize = 100;
 
         private DrawingVisual drawingVisual = new DrawingVisual();
 
@@ -145,34 +145,6 @@ namespace CityGame
                 
         }
 
-
-        private void SetWaterLevelButton_Click(object sender, RoutedEventArgs e)
-        {
-            int wl;
-            if (int.TryParse(WaterLevelTextBox.Text, out wl))
-            {
-                //cityGameEngine.waterLevel = wl;
-                //cityGameEngine.GenerateNewTerrain();
-            }
-            else
-            {
-                //WaterLevelTextBox.Text = cityGameEngine.waterLevel.ToString();
-            }
-        }
-
-        private void SetRoughnessButton_Click(object sender, RoutedEventArgs e)
-        {
-            int r;
-            if (int.TryParse(RoughnessTextBox.Text, out r))
-            {
-                //cityGameEngine.roughness = r;
-                //cityGameEngine.GenerateNewTerrain();
-            }
-            else
-            {
-                //RoughnessTextBox.Text = cityGameEngine.roughness.ToString();
-            }
-        }
 
         private void Terrain_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
         {

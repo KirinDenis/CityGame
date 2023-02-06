@@ -1,35 +1,27 @@
 ﻿using CityGame.Data.DTO;
-using CityGame.DTOs;
-using CityGame.DTOs.Enum;
 using CityGame.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Threading;
 
 namespace CityGame.Models
 {
-    internal class ResidentModel: GameObjectModel
+    internal class ResidentModel : GameObjectModel
     {
         private SpriteBusiness spriteBusiness = new SpriteBusiness();
         private TerrainModel terrainModel;
 
         private int animationFrame = 1;
 
-        public ResidentModel(TerrainModel terrainModel): base(terrainModel)
-        {            
+        public ResidentModel(TerrainModel terrainModel) : base(terrainModel)
+        {
             this.terrainModel = terrainModel;
 
         }
 
         public void Animate()
         {
-            Task t = Task.Run(async delegate {                
+            Task t = Task.Run(async delegate
+            {
                 if (Group?.Sprites.Count > 1)
                 {
                     while (true)
@@ -63,17 +55,17 @@ namespace CityGame.Models
 
         public void Put(ushort x, ushort y, GroupDTO group, int frame = 0)
         {
-            
-            
-            if (group == null) 
-            { 
-                return; 
-            }
 
-            if (group?.Sprites.Count-1 < frame)
+
+            if (group == null)
             {
                 return;
-            }    
+            }
+
+            if (group?.Sprites.Count - 1 < frame)
+            {
+                return;
+            }
 
             positionDTO = new PositionDTO()
             {
@@ -85,16 +77,16 @@ namespace CityGame.Models
             for (int sx = 0; sx < group?.Width; sx++)
             {
                 for (int sy = 0; sy < group?.Height; sy++)
-                { 
-                
-                if (group?.Sprites[frame].Sprites[sx,sy] != null)
                 {
-                    terrainModel.terrain[x + sx, y + sy] = group?.Sprites[frame].Sprites[sx, sy];
-                    terrainModel.PutImage(x + sx, y + sy, group?.Sprites[frame].Sprites[sx, sy].x, group?.Sprites[frame].Sprites[sx, sy].y) ;
+
+                    if (group?.Sprites[frame].Sprites[sx, sy] != null)
+                    {
+                        terrainModel.terrain[x + sx, y + sy] = group?.Sprites[frame].Sprites[sx, sy];
+                        terrainModel.PutImage(x + sx, y + sy, group?.Sprites[frame].Sprites[sx, sy].x, group?.Sprites[frame].Sprites[sx, sy].y);
+                    }
                 }
             }
-            }
-            
+
 
         }
 

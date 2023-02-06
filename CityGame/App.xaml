@@ -4,6 +4,10 @@
              xmlns:local="clr-namespace:CityGame"
              StartupUri="Views\MainWindow.xaml">
     <Application.Resources>
-         
+
     </Application.Resources>
+
+    
+    
+    
 </Application>

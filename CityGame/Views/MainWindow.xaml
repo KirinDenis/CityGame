@@ -7,64 +7,86 @@
         mc:Ignorable="d"
         Title="City Game" Height="800" Width="800" WindowStartupLocation="CenterScreen" PreviewKeyDown="Window_PreviewKeyDown">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="167*"/>
-            <ColumnDefinition Width="250"/>
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="32"/>
-            <RowDefinition Height="365*"/>
+            <RowDefinition Height="AUTO"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.ColumnSpan="2" >
-            <Button x:Name="ResourceExplorerButton" Content="Resource Explorer (F2)" Width="128" HorizontalAlignment="Left" Click="ResourceExplorerButton_Click" />
-            <Button x:Name="GenerateMapButton" Content="Generate map (F5)" Width="128" HorizontalAlignment="Left" Click="GenerateMapButton_Click"  />
-            <Button x:Name="BenchmarkButton" Content="Benchmark test" Width="128" HorizontalAlignment="Left" Click="BenchmarkButton_Click"  />
-
-            <TextBlock Text="Water level" VerticalAlignment="Center" />
-            <TextBox x:Name="WaterLevelTextBox" Text="0.3" VerticalAlignment="Center"  />
-            <Button x:Name="SetWaterLevelButton" Content="set" HorizontalAlignment="Left" Click="SetWaterLevelButton_Click"  />
-
-            <TextBlock Text="Roughness" VerticalAlignment="Center" />
-            <TextBox x:Name="RoughnessTextBox" Text="0.3" VerticalAlignment="Center"  />
-            <Button x:Name="SetRoughnessButton" Content="set" HorizontalAlignment="Left" Click="SetRoughnessButton_Click"  />
-
-        </StackPanel>
 
 
         <Grid x:Name="TerrainGrid"  PreviewMouseWheel="Terrain_PreviewMouseWheel" PreviewMouseMove="TerrainGrid_PreviewMouseMove" Background="#FFF6F6F6" Grid.Row="1" Grid.ColumnSpan="2" PreviewMouseDown="TerrainGrid_PreviewMouseDown">
             <ScrollViewer x:Name="TerrainScroll" HorizontalScrollBarVisibility="Visible"  HorizontalContentAlignment="Stretch" PanningMode="Both"  >
                 <Grid x:Name="GameViewGrid" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0,0">
-                    <Image x:Name="TerrainImage" HorizontalAlignment="Left" VerticalAlignment="Top" RenderOptions.BitmapScalingMode="NearestNeighbor" Source="/Resources/resources.png" RenderTransformOrigin="1,0" >
-                        <Image.RenderTransform>
-                            <TransformGroup>
-
-
-
-
-                            </TransformGroup>
-                        </Image.RenderTransform>
-                    </Image>
+                    <Image x:Name="TerrainImage" HorizontalAlignment="Left" VerticalAlignment="Top" RenderOptions.BitmapScalingMode="NearestNeighbor" Source="/Resources/resources.png" RenderTransformOrigin="1,0" />
                     <Border x:Name="TerrainSelector" HorizontalAlignment="Left" VerticalAlignment="Top" Width="16" Height="16" BorderBrush="#FF4FEA25" BorderThickness="2,2,2,2" />
-                    <Border  BorderThickness="1">
-                        <Border BorderBrush="Black" BorderThickness="2 2 2 2" Margin="-6">
-                            <Border.Effect>
-                                <DropShadowEffect ShadowDepth="16" BlurRadius="16"/>
-                            </Border.Effect>
-                        </Border>
-                    </Border>
-
                 </Grid>
             </ScrollViewer>
         </Grid>
 
-
-        <Viewbox Grid.Column="1" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Top" >
-            <Canvas x:Name="Canvas" Width="500" Height="500" />
-        </Viewbox>
-
         <Grid Grid.Column="0" Grid.Row="1" Width="150" Height="450" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#FFF6F6F6" Margin="20,20,0,0">
-            <ListBox x:Name="ObjectsListBox"  PreviewMouseUp="ObjectsListBox_PreviewMouseUp" />
+            <ListBox x:Name="ObjectsListBox"  PreviewMouseUp="ObjectsListBox_PreviewMouseUp" Background="#FFE7E8EC">
+                <ListBox.Effect>
+                    <DropShadowEffect Opacity="0.35" ShadowDepth="25" Color="#FF756A6A" />
+                </ListBox.Effect>
+            </ListBox>
         </Grid>
+
+        <Menu IsMainMenu="True" HorizontalContentAlignment="Stretch" Background="#FF00AAFF" Foreground="#FF0033C4" >
+            <MenuItem Header="SYSTEM" HorizontalContentAlignment="Left">
+                <MenuItem Header="About CITY GAME" Command="{Binding MenuCommand}" CommandParameter="About SIMPLE CITY" />
+                <Separator />
+
+                <MenuItem Header="Print" Command="{Binding MenuCommand}" CommandParameter="Param02"  />
+                <Separator />
+
+                <MenuItem Header="Load Scenario"   Command="{Binding MenuCommand}" CommandParameter="LoadScenario" />
+                <MenuItem Header="Start New City"   Command="{Binding MenuCommand}" />
+                <Separator />
+                
+                <MenuItem Header="Load City"   Command="{Binding MenuCommand}" />
+                <MenuItem Header="Save City as..."   Command="{Binding MenuCommand}" />
+                <MenuItem Header="Save City"   Command="{Binding MenuCommand}" />
+                <Separator />
+                <MenuItem Header="Exit"   Command="{Binding MenuCommand}" />
+            </MenuItem>
+            <MenuItem Header="OPTIONS" HorizontalContentAlignment="Left">
+                <MenuItem Header="Auto-Bulldoze"   Command="{Binding MenuCommand}" />
+                <MenuItem Header="Auto-Budget"   Command="{Binding MenuCommand}" />
+                <MenuItem Header="Auto-Goto"   Command="{Binding MenuCommand}" />
+                <MenuItem Header="Sound On"   Command="{Binding MenuCommand}" />
+                <MenuItem Header="Speed"   Command="{Binding MenuCommand}">
+                    <MenuItem Header="Fastest"   Command="{Binding MenuCommand}"/>
+                    <MenuItem Header="Fast"   Command="{Binding MenuCommand}"/>
+                    <MenuItem Header="Average"   Command="{Binding MenuCommand}"/>
+                    <MenuItem Header="Slow"   Command="{Binding MenuCommand}"/>
+                    <MenuItem Header="Pause"   Command="{Binding MenuCommand}"/>
+                </MenuItem>
+                <MenuItem Header="Animate all"   Command="{Binding MenuCommand}" />
+                <MenuItem Header="Frequent animation"   Command="{Binding MenuCommand}" />
+            </MenuItem>
+
+            <MenuItem Header="DISASTERS" HorizontalContentAlignment="Left">
+                <MenuItem Header="Fire"   Command="{Binding MenuCommand}" />
+                <MenuItem Header="Flood"   Command="{Binding MenuCommand}" />
+                <MenuItem Header="Air Crash"   Command="{Binding MenuCommand}" />
+                <MenuItem Header="Tornado"   Command="{Binding MenuCommand}" />
+                <MenuItem Header="Earthquake"   Command="{Binding MenuCommand}" />
+                <MenuItem Header="Monster"   Command="{Binding MenuCommand}" />
+                <Separator />
+                <MenuItem Header="Disable"   Command="{Binding MenuCommand}" />
+            </MenuItem>
+
+            <MenuItem Header="WINDOWS" HorizontalContentAlignment="Left">
+                <MenuItem Header="Maps"   Command="{Binding MenuCommand}" />
+                <MenuItem Header="Graphs"   Command="{Binding MenuCommand}" />
+                <MenuItem Header="Budget"   Command="{Binding MenuCommand}" />
+                <MenuItem Header="Edit"   Command="{Binding MenuCommand}" />
+                <MenuItem Header="Evaluation"   Command="{Binding MenuCommand}" />
+                <MenuItem Header="Close"   Command="{Binding MenuCommand}" />
+                <MenuItem Header="Hide"   Command="{Binding MenuCommand}" />
+            </MenuItem>
+
+
+        </Menu>
 
     </Grid>
 </Window>

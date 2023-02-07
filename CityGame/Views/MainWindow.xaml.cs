@@ -4,7 +4,6 @@ using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 using CityGame.Models;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,7 +19,7 @@ namespace CityGame
     /// </summary>
     public partial class MainWindow : Window
     {
-        private int terrainSize = 200;
+        private int terrainSize = 100;
 
         private DrawingVisual drawingVisual = new DrawingVisual();
 
@@ -57,9 +56,6 @@ namespace CityGame
 
             cityGameEngine = new CityGameEngine("new city", terrainSize);
             cityGameEngine.RenderCompleted += CityGameEngine_RenderCompleted;
-
-            //WaterLevelTextBox.Text = cityGameEngine.waterLevel.ToString();
-            //RoughnessTextBox.Text = cityGameEngine.roughness.ToString();
 
             TerrainImage.Width = TerrainImage.Height = cityGameEngine.GetTerrainSize() * SpriteRepository.ResourceInfo.SpriteSize * zoom;
 
@@ -115,21 +111,22 @@ namespace CityGame
         private void BenchmarkButton_Click(object sender, RoutedEventArgs e)
         {
             int groupIndex = 0;
-            for (int x = 3; x < terrainSize-7; x+=3, groupIndex++)
+            for (ushort x = 3; x < terrainSize - 7; x += 3, groupIndex++)
             {
-                for (int y = 3; y < terrainSize - 7; y += 3, groupIndex++)
+                for (ushort y = 3; y < terrainSize - 7; y += 3, groupIndex++)
                 {
-                    if (groupIndex >= spriteBusiness.groups.Count-1)
+                    if (groupIndex >= spriteBusiness.groups.Count - 1)
                     {
                         groupIndex = 0;
                     }
-                    cityGameEngine.PutObject((ushort)x, (ushort)y, spriteBusiness.groups[groupIndex]);
+                    cityGameEngine.BuildObject(new PositionDTO() { x = x, y = y }, spriteBusiness.groups[groupIndex]);
 
 
-                    System.GC.Collect();
-                }    
+                 
+                }
             }
-                
+            System.GC.Collect();
+
         }
 
 
@@ -262,7 +259,7 @@ namespace CityGame
                     {
                         switch (newPositionMap[px, py])
                         {
-                            case ObjectType.terrain:                            
+                            case ObjectType.terrain:
                             case ObjectType.forest:
                             case ObjectType.network:
                                 previewImages[px, py].Source = previewImages[px, py].Tag as ImageSource;
@@ -295,12 +292,8 @@ namespace CityGame
 
             PositionDTO p = GetTerrainPosition(e);
 
-            cityGameEngine.PutObject(p.x, p.y, selectedGroup);
+            cityGameEngine.BuildObject(p, selectedGroup);
         }
-
-
-
-
 
         private void Window_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {

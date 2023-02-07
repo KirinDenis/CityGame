@@ -106,13 +106,16 @@ namespace CityGame.Models
             }
             //else default single road
 
-            terrainModel.PutImage(x, y, terrainModel.terrain[x, y].x, terrainModel.terrain[x, y].y);
+            terrainModel.PutSprite(x, y, terrainModel.terrain[x, y].x, terrainModel.terrain[x, y].y);
 
             return FS;
         }
 
-        public override bool Put(ushort x, ushort y)
+        public override bool Build(PositionDTO positionDTO)
         {
+            int x = positionDTO.x;
+            int y = positionDTO.y;
+
             bool[,] FS = BuildNetworkItem(x, y);
 
             //Rebuild near roads            

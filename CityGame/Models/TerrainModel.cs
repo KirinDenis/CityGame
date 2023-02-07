@@ -60,11 +60,48 @@ namespace CityGame.Models
 
         }
 
-        public void PutImage(int x, int y, ushort? bx, ushort? by)
+        public void PutSprite(int x, int y, ushort? bx, ushort? by)
         {
             Int32Rect rect = new Int32Rect(x * 16, y * 16, 16, 16);
             bitmapSource.WritePixels(rect, SpriteRepository.GetPixels((int)bx, (int)by), 16 * 4, 0);
         }
+
+        public void BuildObject(ushort x, ushort y, GroupDTO group, int animationFrame = 0)
+        {
+
+
+            if (group == null)
+            {
+                return;
+            }
+
+            if (group?.Sprites.Count - 1 < animationFrame)
+            {
+                return;
+            }
+
+            if ((x > terrainSize - group?.Width) || (y > terrainSize - group?.Height))
+            {
+                return;
+            }
+
+            for (int sx = 0; sx < group?.Width; sx++)
+            {
+                for (int sy = 0; sy < group?.Height; sy++)
+                {
+
+                    if (group?.Sprites[animationFrame].Sprites[sx, sy] != null)
+                    {
+                        terrain[x + sx, y + sy] = group?.Sprites[animationFrame].Sprites[sx, sy];
+                        PutSprite(x + sx, y + sy, group?.Sprites[animationFrame].Sprites[sx, sy].x, group?.Sprites[animationFrame].Sprites[sx, sy].y);
+                    }
+                }
+            }
+
+
+        }
+
+
 
         public ObjectType[,] TestPosition(GroupDTO? group, int x, int y)
         {
@@ -152,7 +189,7 @@ namespace CityGame.Models
             water.Add(spriteBusiness.GetSpritesByGroupName(SpritesGroupEnum.water, 2));
 
             List<GroupSpritesDTO> coast = new List<GroupSpritesDTO>();
-            
+
             coast.Add(spriteBusiness.GetSpritesByGroupName(SpritesGroupEnum.coast, 0));
             coast.Add(spriteBusiness.GetSpritesByGroupName(SpritesGroupEnum.coast, 1));
 

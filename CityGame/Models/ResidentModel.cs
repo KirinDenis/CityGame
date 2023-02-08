@@ -1,12 +1,14 @@
 ﻿using CityGame.Data.DTO;
 using CityGame.DTOs.Enum;
 using CityGame.Graphics;
+using System;
 using System.Windows;
 
 namespace CityGame.Models
 {
     internal class ResidentModel : GameObjectModel
-    {        
+    {
+        private Random random = new Random();
         public ResidentModel(SpriteBusiness spriteBusiness, TerrainModel terrainModel) : base(spriteBusiness, terrainModel)
         {
             startingGroup = spriteBusiness.GetGroupByName(SpritesGroupEnum.resident0);
@@ -15,7 +17,7 @@ namespace CityGame.Models
         protected override void LiveCycle(GameObjectDTO gameObject)
         {
             gameObject.timeLive++;
-            if (gameObject.timeLive > 3)
+            if (gameObject.timeLive > random.Next(10))
             {
                 gameObject.timeLive = 0;
                 gameObject.level++;

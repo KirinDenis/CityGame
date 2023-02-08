@@ -62,6 +62,7 @@ namespace CityGame
             TerrainScroll.ScrollToVerticalOffset(TerrainImage.Width / 2.0f);
             TerrainScroll.ScrollToHorizontalOffset(TerrainImage.Height / 2.0f);
 
+            /*
             foreach (GroupDTO group in spriteBusiness.groups)
             {
                 ObjectsListBox.Items.Add(new ListBoxItem()
@@ -70,6 +71,7 @@ namespace CityGame
                     Tag = group
                 });
             }
+            */
 
             for (int x = 0; x < GameConsts.GroupSize; x++)
             {
@@ -316,6 +318,7 @@ namespace CityGame
         }
 
 
+        /*
         private void ObjectsListBox_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             ListBoxItem item = ObjectsListBox.SelectedItem as ListBoxItem;
@@ -332,13 +335,56 @@ namespace CityGame
                     }
                 }
             }
-
-
         }
+        */
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             new ResourceExplorerWindow().Show();
+        }
+
+        private void SelectGroup(GroupDTO? group)
+        {
+            selectedGroup = group;
+            if (selectedGroup != null)
+            {
+                if (cityGameEngine.GetObjectTypeByGrop(group) == ObjectType.network)
+                {
+                    for (int x = 0; x < GameConsts.GroupSize; x++)
+                    {
+                        for (int y = 0; y < GameConsts.GroupSize; y++)
+                        {
+                            previewImages[x, y].Source = null;
+                            previewImages[x, y].Tag = previewImages[x, y].Source;
+                        }
+                    }
+                    previewImages[0, 0].Source =  SpriteRepository.GetSprite(selectedGroup.Sprites[0].Sprites[1, 1]);
+                }
+                else 
+                if (cityGameEngine.GetObjectTypeByGrop(group) == ObjectType.building)
+                {
+                    for (int x = 0; x < GameConsts.GroupSize; x++)
+                    {
+                        for (int y = 0; y < GameConsts.GroupSize; y++)
+                        {
+                            previewImages[x, y].Source = SpriteRepository.GetSprite(selectedGroup.Sprites[0].Sprites[x, y]);
+                            previewImages[x, y].Tag = previewImages[x, y].Source;
+                        }
+                    }
+                }
+                
+                    
+            }
+        }
+
+        private void ResidentButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.resident0));
+        }
+
+        private void RoadButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.road));
         }
     }
 }

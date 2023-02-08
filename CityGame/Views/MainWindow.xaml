@@ -22,13 +22,33 @@
             </ScrollViewer>
         </Grid>
 
-        <Grid Grid.Column="0" Grid.Row="1" Width="150" Height="450" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#FFF6F6F6" Margin="20,20,0,0">
-            <ListBox x:Name="ObjectsListBox"  PreviewMouseUp="ObjectsListBox_PreviewMouseUp" Background="#FFE7E8EC">
-                <ListBox.Effect>
-                    <DropShadowEffect Opacity="0.35" ShadowDepth="25" Color="#FF756A6A" />
-                </ListBox.Effect>
-            </ListBox>
-        </Grid>
+        <Border Grid.Column="0" Grid.Row="1" BorderBrush="#FFFEFEFE" BorderThickness="1,1,1,1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,20,0,0">
+        <StackPanel  Orientation="Horizontal"  HorizontalAlignment="Left" VerticalAlignment="Top" Background="#FF545454">
+            <StackPanel.Effect>
+                <DropShadowEffect Opacity="0.35" ShadowDepth="25" Color="#FF756A6A" />
+            </StackPanel.Effect>
+
+            <StackPanel Width="36" HorizontalAlignment="Left">
+                    <Button Width="32" Height="32" Margin="2,2" x:Name="BuildozerButton" Content="BD" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE"  />
+                    <Button Width="32" Height="32"  Margin="2,2" x:Name="WireButton" Content="WR" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE"  />
+                    <Button Width="32" Height="32"  Margin="2,2" x:Name="GardenButton" Content="GD" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE"  />
+                    <Button Width="32" Height="32"  Margin="2,2" x:Name="ComercialButton" Content="CM" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE"  />
+                    <Button Width="32" Height="32"  Margin="2,2" x:Name="PoliceDepartmentButton" Content="PD" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE"  />
+                    <Button Width="32" Height="32"  Margin="2,2" x:Name="StadiumButton" Content="SD" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE"  />
+                    <Button Width="32" Height="32"  Margin="2,2" x:Name="SeaPortButton" Content="SP" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE"  />
+                </StackPanel>
+
+                <StackPanel Width="36" HorizontalAlignment="Left">
+                    <Button Width="32" Height="32" Margin="2,2" x:Name="RoadButton" Content="RD" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE" Click="RoadButton_Click"  />
+                    <Button Width="32" Height="32" Margin="2,2" x:Name="RailButton" Content="RL" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE"  />
+                    <Button Width="32" Height="32" Margin="2,2" x:Name="ResidentButton" Content="RD" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE" Click="ResidentButton_Click"  />
+                    <Button Width="32" Height="32" Margin="2,2" x:Name="IndustrialButton" Content="IL" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE"  />
+                    <Button Width="32" Height="32" Margin="2,2" x:Name="FireDepartmentButton" Content="FD" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE"  />
+                    <Button Width="32" Height="32" Margin="2,2" x:Name="PowerButton" Content="PW" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE"  />
+                    <Button Width="32" Height="32" Margin="2,2" x:Name="AirPortButton" Content="AP" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE"  />
+                </StackPanel>
+            </StackPanel>
+        </Border>
 
         <Menu IsMainMenu="True" HorizontalContentAlignment="Stretch" Background="#FF00AAFF" Foreground="#FF0033C4" >
             <MenuItem Header="SYSTEM" HorizontalContentAlignment="Left">
@@ -41,7 +61,7 @@
                 <MenuItem Header="Load Scenario"   Command="{Binding MenuCommand}" CommandParameter="LoadScenario" />
                 <MenuItem Header="Start New City"   Command="{Binding MenuCommand}" />
                 <Separator />
-                
+
                 <MenuItem Header="Load City"   Command="{Binding MenuCommand}" />
                 <MenuItem Header="Save City as..."   Command="{Binding MenuCommand}" />
                 <MenuItem Header="Save City"   Command="{Binding MenuCommand}" />

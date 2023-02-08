@@ -17,7 +17,7 @@ namespace CityGame.Models
         public ResidentModel(SpriteBusiness spriteBusiness, TerrainModel terrainModel) : base(spriteBusiness, terrainModel)
         {
             this.terrainModel = terrainModel;
-            Group = spriteBusiness.GetGroupByName(SpritesGroupEnum.industrial7);
+            Group = spriteBusiness.GetGroupByName(SpritesGroupEnum.resident0);
 
         }
 

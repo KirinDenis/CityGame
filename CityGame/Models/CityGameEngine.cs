@@ -65,6 +65,19 @@ namespace CityGame.Models
             }
         }
 
+        public ObjectType GetObjectTypeByGrop(GroupDTO? group)
+        {
+            switch (group?.Name)
+            {
+                case SpritesGroupEnum.road: 
+                case SpritesGroupEnum.rail: 
+                case SpritesGroupEnum.wire:
+                    return ObjectType.network;
+                default:
+                    return ObjectType.building;
+            }
+        }
+
         public ObjectType[,] TestPosition(GroupDTO? group, int x, int y)
         {
             return this.terrainModel.TestPosition(group, x, y);

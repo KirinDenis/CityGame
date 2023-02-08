@@ -22,7 +22,7 @@ namespace CityGame.Models
         private bool Canceled = false;
 
         private List<GameObjectModel> familyModels = new List<GameObjectModel>();
-        private List<PositionDTO> positions;
+        private List<PositionDTO> positions = new List<PositionDTO>();
 
 
         public GroupDTO? Group { get; set; }
@@ -30,8 +30,7 @@ namespace CityGame.Models
         public GameObjectModel(SpriteBusiness spriteBusiness, TerrainModel terrainModel)
         {
             this.spriteBusiness = spriteBusiness;
-            this.terrainModel = terrainModel;
-            positions = new List<PositionDTO>();
+            this.terrainModel = terrainModel;            
             Live();
         }
 

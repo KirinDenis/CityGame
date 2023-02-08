@@ -19,7 +19,7 @@ namespace CityGame
     /// </summary>
     public partial class MainWindow : Window
     {
-        private int terrainSize = 400;
+        private int terrainSize = 100;
 
         private DrawingVisual drawingVisual = new DrawingVisual();
 

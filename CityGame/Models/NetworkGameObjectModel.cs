@@ -10,7 +10,7 @@ namespace CityGame.Models
         {
         }
 
-        public bool[,] BuildNetworkItem(int x, int y)
+        public bool[,] BuildNetworkItem(ushort x, ushort y)
         {
             bool[,] FS = new bool[3, 3]; //FS means friendly sprites, the sprites of selected network item type
             int ox = 0;
@@ -114,17 +114,17 @@ namespace CityGame.Models
 
         public override bool Build(PositionDTO positionDTO)
         {
-            int x = positionDTO.x;
-            int y = positionDTO.y;
+            ushort x = positionDTO.x;
+            ushort y = positionDTO.y;
 
             bool[,] FS = BuildNetworkItem(x, y);
 
             //Rebuild near roads            
-            int ox = 0;
-            for (int tx = CLeft(x); tx < CRight(x) + 1; tx++, ox++)
+            ushort ox = 0;
+            for (ushort tx = CLeft(x); tx < CRight(x) + 1; tx++, ox++)
             {
-                int oy = 0;
-                for (int ty = CLeft(y); ty < CRight(y) + 1; ty++, oy++)
+                ushort oy = 0;
+                for (ushort ty = CLeft(y); ty < CRight(y) + 1; ty++, oy++)
                 {
                     if (FS[ox, oy])
                     {

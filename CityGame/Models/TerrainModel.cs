@@ -4,6 +4,7 @@ using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
@@ -60,44 +61,48 @@ namespace CityGame.Models
 
         }
 
-        public void PutSprite(int x, int y, ushort? bx, ushort? by)
-        {
-            Int32Rect rect = new Int32Rect(x * 16, y * 16, 16, 16);
-            bitmapSource.WritePixels(rect, SpriteRepository.GetPixels((int)bx, (int)by), 16 * 4, 0);
+        public void PutSprite(ushort x, ushort y, ushort? bx, ushort? by)
+        {            
+                Int32Rect rect = new Int32Rect(x * SpriteRepository.ResourceInfo.SpriteSize, y * SpriteRepository.ResourceInfo.SpriteSize, SpriteRepository.ResourceInfo.SpriteSize, SpriteRepository.ResourceInfo.SpriteSize);
+
+                    bitmapSource.WritePixels(rect, SpriteRepository.GetPixels((int)bx, (int)by), SpriteRepository.ResourceInfo.SpriteSize * 4, 0);
+
+
+
         }
 
-        public void BuildObject(ushort x, ushort y, GroupDTO group, int animationFrame = 0)
+        public bool BuildObject(ushort x, ushort y, GroupDTO group, int animationFrame = 0)
         {
 
 
             if (group == null)
             {
-                return;
+                return false;
             }
 
             if (group?.Sprites.Count - 1 < animationFrame)
             {
-                return;
+                return false;
             }
 
             if ((x > terrainSize - group?.Width) || (y > terrainSize - group?.Height))
             {
-                return;
+                return false;
             }
 
-            for (int sx = 0; sx < group?.Width; sx++)
+            for (ushort sx = 0; sx < group?.Width; sx++)
             {
-                for (int sy = 0; sy < group?.Height; sy++)
+                for (ushort sy = 0; sy < group?.Height; sy++)
                 {
 
                     if (group?.Sprites[animationFrame].Sprites[sx, sy] != null)
                     {
                         terrain[x + sx, y + sy] = group?.Sprites[animationFrame].Sprites[sx, sy];
-                        PutSprite(x + sx, y + sy, group?.Sprites[animationFrame].Sprites[sx, sy].x, group?.Sprites[animationFrame].Sprites[sx, sy].y);
+                        PutSprite((ushort)(x + sx), (ushort)(y + sy), group?.Sprites[animationFrame].Sprites[sx, sy].x, group?.Sprites[animationFrame].Sprites[sx, sy].y);
                     }
                 }
             }
-
+            return true;
 
         }
 
@@ -132,7 +137,7 @@ namespace CityGame.Models
             return result;
         }
 
-        protected Func<TerrainModel, int, int, int[,], TerrainType, GroupSpritesDTO, GroupSpritesDTO, bool> PutTerrainBlock = delegate (TerrainModel terrainModel, int x, int y, int[,] sourceTerraing, TerrainType groupType, GroupSpritesDTO groupSprites, GroupSpritesDTO borderSprites)
+        protected Func<TerrainModel, ushort, ushort, int[,], TerrainType, GroupSpritesDTO, GroupSpritesDTO, bool> PutTerrainBlock = delegate (TerrainModel terrainModel, ushort x, ushort y, int[,] sourceTerraing, TerrainType groupType, GroupSpritesDTO groupSprites, GroupSpritesDTO borderSprites)
         {
 
             if ((x > 0) && (y > 0) && (sourceTerraing[terrainModel.CLeft(x), y] != (int)groupType) && (sourceTerraing[x, terrainModel.CTop(y)] != (int)groupType))
@@ -222,10 +227,10 @@ namespace CityGame.Models
             }
 
             byte randomIndex = 0;
-            for (int x = 0; x < terrainSize; x++)
+            for (ushort x = 0; x < terrainSize; x++)
             {
                 randomIndex = randomIndex != 0 ? (byte)0 : (byte)1;
-                for (int y = 0; y < terrainSize; y++)
+                for (ushort y = 0; y < terrainSize; y++)
                 {
                     randomIndex = randomIndex != 0 ? (byte)0 : (byte)1;
 

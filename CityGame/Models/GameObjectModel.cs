@@ -59,7 +59,7 @@ namespace CityGame.Models
                             {
                                 animationFrame = 1;
                             }
-                            Application.Current.Dispatcher.Invoke(() =>
+                            Application.Current.Dispatcher.Invoke(async () =>
                             {
                                 if (!Canceled)
                                 {

@@ -1,32 +1,37 @@
 ﻿using CityGame.Data.DTO;
 using CityGame.DTOs.Enum;
 using CityGame.Graphics;
+using System.Windows;
 
 namespace CityGame.Models
 {
     internal class IndustrialModel : GameObjectModel
     {
-        private byte level = 0;
-
-        private uint timeLive = 0;
         public IndustrialModel(SpriteBusiness spriteBusiness, TerrainModel terrainModel) : base(spriteBusiness, terrainModel)
         {        
             startingGroup = spriteBusiness.GetGroupByName(SpritesGroupEnum.industrial0);
         }
         protected override void LiveCycle(GameObjectDTO gameObject)
         {
-            timeLive++;
-            if (timeLive > 3)
+            gameObject.timeLive++;
+            if (gameObject.timeLive > 3)
             {
-                timeLive = 0;
-                level++;
-                gameObject.Group = spriteBusiness.GetGroupByName(SpritesGroupEnum.industrialBase + level);
+                gameObject.timeLive = 0;
+                gameObject.level++;
+                gameObject.Group = spriteBusiness.GetGroupByName(SpritesGroupEnum.industrialBase + gameObject.level);
                 if (gameObject.Group == null)
                 {
-                    level = 0;
+                    gameObject.level = 0;
                     gameObject.Group = startingGroup;
                 }
                 gameObject.animationFrame = 0;
+                Application.Current.Dispatcher.Invoke(async () =>
+                {
+                    if (!Canceled)
+                    {
+                        terrainModel.BuildObject(gameObject.positionDTO.x, gameObject.positionDTO.y, gameObject.Group, gameObject.animationFrame);
+                    }
+                });
             }
         }
     }

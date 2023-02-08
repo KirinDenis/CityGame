@@ -16,6 +16,8 @@ namespace CityGame.DTOs.Enum
         public const string road = "road";
         public const string rail = "rail";
         public const string wire = "wire";
+
+        public const string residentBase = "resident";
         public const string resident0 = "resident0";
         public const string resident1 = "resident1";
         public const string resident2 = "resident2";
@@ -36,8 +38,8 @@ namespace CityGame.DTOs.Enum
         public const string resident16 = "resident16";
         public const string resident17 = "resident17";
         public const string resident18 = "resident18";
-        
 
+        public const string comercialBase = "comercial";
         public const string comercial0 = "comercial0";
         public const string comercial1 = "comercial1";
         public const string comercial2 = "comercial2";

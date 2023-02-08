@@ -17,7 +17,7 @@ namespace CityGame.Models
 
 
         private Task liveTask;
-        private bool Canceled = false;
+        protected bool Canceled = false;
 
         
         private List<GameObjectDTO> gameObjects = new List<GameObjectDTO>();

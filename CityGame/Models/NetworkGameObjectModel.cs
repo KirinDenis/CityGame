@@ -1,11 +1,12 @@
 ﻿using CityGame.Data.DTO;
 using CityGame.DTOs.Enum;
+using CityGame.Graphics;
 
 namespace CityGame.Models
 {
     internal class NetworkGameObjectModel : GameObjectModel
     {
-        public NetworkGameObjectModel(TerrainModel terrainModel) : base(terrainModel)
+        public NetworkGameObjectModel(SpriteBusiness spriteBusiness, TerrainModel terrainModel) : base(spriteBusiness, terrainModel)
         {
         }
 

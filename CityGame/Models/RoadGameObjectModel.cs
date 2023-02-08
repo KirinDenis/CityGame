@@ -1,10 +1,11 @@
 ﻿using CityGame.DTOs.Enum;
+using CityGame.Graphics;
 
 namespace CityGame.Models
 {
     internal class RoadGameObjectModel : NetworkGameObjectModel
     {
-        public RoadGameObjectModel(TerrainModel terrainModel) : base(terrainModel)
+        public RoadGameObjectModel(SpriteBusiness spriteBusiness, TerrainModel terrainModel) : base(spriteBusiness, terrainModel)
         {
             Group = spriteBusiness.GetGroupByName(SpritesGroupEnum.road);
         }

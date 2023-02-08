@@ -1,4 +1,5 @@
 ﻿using CityGame.Data.DTO;
+using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 using System;
 using System.Threading;
@@ -13,12 +14,17 @@ namespace CityGame.Models
         private TerrainModel terrainModel;
 
 
-        public ResidentModel(TerrainModel terrainModel, PositionDTO positionDTO, GroupDTO group) : base(terrainModel, positionDTO, group)
+        public ResidentModel(SpriteBusiness spriteBusiness, TerrainModel terrainModel) : base(spriteBusiness, terrainModel)
         {
             this.terrainModel = terrainModel;
+            Group = spriteBusiness.GetGroupByName(SpritesGroupEnum.stadium);
 
         }
 
+        protected override void LiveCycle()
+        {
+            
+        }
 
     }
 }

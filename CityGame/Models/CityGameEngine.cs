@@ -1,5 +1,6 @@
 ﻿using CityGame.Data.DTO;
 using CityGame.DTOs.Enum;
+using CityGame.Graphics;
 using System;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -8,9 +9,13 @@ namespace CityGame.Models
 {
     public class CityGameEngine
     {
+        private SpriteBusiness spriteBusiness = new SpriteBusiness();
         private TerrainModel terrainModel;
+        
+
         private RoadGameObjectModel roadGameObjectModel;
         private RailGameObjectModel railGameObjectModel;
+        private WireGameObjectModel wireGameObjectModel;
         private ResidentModel residentModel;
 
         public event EventHandler RenderCompleted;
@@ -19,8 +24,10 @@ namespace CityGame.Models
         public CityGameEngine(string cityName, int size = 100)
         {
             terrainModel = new TerrainModel(size);
-            roadGameObjectModel = new RoadGameObjectModel(terrainModel);
-            railGameObjectModel = new RailGameObjectModel(terrainModel);
+            roadGameObjectModel = new RoadGameObjectModel(spriteBusiness, terrainModel);
+            railGameObjectModel = new RailGameObjectModel(spriteBusiness, terrainModel);
+            wireGameObjectModel = new WireGameObjectModel(spriteBusiness, terrainModel);
+            residentModel = new ResidentModel(spriteBusiness, terrainModel);
 
 
             DispatcherTimer timer = new DispatcherTimer();
@@ -50,9 +57,9 @@ namespace CityGame.Models
             {
                 case SpritesGroupEnum.road: roadGameObjectModel.Build(position); break;
                 case SpritesGroupEnum.rail: railGameObjectModel.Build(position); break;
-                case SpritesGroupEnum.wire: railGameObjectModel.Build(position); break;
+                case SpritesGroupEnum.wire: wireGameObjectModel.Build(position); break;
                 default:
-                    residentModel = new ResidentModel(terrainModel, position, group);                    
+                    residentModel.Build(position);                    
                     break;
 
             }

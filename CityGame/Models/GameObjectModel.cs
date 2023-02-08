@@ -22,7 +22,7 @@ namespace CityGame.Models
         private bool Canceled = false;
 
         private List<GameObjectModel> familyModels = new List<GameObjectModel>();
-        private List<PositionDTO> positions = new List<PositionDTO>();
+        private List<PositionDTO> positions;
 
 
         public GroupDTO? Group { get; set; }
@@ -31,7 +31,7 @@ namespace CityGame.Models
         {
             this.spriteBusiness = spriteBusiness;
             this.terrainModel = terrainModel;
-
+            positions = new List<PositionDTO>();
             Live();
         }
 
@@ -51,7 +51,7 @@ namespace CityGame.Models
             {
                 while (!Canceled)
                 {
-                    foreach (PositionDTO position in positions)
+                    foreach (PositionDTO position in positions.ToArray())
                     {
                         if (Group?.Sprites.Count > 1)
                         {
@@ -67,7 +67,7 @@ namespace CityGame.Models
                                 }
                             });
                             animationFrame++;
-                            await Task.Delay(1);
+                            
                         }
 
                         LiveCycle();

@@ -6,6 +6,7 @@
         forest,
         water,
         network,
+        garden,
         building        
     }
 }

@@ -16,7 +16,10 @@ namespace CityGame.Models
         private RoadGameObjectModel roadGameObjectModel;
         private RailGameObjectModel railGameObjectModel;
         private WireGameObjectModel wireGameObjectModel;
+        private GardenModel gardenModel;
         private ResidentModel residentModel;
+        private IndustrialModel industrialModel;
+        private ComercialModel comercialModel;
 
         public event EventHandler RenderCompleted;
 
@@ -27,7 +30,10 @@ namespace CityGame.Models
             roadGameObjectModel = new RoadGameObjectModel(spriteBusiness, terrainModel);
             railGameObjectModel = new RailGameObjectModel(spriteBusiness, terrainModel);
             wireGameObjectModel = new WireGameObjectModel(spriteBusiness, terrainModel);
+            gardenModel = new GardenModel(spriteBusiness, terrainModel);
             residentModel = new ResidentModel(spriteBusiness, terrainModel);
+            industrialModel = new IndustrialModel(spriteBusiness, terrainModel);
+            comercialModel = new ComercialModel(spriteBusiness, terrainModel);
 
 
             DispatcherTimer timer = new DispatcherTimer();
@@ -58,6 +64,11 @@ namespace CityGame.Models
                 case SpritesGroupEnum.road: roadGameObjectModel.Build(position); break;
                 case SpritesGroupEnum.rail: railGameObjectModel.Build(position); break;
                 case SpritesGroupEnum.wire: wireGameObjectModel.Build(position); break;
+                case SpritesGroupEnum.garden: gardenModel.Build(position); break;
+                case SpritesGroupEnum.resident0: residentModel.Build(position); break;
+                case SpritesGroupEnum.industrial0: industrialModel.Build(position); break;
+                case SpritesGroupEnum.comercial0: comercialModel.Build(position); break;
+
                 default:
                     residentModel.Build(position);                    
                     break;
@@ -73,6 +84,8 @@ namespace CityGame.Models
                 case SpritesGroupEnum.rail: 
                 case SpritesGroupEnum.wire:
                     return ObjectType.network;
+                case SpritesGroupEnum.garden:
+                    return ObjectType.garden;
                 default:
                     return ObjectType.building;
             }

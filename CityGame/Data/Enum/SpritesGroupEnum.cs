@@ -62,6 +62,7 @@ namespace CityGame.DTOs.Enum
         public const string comercial20 = "comercial20";
 
 
+        public const string industrialBase = "industrial";
         public const string industrial0 = "industrial0";
         public const string industrial1 = "industrial1";
         public const string industrial2 = "industrial2";

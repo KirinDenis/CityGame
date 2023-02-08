@@ -348,7 +348,9 @@ namespace CityGame
             selectedGroup = group;
             if (selectedGroup != null)
             {
-                if (cityGameEngine.GetObjectTypeByGrop(group) == ObjectType.network)
+                if ((cityGameEngine.GetObjectTypeByGrop(group) == ObjectType.network)
+                    ||
+                   (cityGameEngine.GetObjectTypeByGrop(group) == ObjectType.garden))
                 {
                     for (int x = 0; x < GameConsts.GroupSize; x++)
                     {
@@ -385,6 +387,31 @@ namespace CityGame
         private void RoadButton_Click(object sender, RoutedEventArgs e)
         {
             SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.road));
+        }
+
+        private void WireButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.wire));
+        }
+
+        private void RailButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.rail));
+        }
+
+        private void GardenButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.garden));
+        }
+
+        private void ComercialButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.comercial0));
+        }
+
+        private void IndustrialButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.industrial0));
         }
     }
 }

@@ -16,7 +16,7 @@ namespace CityGame.Models
 
         protected PositionDTO positionDTO;
 
-        private int animationFrame = 1;
+        protected int animationFrame = 1;
 
         private Task liveTask;
         private bool Canceled = false;

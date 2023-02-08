@@ -7,7 +7,7 @@ namespace CityGame.Models
     {
         public WireGameObjectModel(SpriteBusiness spriteBusiness, TerrainModel terrainModel) : base(spriteBusiness, terrainModel)
         {
-            Group = spriteBusiness.GetGroupByName(SpritesGroupEnum.wire);
+            startingGroup = spriteBusiness.GetGroupByName(SpritesGroupEnum.wire);
         }
     }
 }

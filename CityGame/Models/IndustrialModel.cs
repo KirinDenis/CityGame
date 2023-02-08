@@ -1,4 +1,5 @@
-﻿using CityGame.DTOs.Enum;
+﻿using CityGame.Data.DTO;
+using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 
 namespace CityGame.Models
@@ -10,22 +11,22 @@ namespace CityGame.Models
         private uint timeLive = 0;
         public IndustrialModel(SpriteBusiness spriteBusiness, TerrainModel terrainModel) : base(spriteBusiness, terrainModel)
         {        
-            Group = spriteBusiness.GetGroupByName(SpritesGroupEnum.industrial0);
+            startingGroup = spriteBusiness.GetGroupByName(SpritesGroupEnum.industrial0);
         }
-        protected override void LiveCycle()
+        protected override void LiveCycle(GameObjectDTO gameObject)
         {
             timeLive++;
             if (timeLive > 3)
             {
                 timeLive = 0;
                 level++;
-                Group = spriteBusiness.GetGroupByName(SpritesGroupEnum.industrialBase + level);
-                if (Group == null)
+                gameObject.Group = spriteBusiness.GetGroupByName(SpritesGroupEnum.industrialBase + level);
+                if (gameObject.Group == null)
                 {
                     level = 0;
-                    Group = spriteBusiness.GetGroupByName(SpritesGroupEnum.industrialBase + level);
+                    gameObject.Group = startingGroup;
                 }
-                animationFrame = 0;
+                gameObject.animationFrame = 0;
             }
         }
     }

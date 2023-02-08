@@ -7,7 +7,7 @@ namespace CityGame.Models
     {
         public RoadGameObjectModel(SpriteBusiness spriteBusiness, TerrainModel terrainModel) : base(spriteBusiness, terrainModel)
         {
-            Group = spriteBusiness.GetGroupByName(SpritesGroupEnum.road);
+            startingGroup = spriteBusiness.GetGroupByName(SpritesGroupEnum.road);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace CityGame.Models
     {
         public RailGameObjectModel(SpriteBusiness spriteBusiness, TerrainModel terrainModel) : base(spriteBusiness, terrainModel)
         {
-            Group = spriteBusiness.GetGroupByName(SpritesGroupEnum.rail);
+            startingGroup = spriteBusiness.GetGroupByName(SpritesGroupEnum.rail);
         }
     }
 }

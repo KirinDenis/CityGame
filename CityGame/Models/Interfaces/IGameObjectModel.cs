@@ -16,6 +16,6 @@ namespace CityGame.Models.Interfaces
 
     internal interface IGameObjectModel
     {
-        public GroupDTO? Group { get; set; }
+        public GroupDTO? startingGroup { get; set; }
     }
 }

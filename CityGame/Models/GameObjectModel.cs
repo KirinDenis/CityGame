@@ -3,6 +3,7 @@ using CityGame.Graphics;
 using CityGame.Models.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -14,18 +15,16 @@ namespace CityGame.Models
         protected SpriteBusiness spriteBusiness;
         protected TerrainModel terrainModel;
 
-        protected PositionDTO positionDTO;
-
-        protected int animationFrame = 1;
 
         private Task liveTask;
         private bool Canceled = false;
 
-        private List<GameObjectModel> familyModels = new List<GameObjectModel>();
-        private List<PositionDTO> positions = new List<PositionDTO>();
+        
+        private List<GameObjectDTO> gameObjects = new List<GameObjectDTO>();
+
+        public GroupDTO? startingGroup { get; set; }
 
 
-        public GroupDTO? Group { get; set; }
 
         public GameObjectModel(SpriteBusiness spriteBusiness, TerrainModel terrainModel)
         {
@@ -36,10 +35,15 @@ namespace CityGame.Models
 
         public virtual bool Build(PositionDTO positionDTO)
         {
-            this.positionDTO = positionDTO;
-            terrainModel.BuildObject(positionDTO.x, positionDTO.y, Group, 0);
-            familyModels.Add(this);
-            positions.Add(this.positionDTO);
+            GameObjectDTO gameObject = new GameObjectDTO()
+            {
+                positionDTO = positionDTO,
+                Group = this.startingGroup
+            };
+            terrainModel.BuildObject(positionDTO.x, positionDTO.y, startingGroup, 0);
+
+            gameObjects.Add(gameObject);
+            
             return true;
         }
 
@@ -50,33 +54,33 @@ namespace CityGame.Models
             {
                 while (!Canceled)
                 {
-                    foreach (PositionDTO position in positions.ToArray())
+                    foreach (GameObjectDTO gameObject in gameObjects.ToArray())
                     {
-                        if (Group?.Sprites.Count > 1)
+                        if (gameObject.Group?.Sprites.Count > 1)
                         {
-                            if (animationFrame >= Group.Sprites.Count)
+                            if (gameObject.animationFrame >= gameObject.Group.Sprites.Count)
                             {
-                                animationFrame = 1;
+                                gameObject.animationFrame = 1;
                             }
                             Application.Current.Dispatcher.Invoke(async () =>
                             {
                                 if (!Canceled)
                                 {
-                                    terrainModel.BuildObject(position.x, position.y, Group, animationFrame);
+                                    terrainModel.BuildObject(gameObject.positionDTO.x, gameObject.positionDTO.y, gameObject.Group, gameObject.animationFrame);
                                 }
                             });
-                            animationFrame++;
+                            gameObject.animationFrame++;
                             
                         }
+                        LiveCycle(gameObject);
 
-                        LiveCycle();
                     }                
                     await Task.Delay(300);
                 }
             });
         }
 
-        protected virtual void LiveCycle()
+        protected virtual void LiveCycle(GameObjectDTO gameObject)
         {
 
         }

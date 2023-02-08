@@ -1,4 +1,5 @@
-﻿using CityGame.DTOs.Enum;
+﻿using CityGame.Data.DTO;
+using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 
 namespace CityGame.Models
@@ -8,9 +9,9 @@ namespace CityGame.Models
         private SpriteBusiness spriteBusiness;
         public GardenModel(SpriteBusiness spriteBusiness, TerrainModel terrainModel) : base(spriteBusiness, terrainModel)
         {
-            Group = spriteBusiness.GetGroupByName(SpritesGroupEnum.garden);
+            startingGroup = spriteBusiness.GetGroupByName(SpritesGroupEnum.garden);
         }
-        protected override void LiveCycle()
+        protected override void LiveCycle(GameObjectDTO gameObject)
         {
 
         }

@@ -152,6 +152,22 @@ namespace CityGame.Graphics
             return null;
         }
 
-        
+        public ObjectType GetObjectTypeByGrop(GroupDTO? group)
+        {
+            switch (group?.Name)
+            {
+                case SpritesGroupEnum.road:
+                case SpritesGroupEnum.rail:
+                case SpritesGroupEnum.wire:
+                    return ObjectType.network;
+                case SpritesGroupEnum.garden:
+                    return ObjectType.garden;
+                default:
+                    return ObjectType.building;
+            }
+        }
+
+
+
     }
 }

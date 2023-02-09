@@ -19,7 +19,7 @@ namespace CityGame
     /// </summary>
     public partial class MainWindow : Window
     {
-        private int terrainSize = 400;
+        private int terrainSize = 200;
 
         private DrawingVisual drawingVisual = new DrawingVisual();
 
@@ -113,6 +113,7 @@ namespace CityGame
         private void BenchmarkButton_Click(object sender, RoutedEventArgs e)
         {
             int groupIndex = 0;
+            int count = 0;
             for (ushort x = 3; x < terrainSize - 7; x += 3, groupIndex++)
             {
                 for (ushort y = 3; y < terrainSize - 7; y += 3, groupIndex++)
@@ -122,13 +123,13 @@ namespace CityGame
                         groupIndex = 0;
                     }
                     cityGameEngine.BuildObject(new PositionDTO() { x = x, y = y }, spriteBusiness.groups[groupIndex]);
-
+                    count++;
 
                  
                 }
             }
             System.GC.Collect();
-
+            Title = "Benchmark result " + count + " objects";
         }
 
 
@@ -136,7 +137,7 @@ namespace CityGame
         {
             if (e.Delta > 0)
             {
-                if (zoom < 4)
+                if (zoom < 8)
                 {
                     zoom += 1;
                 }
@@ -169,9 +170,9 @@ namespace CityGame
                 TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset - imageLamda / 2.0 + xLambda / 2.0);
                 TerrainScroll.ScrollToVerticalOffset(TerrainScroll.VerticalOffset - imageLamda / 2.0 + yLambda / 2.0);
 
-                Debug.WriteLine("XL:" + xLambda);
-                Debug.WriteLine("IL:" + imageLamda / 2);
-                Debug.WriteLine("SBH:" + TerrainScroll.HorizontalOffset);
+                //Debug.WriteLine("XL:" + xLambda);
+                //Debug.WriteLine("IL:" + imageLamda / 2);
+                //Debug.WriteLine("SBH:" + TerrainScroll.HorizontalOffset);
 
             }
 
@@ -348,22 +349,23 @@ namespace CityGame
             selectedGroup = group;
             if (selectedGroup != null)
             {
-                if ((cityGameEngine.GetObjectTypeByGrop(group) == ObjectType.network)
+                if ((spriteBusiness.GetObjectTypeByGrop(group) == ObjectType.network)
                     ||
-                   (cityGameEngine.GetObjectTypeByGrop(group) == ObjectType.garden))
+                   (spriteBusiness.GetObjectTypeByGrop(group) == ObjectType.garden))
                 {
                     for (int x = 0; x < GameConsts.GroupSize; x++)
                     {
                         for (int y = 0; y < GameConsts.GroupSize; y++)
                         {
                             previewImages[x, y].Source = null;
-                            previewImages[x, y].Tag = previewImages[x, y].Source;
+                            previewImages[x, y].Tag = null;
                         }
                     }
-                    previewImages[0, 0].Source =  SpriteRepository.GetSprite(selectedGroup.Sprites[0].Sprites[1, 1]);
+                    previewImages[0, 0].Source =  SpriteRepository.GetSprite(selectedGroup.Sprites[0].Sprites[4, 0]);
+                    previewImages[0, 0].Tag = previewImages[0, 0].Source;
                 }
                 else 
-                if (cityGameEngine.GetObjectTypeByGrop(group) == ObjectType.building)
+                if (spriteBusiness.GetObjectTypeByGrop(group) == ObjectType.building)
                 {
                     for (int x = 0; x < GameConsts.GroupSize; x++)
                     {
@@ -412,6 +414,36 @@ namespace CityGame
         private void IndustrialButton_Click(object sender, RoutedEventArgs e)
         {
             SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.industrial0));
+        }
+
+        private void PoliceDepartmentButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.policedepartment));
+        }
+
+        private void FireDepartmentButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.firedepartment));
+        }
+
+        private void StadiumButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.stadium));
+        }
+
+        private void PowerButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.coalpowerplant));
+        }
+
+        private void SeaPortButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.seaport));
+        }
+
+        private void AirPortButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.airport));
         }
     }
 }

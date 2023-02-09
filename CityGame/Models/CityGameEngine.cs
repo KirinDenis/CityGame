@@ -21,6 +21,17 @@ namespace CityGame.Models
         private IndustrialModel industrialModel;
         private ComercialModel comercialModel;
 
+        private PoliceDepartmentModel policeDepartmentModel;
+        private FireDepartmentModel fireDepartmentModel;
+        private StadiumModel stadiumModel;
+        private CoalPowerPlantModel coalPowerPlantModel;
+        private NuclearPowerPlantModel nuclearPowerPlantModel;
+        private SeaPortModel seaPortModel;
+        private AirPortModel airPortModel;
+
+
+
+
         public event EventHandler RenderCompleted;
 
 
@@ -34,6 +45,13 @@ namespace CityGame.Models
             residentModel = new ResidentModel(spriteBusiness, terrainModel);
             industrialModel = new IndustrialModel(spriteBusiness, terrainModel);
             comercialModel = new ComercialModel(spriteBusiness, terrainModel);
+            policeDepartmentModel = new PoliceDepartmentModel(spriteBusiness, terrainModel);
+            fireDepartmentModel = new FireDepartmentModel(spriteBusiness, terrainModel);
+            stadiumModel = new  StadiumModel(spriteBusiness, terrainModel);
+            coalPowerPlantModel = new CoalPowerPlantModel(spriteBusiness, terrainModel);
+            nuclearPowerPlantModel = new  NuclearPowerPlantModel(spriteBusiness, terrainModel);
+            seaPortModel = new  SeaPortModel(spriteBusiness, terrainModel);
+            airPortModel = new AirPortModel(spriteBusiness, terrainModel);
 
 
             DispatcherTimer timer = new DispatcherTimer();
@@ -68,26 +86,17 @@ namespace CityGame.Models
                 case SpritesGroupEnum.resident0: residentModel.Build(position); break;
                 case SpritesGroupEnum.industrial0: industrialModel.Build(position); break;
                 case SpritesGroupEnum.comercial0: comercialModel.Build(position); break;
-
+                case SpritesGroupEnum.policedepartment: policeDepartmentModel.Build(position); break;
+                case SpritesGroupEnum.firedepartment: fireDepartmentModel.Build(position); break;
+                case SpritesGroupEnum.stadium: stadiumModel.Build(position); break;
+                case SpritesGroupEnum.coalpowerplant: coalPowerPlantModel.Build(position); break;
+                case SpritesGroupEnum.nuclearpowerplant: nuclearPowerPlantModel.Build(position); break;
+                case SpritesGroupEnum.seaport: seaPortModel.Build(position); break;
+                case SpritesGroupEnum.airport: airPortModel.Build(position); break;
                 default:
                     residentModel.Build(position);                    
                     break;
 
-            }
-        }
-
-        public ObjectType GetObjectTypeByGrop(GroupDTO? group)
-        {
-            switch (group?.Name)
-            {
-                case SpritesGroupEnum.road: 
-                case SpritesGroupEnum.rail: 
-                case SpritesGroupEnum.wire:
-                    return ObjectType.network;
-                case SpritesGroupEnum.garden:
-                    return ObjectType.garden;
-                default:
-                    return ObjectType.building;
             }
         }
 

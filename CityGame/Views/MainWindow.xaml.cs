@@ -223,6 +223,7 @@ namespace CityGame
                     double yLambda = (scrollBorder / (mousePosition.Y)) * startScrollSpeed;
                     TerrainScroll.ScrollToVerticalOffset(TerrainScroll.VerticalOffset - yLambda);
                 }
+
                 lockScroll = false;
             }
 
@@ -243,7 +244,7 @@ namespace CityGame
 
             PositionDTO p = GetTerrainPosition(e);
 
-            ObjectType[,] newPositionMap = cityGameEngine.TestPosition(selectedGroup, p.x, p.y);
+            ObjectType[,] newPositionMap = cityGameEngine.TestPosition(selectedGroup, p.x, p.y)?.PositionArea;
 
             for (int px = 0; px < GameConsts.GroupSize; px++)
             {
@@ -275,6 +276,12 @@ namespace CityGame
 
                 }
             }
+
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                cityGameEngine.BuildObject(p, selectedGroup);
+            }
+
 
         }
 

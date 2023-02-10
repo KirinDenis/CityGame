@@ -108,14 +108,17 @@ namespace CityGame.Models
 
 
 
-        public ObjectType[,] TestPosition(GroupDTO? group, int x, int y)
+        public TestPositionDTO TestPosition(GroupDTO? group, int x, int y)
         {
+            TestPositionDTO result = new TestPositionDTO();
             if (group == null)
             {
-                return null;
+                return result;
             }
 
-            ObjectType[,] result = new ObjectType[group.Width, group.Height];
+            
+            result.PositionArea = new ObjectType[group.Width, group.Height];
+            result.CanBuild = true;
 
             if (spriteBusiness.GetObjectTypeByGrop(group) != ObjectType.network)
             {
@@ -128,18 +131,38 @@ namespace CityGame.Models
                     {
                         if ((sx < terrainSize) && (sy < terrainSize))
                         {
-                            result[rx, ry] = SpritesGroupEnum.GetObjectTypeByGroupName(spriteBusiness.GetGroupBySpritePosition(terrain[sx, sy])?.Name);
+                            result.PositionArea[rx, ry] = SpritesGroupEnum.GetObjectTypeByGroupName(spriteBusiness.GetGroupBySpritePosition(terrain[sx, sy])?.Name);
+
+                            if ((result.PositionArea[rx, ry] != ObjectType.terrain)
+                                &&
+                                (result.PositionArea[rx, ry] != ObjectType.forest)
+                                &&
+                                (result.PositionArea[rx, ry] != ObjectType.network))
+                            {
+                                result.CanBuild = false;
+                            }
+
                         }
                         else
                         {
-                            result[rx, ry] = ObjectType.water;
+                            result.PositionArea[rx, ry] = ObjectType.water;
+                            result.CanBuild = false;
                         }
                     }
                 }
             }
             else
             {
-                result[0, 0] = SpritesGroupEnum.GetObjectTypeByGroupName(spriteBusiness.GetGroupBySpritePosition(terrain[x, y])?.Name);
+                result.PositionArea[0, 0] = SpritesGroupEnum.GetObjectTypeByGroupName(spriteBusiness.GetGroupBySpritePosition(terrain[x, y])?.Name);
+                if ((result.PositionArea[0, 0] != ObjectType.terrain)
+                    &&
+                    (result.PositionArea[0, 0] != ObjectType.forest)
+                    &&
+                    (result.PositionArea[0, 0] != ObjectType.network))
+                {
+                    result.CanBuild = false;
+                }
+
             }
             return result;
         }

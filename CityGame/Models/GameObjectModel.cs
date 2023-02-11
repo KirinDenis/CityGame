@@ -1,4 +1,5 @@
 ﻿using CityGame.Data.DTO;
+using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 using CityGame.Models.Interfaces;
 using System;
@@ -11,6 +12,7 @@ namespace CityGame.Models
 {
     public class GameObjectModel : BaseModel, IGameObjectModel, IDisposable
     {
+        
 
         protected SpriteBusiness spriteBusiness;
         protected TerrainModel terrainModel;
@@ -19,8 +21,9 @@ namespace CityGame.Models
         private Task liveTask;
         protected bool Canceled = false;
 
+        private int DestroyProcess = 0;
         
-        private List<GameObjectDTO> gameObjects = new List<GameObjectDTO>();
+        public List<GameObjectDTO> gameObjects = new List<GameObjectDTO>();
 
         public GroupDTO? startingGroup { get; set; }
 
@@ -45,6 +48,44 @@ namespace CityGame.Models
             gameObjects.Add(gameObject);
             
             return true;
+        }
+
+        public void Destroy(GameObjectDTO gameObjectDTO)
+        {
+            
+            gameObjects.Remove(gameObjectDTO);
+            int destroyStep = 0;
+            GroupDTO destroyGroup = spriteBusiness.GetGroupByName(SpritesGroupEnum.explosion);
+            Task destroyTask = Task.Run(async delegate
+            {
+                while (destroyStep < 7)
+                {
+                    destroyStep++;
+                            Application.Current.Dispatcher.Invoke(async () =>
+                            {
+                                if (!Canceled)
+                                {
+                                    //TEMP
+                                    for (ushort sx = 0; sx < gameObjectDTO.Group.Width; sx++)
+                                    {
+                                        for (ushort sy = 0; sy < gameObjectDTO.Group.Height; sy++)
+                                        {
+
+                                            if (destroyGroup?.Sprites[destroyStep].Sprites[0, 0] != null)
+                                            {
+                                                terrainModel.terrain[gameObjectDTO.positionDTO.x + sx, gameObjectDTO.positionDTO.y + sy] = destroyGroup.Sprites[destroyStep].Sprites[0, 0];
+                                                terrainModel.PutSprite((ushort)(gameObjectDTO.positionDTO.x + sx), (ushort)(gameObjectDTO.positionDTO.y + sy), destroyGroup.Sprites[destroyStep].Sprites[0, 0].x, destroyGroup.Sprites[destroyStep].Sprites[0, 0].y);
+                                            }
+                                        }
+                                    }
+
+                                    terrainModel.BuildObject(gameObjectDTO.positionDTO.x, gameObjectDTO.positionDTO.y, destroyGroup, destroyStep);
+                                }
+                            });
+                    await Task.Delay(300);
+                }                                 
+            });
+
         }
 
         private void Live()

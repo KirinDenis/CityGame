@@ -302,7 +302,15 @@ namespace CityGame
 
             PositionDTO p = GetTerrainPosition(e);
 
-            cityGameEngine.BuildObject(p, selectedGroup);
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                cityGameEngine.BuildObject(p, selectedGroup);
+            }
+            else 
+            if (e.RightButton == MouseButtonState.Pressed)
+            {
+                cityGameEngine.DestroyObjectAtPosition(p);
+            }
         }
 
         private void Window_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)

@@ -10,7 +10,7 @@ namespace CityGame.Models
         {
         }
 
-        public bool[,] BuildNetworkItem(ushort x, ushort y)
+        public bool[,] BuildNetworkItem(ushort x, ushort y, bool current = false)
         {
             bool[,] FS = new bool[3, 3]; //FS means friendly sprites, the sprites of selected network item type
             int ox = 0;
@@ -31,6 +31,70 @@ namespace CityGame.Models
                     }
                 }
             }
+
+            PositionDTO previosSptite = terrainModel.terrain[x, y];
+            //check previos sprite 
+            GroupDTO previosGroup = spriteBusiness.GetGroupBySpritePosition(previosSptite);
+            GroupDTO cross = spriteBusiness.GetGroupByName(SpritesGroupEnum.cross);
+            if (previosGroup != null)
+            {
+                if (spriteBusiness.GetObjectTypeByGrop(previosGroup) == ObjectType.network)
+                {
+                    foreach (PositionDTO position in cross.Sprites[0].Sprites)
+                    {
+                        if ((position != null)
+                            && (position.x == terrainModel.terrain[x, y].x)
+                            && (position.y == terrainModel.terrain[x, y].y))
+                        {
+                            return FS;
+                        }
+                    }
+
+
+                    if (current)
+                    {
+
+                        if (!previosGroup.Name.Equals(startingGroup.Name))
+                        {
+                            if (previosGroup.Name.Equals(SpritesGroupEnum.rail))
+                            {
+                                if ((previosGroup.Sprites[0].Sprites[3, 0].x == terrainModel.terrain[x, y].x)
+                                    &&
+                                    (previosGroup.Sprites[0].Sprites[3, 0].y == terrainModel.terrain[x, y].y))
+                                {
+                                    terrainModel.terrain[x, y] = startingGroup?.Sprites[0].Sprites[3, 2];
+                                }
+                                else
+                                {
+                                    terrainModel.terrain[x, y] = startingGroup?.Sprites[0].Sprites[4, 2];
+                                }
+                                terrainModel.PutSprite(x, y, terrainModel.terrain[x, y].x, terrainModel.terrain[x, y].y);
+                                return FS;
+                            }
+                            else
+                            if (previosGroup.Name.Equals(SpritesGroupEnum.road))
+                            {
+                                if ((previosGroup.Sprites[0].Sprites[3, 0].x == terrainModel.terrain[x, y].x)
+                                    &&
+                                    (previosGroup.Sprites[0].Sprites[3, 0].y == terrainModel.terrain[x, y].y))
+                                {
+                                    terrainModel.terrain[x, y] = startingGroup?.Sprites[0].Sprites[3, 2];
+                                }
+                                else
+                                {
+                                    terrainModel.terrain[x, y] = startingGroup?.Sprites[0].Sprites[4, 2];
+                                }
+                                terrainModel.PutSprite(x, y, terrainModel.terrain[x, y].x, terrainModel.terrain[x, y].y);
+                                return FS;
+                            }
+
+                        }
+                    }
+                }
+            }
+        
+
+
 
             terrainModel.terrain[x, y] = startingGroup?.Sprites[0].Sprites[4, 0];
 
@@ -107,6 +171,7 @@ namespace CityGame.Models
             }
             //else default single road
 
+
             terrainModel.PutSprite(x, y, terrainModel.terrain[x, y].x, terrainModel.terrain[x, y].y);
 
             return FS;
@@ -117,7 +182,7 @@ namespace CityGame.Models
             ushort x = positionDTO.x;
             ushort y = positionDTO.y;
 
-            bool[,] FS = BuildNetworkItem(x, y);
+            bool[,] FS = BuildNetworkItem(x, y, true);
 
             //Rebuild near roads            
             ushort ox = 0;

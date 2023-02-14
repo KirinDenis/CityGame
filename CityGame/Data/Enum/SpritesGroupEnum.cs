@@ -16,6 +16,7 @@ namespace CityGame.DTOs.Enum
         public const string road = "road";
         public const string rail = "rail";
         public const string wire = "wire";
+        public const string cross = "cross";
 
         public const string residentBase = "resident";
         public const string resident0 = "resident0";
@@ -104,7 +105,7 @@ namespace CityGame.DTOs.Enum
         public const string select = "select";
         public const string coast = "coast";
 
-        public static string[] groups = { terrain, water , forest, road, rail, wire,
+        public static string[] groups = { terrain, water , forest, road, rail, wire, cross,
             resident0,
             resident1,
             resident2,

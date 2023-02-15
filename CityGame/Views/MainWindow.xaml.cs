@@ -242,9 +242,9 @@ namespace CityGame
 
 
 
-            PositionDTO p = GetTerrainPosition(e);
+            PositionDTO position = GetTerrainPosition(e);
 
-            ObjectType[,] newPositionMap = cityGameEngine.TestPosition(selectedGroup, p.x, p.y)?.PositionArea;
+            ObjectType[,] newPositionMap = cityGameEngine.TestPosition(selectedGroup, position)?.PositionArea;
 
             for (int px = 0; px < GameConsts.GroupSize; px++)
             {
@@ -279,7 +279,7 @@ namespace CityGame
 
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                cityGameEngine.BuildObject(p, selectedGroup);
+                cityGameEngine.BuildObject(position, selectedGroup);
             }
 
 

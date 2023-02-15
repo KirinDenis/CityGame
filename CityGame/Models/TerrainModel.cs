@@ -106,9 +106,23 @@ namespace CityGame.Models
 
         }
 
+        public bool TestRange(PositionDTO position)
+        {
+            if (position == null)
+            {
+                return false;
+            }
 
+            if ((position.x >= 0) && (position.x < terrainSize)
+                && 
+                (position.y >= 0) && (position.y < terrainSize))
+            {
+                return true;
+            }    
+            return false;
+        }
 
-        public TestPositionDTO TestPosition(GroupDTO? group, int x, int y)
+        public TestPositionDTO TestPosition(GroupDTO? group, PositionDTO position)
         {
             TestPositionDTO result = new TestPositionDTO();
             if (group == null)
@@ -116,6 +130,10 @@ namespace CityGame.Models
                 return result;
             }
 
+            if (!TestRange(position))
+            {
+                return result;
+            }    
             
             result.PositionArea = new ObjectType[group.Width, group.Height];
             result.CanBuild = true;
@@ -124,10 +142,10 @@ namespace CityGame.Models
             {
                 int rx, ry;
                 rx = 0;
-                for (int sx = x; sx < x + group.Width; sx++, rx++)
+                for (int sx = position.x; sx < position.x + group.Width; sx++, rx++)
                 {
                     ry = 0;
-                    for (int sy = y; sy < y + group.Height; sy++, ry++)
+                    for (int sy = position.y; sy < position.y + group.Height; sy++, ry++)
                     {
                         if ((sx < terrainSize) && (sy < terrainSize))
                         {
@@ -153,10 +171,12 @@ namespace CityGame.Models
             }
             else
             {
-                result.PositionArea[0, 0] = SpritesGroupEnum.GetObjectTypeByGroupName(spriteBusiness.GetGroupBySpritePosition(terrain[x, y])?.Name);
+                result.PositionArea[0, 0] = SpritesGroupEnum.GetObjectTypeByGroupName(spriteBusiness.GetGroupBySpritePosition(terrain[position.x, position.y])?.Name);
                 if ((result.PositionArea[0, 0] != ObjectType.terrain)
                     &&
                     (result.PositionArea[0, 0] != ObjectType.forest)
+                    &&
+                    (result.PositionArea[0, 0] != ObjectType.water)
                     &&
                     (result.PositionArea[0, 0] != ObjectType.network))
                 {

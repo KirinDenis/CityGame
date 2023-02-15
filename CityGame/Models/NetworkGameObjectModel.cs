@@ -14,11 +14,15 @@ namespace CityGame.Models
         {
             bool[,] FS = new bool[3, 3]; //FS means friendly sprites, the sprites of selected network item type
             int ox = 0;
-            for (int tx = CLeft(x); tx < CRight(x) + 1; tx++, ox++)
+            for (ushort tx = CLeft(x); tx < CRight(x) + 1; tx++, ox++)
             {
                 int oy = 0;
-                for (int ty = CLeft(y); ty < CRight(y) + 1; ty++, oy++)
+                for (ushort ty = CLeft(y); ty < CRight(y) + 1; ty++, oy++)
                 {
+                    if (!terrainModel.TestRange(new PositionDTO() { x = tx, y = ty}))
+                    {
+                        continue;
+                    }    
 
                     FS[ox, oy] = false;
                     foreach (PositionDTO? spritePosition in startingGroup?.Sprites[0].Sprites)
@@ -38,7 +42,9 @@ namespace CityGame.Models
             GroupDTO cross = spriteBusiness.GetGroupByName(SpritesGroupEnum.cross);
             if (previosGroup != null)
             {
-                if (spriteBusiness.GetObjectTypeByGrop(previosGroup) == ObjectType.network)
+                if ((spriteBusiness.GetObjectTypeByGrop(previosGroup) == ObjectType.network)
+                    ||
+                    (spriteBusiness.GetObjectTypeByGrop(previosGroup) == ObjectType.water))
                 {
                     foreach (PositionDTO position in cross.Sprites[0].Sprites)
                     {
@@ -78,15 +84,43 @@ namespace CityGame.Models
                                     &&
                                     (previosGroup.Sprites[0].Sprites[3, 0].y == terrainModel.terrain[x, y].y))
                                 {
-                                    terrainModel.terrain[x, y] = startingGroup?.Sprites[0].Sprites[3, 2];
+                                    terrainModel.terrain[x, y] = startingGroup?.Sprites[0].Sprites[3, 1];
                                 }
                                 else
                                 {
-                                    terrainModel.terrain[x, y] = startingGroup?.Sprites[0].Sprites[4, 2];
+                                    terrainModel.terrain[x, y] = startingGroup?.Sprites[0].Sprites[4, 1];
                                 }
                                 terrainModel.PutSprite(x, y, terrainModel.terrain[x, y].x, terrainModel.terrain[x, y].y);
                                 return FS;
                             }
+                            else
+                            if (previosGroup.Name.Equals(SpritesGroupEnum.wire))
+                            {
+                                if ((previosGroup.Sprites[0].Sprites[3, 0].x == terrainModel.terrain[x, y].x)
+                                    &&
+                                    (previosGroup.Sprites[0].Sprites[3, 0].y == terrainModel.terrain[x, y].y))
+                                {
+                                    terrainModel.terrain[x, y] = startingGroup?.Sprites[0].Sprites[3, 3];
+                                }
+                                else
+                                {
+                                    terrainModel.terrain[x, y] = startingGroup?.Sprites[0].Sprites[4, 3];
+                                }
+                                terrainModel.PutSprite(x, y, terrainModel.terrain[x, y].x, terrainModel.terrain[x, y].y);
+                                return FS;
+                            }
+                            else
+                            if (previosGroup.Name.Equals(SpritesGroupEnum.water))
+                            {
+                                    terrainModel.terrain[x, y] = startingGroup?.Sprites[0].Sprites[3, 4];
+                                // terrainModel.terrain[x, y] = startingGroup?.Sprites[0].Sprites[4, 4];
+
+                                terrainModel.PutSprite(x, y, terrainModel.terrain[x, y].x, terrainModel.terrain[x, y].y);
+                                return FS;
+                            }
+
+
+
 
                         }
                     }

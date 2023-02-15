@@ -162,6 +162,8 @@ namespace CityGame.Graphics
                     return ObjectType.network;
                 case SpritesGroupEnum.garden:
                     return ObjectType.garden;
+                case SpritesGroupEnum.water:
+                    return ObjectType.water;
                 default:
                     return ObjectType.building;
             }

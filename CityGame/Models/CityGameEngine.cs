@@ -99,7 +99,7 @@ namespace CityGame.Models
 
         public bool BuildObject(PositionDTO position, GroupDTO? group)
         {
-            if (TestPosition(group, position.x, position.y).CanBuild)
+            if (TestPosition(group, position).CanBuild)
             {
                 foreach (GameObjectModel gameObjectModel in gameObjectModels)
                 {
@@ -134,9 +134,9 @@ namespace CityGame.Models
             return false;
         }
 
-        public TestPositionDTO TestPosition(GroupDTO? group, int x, int y)
+        public TestPositionDTO TestPosition(GroupDTO? group, PositionDTO position)
         {
-            return this.terrainModel.TestPosition(group, x, y);
+            return this.terrainModel.TestPosition(group, position);
         }
 
         public bool DestroyObjectAtPosition(PositionDTO position)

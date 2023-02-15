@@ -28,9 +28,9 @@ namespace CityGame.Models
         //Terrain map - sprite offsets
         public PositionDTO[,] terrain;
 
-        public int waterLevel = 120;
+        public int waterLevel = 140;
 
-        public int landLevel = 130; //upper this is forest        
+        public int landLevel = 170; //upper this is forest        
 
         public int roughness = 0;
 

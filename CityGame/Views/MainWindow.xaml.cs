@@ -4,7 +4,6 @@ using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 using CityGame.Models;
 using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -33,10 +32,6 @@ namespace CityGame
 
         private double zoom = 2;
 
-        int count = 0;
-        DateTime enter;
-        private int animationFrame = 0;
-
         public GroupDTO selectedGroup = null;
 
         private SpriteBusiness spriteBusiness = new SpriteBusiness();
@@ -46,8 +41,6 @@ namespace CityGame
         public MainWindow()
         {
             InitializeComponent();
-
-            enter = DateTime.Now;
 
             if (SpriteRepository.ResourceInfo == null)
             {
@@ -62,17 +55,6 @@ namespace CityGame
             TerrainScroll.ScrollToVerticalOffset(TerrainImage.Width / 2.0f);
             TerrainScroll.ScrollToHorizontalOffset(TerrainImage.Height / 2.0f);
 
-            /*
-            foreach (GroupDTO group in spriteBusiness.groups)
-            {
-                ObjectsListBox.Items.Add(new ListBoxItem()
-                {
-                    Content = group.Name,
-                    Tag = group
-                });
-            }
-            */
-
             for (int x = 0; x < GameConsts.GroupSize; x++)
             {
                 for (int y = 0; y < GameConsts.GroupSize; y++)
@@ -86,7 +68,6 @@ namespace CityGame
                     GameViewGrid.Children.Add(previewImages[x, y]);
                 }
             }
-
         }
 
         private void CityGameEngine_RenderCompleted(object? sender, EventArgs e)
@@ -97,7 +78,7 @@ namespace CityGame
                 drawingContext.Close();
             }
             TerrainImage.Source = new DrawingImage(drawingVisual.Drawing);
-
+            MapImage.Source = new DrawingImage(drawingVisual.Drawing);
         }
 
         private void ResourceExplorerButton_Click(object sender, RoutedEventArgs e)
@@ -124,14 +105,11 @@ namespace CityGame
                     }
                     cityGameEngine.BuildObject(new PositionDTO() { x = x, y = y }, spriteBusiness.groups[groupIndex]);
                     count++;
-
-                 
                 }
             }
             System.GC.Collect();
             Title = "Benchmark result " + count + " objects";
         }
-
 
         private void Terrain_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
         {
@@ -156,9 +134,6 @@ namespace CityGame
             {
                 Point mousePosition = e.GetPosition((Grid)sender);
 
-                //  TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset + xLambda);
-
-
                 double saveImageSize = TerrainImage.Width;
                 TerrainImage.Width = TerrainImage.Height = cityGameEngine.GetTerrainSize() * SpriteRepository.ResourceInfo.SpriteSize * zoom;
                 double imageLamda = saveImageSize - TerrainImage.Width;
@@ -173,16 +148,13 @@ namespace CityGame
                 //Debug.WriteLine("XL:" + xLambda);
                 //Debug.WriteLine("IL:" + imageLamda / 2);
                 //Debug.WriteLine("SBH:" + TerrainScroll.HorizontalOffset);
-
             }
-
             //lock scroll view            
             e.Handled = true;
         }
 
         private void TerrainGrid_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-
             if (!lockScroll)
             {
                 lockScroll = true;
@@ -201,15 +173,16 @@ namespace CityGame
                 if (mousePosition.X > this.ActualWidth - scrollBorder)
                 {
                     double xLambda = (scrollBorder / (TerrainGrid.ActualWidth - mousePosition.X)) * startScrollSpeed;
-                    TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset + xLambda);
+                    if (TerrainScroll.HorizontalOffset + xLambda < TerrainImage.ActualWidth - this.ActualWidth)
+                    {
+                        TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset + xLambda);
+                    }
                 }
                 else
                 if (mousePosition.X < scrollBorder)
                 {
-
                     double xLambda = (scrollBorder / (mousePosition.X)) * startScrollSpeed;
                     TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset - xLambda);
-
                 }
 
                 if (mousePosition.Y > this.ActualHeight - scrollBorder)
@@ -227,7 +200,6 @@ namespace CityGame
                 lockScroll = false;
             }
 
-
             double actualSpriteSizeInPixels = TerrainImage.ActualWidth / cityGameEngine.GetTerrainSize();
 
             double x = e.GetPosition(TerrainImage).X - (e.GetPosition(TerrainImage).X % actualSpriteSizeInPixels); // + TerrainScroll.HorizontalOffset;
@@ -238,53 +210,45 @@ namespace CityGame
             if ((x < TerrainImage.ActualWidth) && (y < TerrainImage.ActualHeight))
             {
                 TerrainSelector.Margin = new Thickness(x, y, 0, 0);
-            }
 
+                PositionDTO position = GetTerrainPosition(e);
 
+                ObjectType[,] newPositionMap = cityGameEngine.TestPosition(selectedGroup, position)?.PositionArea;
 
-            PositionDTO position = GetTerrainPosition(e);
-
-            ObjectType[,] newPositionMap = cityGameEngine.TestPosition(selectedGroup, position)?.PositionArea;
-
-            for (int px = 0; px < GameConsts.GroupSize; px++)
-            {
-                for (int py = 0; py < GameConsts.GroupSize; py++)
+                for (int px = 0; px < GameConsts.GroupSize; px++)
                 {
-                    previewImages[px, py].Width = previewImages[px, py].Height = actualSpriteSizeInPixels;
-                    previewImages[px, py].Margin = new Thickness(x + px * actualSpriteSizeInPixels, y + py * actualSpriteSizeInPixels, 0, 0);
-
-
-                    if ((newPositionMap != null)
-                        && (px < newPositionMap.GetLength(0))
-                        && (py < newPositionMap.GetLength(1))
-                        &&
-                        (newPositionMap != null) && (newPositionMap[px, py] != null))
-
+                    for (int py = 0; py < GameConsts.GroupSize; py++)
                     {
-                        switch (newPositionMap[px, py])
+                        previewImages[px, py].Width = previewImages[px, py].Height = actualSpriteSizeInPixels;
+                        previewImages[px, py].Margin = new Thickness(x + px * actualSpriteSizeInPixels, y + py * actualSpriteSizeInPixels, 0, 0);
+
+                        if ((newPositionMap != null)
+                            && (px < newPositionMap.GetLength(0))
+                            && (py < newPositionMap.GetLength(1))
+                            &&
+                            (newPositionMap != null) && (newPositionMap[px, py] != null))
+
                         {
-                            case ObjectType.terrain:
-                            case ObjectType.forest:
-                            case ObjectType.network:
-                                previewImages[px, py].Source = previewImages[px, py].Tag as ImageSource;
-                                break;
-                            default:
-                                previewImages[px, py].Source = SpriteRepository.GetSprite(spriteBusiness.GetGroupByName(SpritesGroupEnum.select)?.Sprites[0].Sprites[0, 0]);
-                                break;
+                            switch (newPositionMap[px, py])
+                            {
+                                case ObjectType.terrain:
+                                case ObjectType.forest:
+                                case ObjectType.network:
+                                    previewImages[px, py].Source = previewImages[px, py].Tag as ImageSource;
+                                    break;
+                                default:
+                                    previewImages[px, py].Source = SpriteRepository.GetSprite(spriteBusiness.GetGroupByName(SpritesGroupEnum.select)?.Sprites[0].Sprites[0, 0]);
+                                    break;
+                            }
                         }
                     }
-
+                }
+                if (e.LeftButton == MouseButtonState.Pressed)
+                {
+                    cityGameEngine.BuildObject(position, selectedGroup);
                 }
             }
-
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                cityGameEngine.BuildObject(position, selectedGroup);
-            }
-
-
         }
-
 
         private PositionDTO GetTerrainPosition(MouseEventArgs e)
         {
@@ -299,14 +263,13 @@ namespace CityGame
 
         private void TerrainGrid_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-
             PositionDTO p = GetTerrainPosition(e);
 
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 cityGameEngine.BuildObject(p, selectedGroup);
             }
-            else 
+            else
             if (e.RightButton == MouseButtonState.Pressed)
             {
                 cityGameEngine.DestroyObjectAtPosition(p);
@@ -329,30 +292,7 @@ namespace CityGame
                 case Key.F2: new ResourceExplorerWindow().Show(); break;
                 case Key.F5: cityGameEngine.GenerateTerrain(); break;
             }
-
-
         }
-
-
-        /*
-        private void ObjectsListBox_PreviewMouseUp(object sender, MouseButtonEventArgs e)
-        {
-            ListBoxItem item = ObjectsListBox.SelectedItem as ListBoxItem;
-            selectedGroup = item.Tag as GroupDTO;
-
-            if (selectedGroup != null)
-            {
-                for (int x = 0; x < GameConsts.GroupSize; x++)
-                {
-                    for (int y = 0; y < GameConsts.GroupSize; y++)
-                    {
-                        previewImages[x, y].Source = SpriteRepository.GetSprite(selectedGroup.Sprites[0].Sprites[x, y]);
-                        previewImages[x, y].Tag = previewImages[x, y].Source;
-                    }
-                }
-            }
-        }
-        */
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
@@ -376,10 +316,10 @@ namespace CityGame
                             previewImages[x, y].Tag = null;
                         }
                     }
-                    previewImages[0, 0].Source =  SpriteRepository.GetSprite(selectedGroup.Sprites[0].Sprites[4, 0]);
+                    previewImages[0, 0].Source = SpriteRepository.GetSprite(selectedGroup.Sprites[0].Sprites[4, 0]);
                     previewImages[0, 0].Tag = previewImages[0, 0].Source;
                 }
-                else 
+                else
                 if (spriteBusiness.GetObjectTypeByGrop(group) == ObjectType.building)
                 {
                     for (int x = 0; x < GameConsts.GroupSize; x++)
@@ -391,8 +331,6 @@ namespace CityGame
                         }
                     }
                 }
-                
-                    
             }
         }
 

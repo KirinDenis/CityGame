@@ -4,6 +4,7 @@ using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 using CityGame.Models;
 using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -18,7 +19,7 @@ namespace CityGame
     /// </summary>
     public partial class MainWindow : Window
     {
-        private int terrainSize = 200;
+        private int terrainSize = 100;
 
         private DrawingVisual drawingVisual = new DrawingVisual();
 
@@ -117,14 +118,14 @@ namespace CityGame
             {
                 if (zoom < 8)
                 {
-                    zoom += 1;
+                    zoom += 0.1;
                 }
             }
             else
             {
                 if (zoom > 0)
                 {
-                    zoom -= 1;
+                    zoom -= 0.1;
                 }
             }
 
@@ -132,18 +133,33 @@ namespace CityGame
                 &&
                 ((cityGameEngine.GetTerrainSize() * SpriteRepository.ResourceInfo.SpriteSize * zoom > TerrainGrid.ActualHeight)))
             {
-                Point mousePosition = e.GetPosition((Grid)sender);
+                Point mousePosition = e.GetPosition(TerrainGrid);
+
+                double ho = TerrainScroll.HorizontalOffset;
+                double vo = TerrainScroll.VerticalOffset;
 
                 double saveImageSize = TerrainImage.Width;
                 TerrainImage.Width = TerrainImage.Height = cityGameEngine.GetTerrainSize() * SpriteRepository.ResourceInfo.SpriteSize * zoom;
-                double imageLamda = saveImageSize - TerrainImage.Width;
+                double imageLamda = saveImageSize / TerrainImage.Width;
 
-                double xLambda = (mousePosition.X - this.ActualWidth / 2.0) * (this.ActualWidth / TerrainImage.ActualWidth);
-                double yLambda = (mousePosition.Y - this.ActualHeight / 2.0) * (this.ActualHeight / TerrainImage.ActualHeight);
+                //double xLambda = (mousePosition.X - this.ActualWidth / 2.0) * (this.ActualWidth / TerrainImage.ActualWidth);
+                //double yLambda = (mousePosition.Y - this.ActualHeight / 2.0) * (this.ActualHeight / TerrainImage.ActualHeight);
+
+               //TerrainImage.Margin = new Thickness(-mousePosition.X * imageLamda, -mousePosition.Y * imageLamda, 0, 0);
+
+                if (mousePosition.X > TerrainGrid.Width / 2)
+                {
+                    double xLambda = ((TerrainScroll.HorizontalOffset + mousePosition.X ) / imageLamda);
+                    double yLambda = (TerrainScroll.VerticalOffset * imageLamda);
 
 
-                TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset - imageLamda / 2.0 + xLambda / 2.0);
-                TerrainScroll.ScrollToVerticalOffset(TerrainScroll.VerticalOffset - imageLamda / 2.0 + yLambda / 2.0);
+
+                    TerrainScroll.ScrollToHorizontalOffset(xLambda);
+                }
+              //TerrainScroll.ScrollToVerticalOffset(yLambda);
+
+                //TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset - imageLamda / 2.0 - xLambda / 4.0);
+                //TerrainScroll.ScrollToVerticalOffset(TerrainScroll.VerticalOffset - imageLamda / 2.0 - yLambda / 4.0);
 
                 //Debug.WriteLine("XL:" + xLambda);
                 //Debug.WriteLine("IL:" + imageLamda / 2);
@@ -155,11 +171,12 @@ namespace CityGame
 
         private void TerrainGrid_PreviewMouseMove(object sender, MouseEventArgs e)
         {
+            return;
             if (!lockScroll)
             {
                 lockScroll = true;
 
-                Point mousePosition = e.GetPosition((Grid)sender);
+                Point mousePosition = e.GetPosition(this);
 
                 if ((mousePosition.X <= 0) || (mousePosition.Y <= 0))
                 {
@@ -172,7 +189,7 @@ namespace CityGame
                 //prior is x
                 if (mousePosition.X > this.ActualWidth - scrollBorder)
                 {
-                    double xLambda = (scrollBorder / (TerrainGrid.ActualWidth - mousePosition.X)) * startScrollSpeed;
+                    double xLambda = (scrollBorder / (TerrainGrid.ActualWidth - mousePosition.X - 16)) * startScrollSpeed;
                     if (TerrainScroll.HorizontalOffset + xLambda < TerrainImage.ActualWidth - this.ActualWidth)
                     {
                         TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset + xLambda);
@@ -185,16 +202,17 @@ namespace CityGame
                     TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset - xLambda);
                 }
 
-                if (mousePosition.Y > this.ActualHeight - scrollBorder)
+                if (mousePosition.Y > TerrainGrid.ActualHeight - scrollBorder)
                 {
-                    double yLambda = (scrollBorder / (TerrainGrid.ActualHeight - mousePosition.Y)) * startScrollSpeed;
+                    double yLambda = (scrollBorder / (TerrainGrid.ActualHeight - mousePosition.Y - 16)) * startScrollSpeed;
                     TerrainScroll.ScrollToVerticalOffset(TerrainScroll.VerticalOffset + yLambda);
                 }
                 else
-                if (mousePosition.Y < scrollBorder)
+                if (mousePosition.Y < scrollBorder - MainMenu.ActualHeight)
                 {
                     double yLambda = (scrollBorder / (mousePosition.Y)) * startScrollSpeed;
                     TerrainScroll.ScrollToVerticalOffset(TerrainScroll.VerticalOffset - yLambda);
+                    Debug.WriteLine(yLambda);
                 }
 
                 lockScroll = false;
@@ -397,6 +415,11 @@ namespace CityGame
         private void AirPortButton_Click(object sender, RoutedEventArgs e)
         {
             SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.airport));
+        }
+
+        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }

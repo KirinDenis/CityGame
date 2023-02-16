@@ -17,7 +17,7 @@ namespace CityGame.Models
         /// Current sprite size is 16x16 piexels
         /// The terrain size at pixels is terrainSize * 16
         /// </summary>
-        public int terrainSize = 10400;
+        public int terrainSize = 100;
 
         /// <summary>
         /// If true, the Diamond generator is not called, the terrain is simple random values 2D array 

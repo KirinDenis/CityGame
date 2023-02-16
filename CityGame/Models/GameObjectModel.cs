@@ -103,12 +103,13 @@ namespace CityGame.Models
                             {
                                 gameObject.animationFrame = 1;
                             }
-                            Application.Current.Dispatcher.Invoke(async () =>
-                            {
+                            _ = Application.Current.Dispatcher.Invoke(() => {
                                 if (!Canceled)
                                 {
                                     terrainModel.BuildObject(gameObject.positionDTO.x, gameObject.positionDTO.y, gameObject.Group, gameObject.animationFrame);
                                 }
+
+                                return Task.CompletedTask;
                             });
                             gameObject.animationFrame++;
                             

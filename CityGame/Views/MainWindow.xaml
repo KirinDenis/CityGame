@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CityGame"
         mc:Ignorable="d"
-        Title="City Game" Height="800" Width="800" WindowStartupLocation="CenterScreen" PreviewKeyDown="Window_PreviewKeyDown">
+        Title="City Game" Height="800" Width="800" WindowStartupLocation="CenterScreen" PreviewKeyDown="Window_PreviewKeyDown" PreviewMouseMove="TerrainGrid_PreviewMouseMove" Topmost="True" WindowState="Maximized" WindowStyle="None">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="AUTO"/>
@@ -13,8 +13,8 @@
         </Grid.RowDefinitions>
 
 
-        <Grid x:Name="TerrainGrid"  PreviewMouseWheel="Terrain_PreviewMouseWheel" PreviewMouseMove="TerrainGrid_PreviewMouseMove" Background="#FFF6F6F6" Grid.Row="1" Grid.ColumnSpan="2" PreviewMouseDown="TerrainGrid_PreviewMouseDown">
-            <ScrollViewer x:Name="TerrainScroll" HorizontalScrollBarVisibility="Visible"  HorizontalContentAlignment="Stretch" PanningMode="Both"  >
+        <Grid x:Name="TerrainGrid"  PreviewMouseWheel="Terrain_PreviewMouseWheel"  Background="#FFF6F6F6" Grid.Row="1" Grid.ColumnSpan="2" PreviewMouseDown="TerrainGrid_PreviewMouseDown">
+            <ScrollViewer x:Name="TerrainScroll" HorizontalScrollBarVisibility="Visible" PanningMode="Both" VerticalContentAlignment="Top" HorizontalContentAlignment="Left" >
                 <Grid x:Name="GameViewGrid" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0,0">
                     <Image x:Name="TerrainImage" HorizontalAlignment="Left" VerticalAlignment="Top" RenderOptions.BitmapScalingMode="NearestNeighbor" Source="/Resources/resources.png" RenderTransformOrigin="1,0" />
                     <Border x:Name="TerrainSelector" HorizontalAlignment="Left" VerticalAlignment="Top" Width="16" Height="16" BorderBrush="#FF4FEA25" BorderThickness="2,2,2,2" />
@@ -50,7 +50,7 @@
             </StackPanel>
         </Border>
 
-        <Menu IsMainMenu="True" HorizontalContentAlignment="Stretch" Background="#FF00AAFF" Foreground="#FF0033C4" >
+        <Menu x:Name="MainMenu" IsMainMenu="True" HorizontalContentAlignment="Stretch" Background="#FF00AAFF" Foreground="#FF0033C4" >
             <MenuItem Header="SYSTEM" HorizontalContentAlignment="Left">
                 <MenuItem Header="About CITY GAME" Command="{Binding MenuCommand}" CommandParameter="About SIMPLE CITY" />
                 <Separator />
@@ -72,7 +72,7 @@
                     <MenuItem Header="Benchmark"   Command="{Binding MenuCommand}" Click="BenchmarkButton_Click"/>
                 </MenuItem>
                 <Separator />
-                <MenuItem Header="Exit"   Command="{Binding MenuCommand}" />
+                <MenuItem Header="Exit"   Command="{Binding MenuCommand}" Click="MenuItem_Click_1" />
             </MenuItem>
             <MenuItem Header="OPTIONS" HorizontalContentAlignment="Left">
                 <MenuItem Header="Auto-Bulldoze"   Command="{Binding MenuCommand}" />
@@ -116,8 +116,9 @@
             <Image.Effect>
                 <DropShadowEffect Opacity="0.35" ShadowDepth="25" Color="#FF756A6A" />
             </Image.Effect>
-
         </Image>
+
+        <Button x:Name="CloseButton" Content="X" Width="20" HorizontalAlignment="Right" BorderBrush="{x:Null}" Background="{x:Null}" Foreground="#FF0033C4" Click="MenuItem_Click_1"  />
 
     </Grid>
 </Window>

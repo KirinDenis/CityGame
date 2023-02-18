@@ -5,7 +5,26 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CityGame"
         mc:Ignorable="d"
-        Title="City Game" Height="800" Width="800" WindowStartupLocation="CenterScreen" PreviewKeyDown="Window_PreviewKeyDown" PreviewMouseMove="TerrainGrid_PreviewMouseMove" Topmost="True" WindowState="Maximized" WindowStyle="None">
+        Title="City Game" Height="800" Width="800" WindowStartupLocation="CenterScreen" PreviewKeyDown="Window_PreviewKeyDown" PreviewMouseMove="TerrainGrid_PreviewMouseMove" >
+
+    <Window.Resources>
+        <Style TargetType="Image">
+            <Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor" />
+        </Style>
+
+        <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="Button" x:Key="DashboardButtonStyle">
+            <Setter Property="Width" Value="48" />
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="Margin" Value="2,0"/>
+            <Setter Property="Background" Value="{x:Null}"/>
+            <Setter Property="BorderBrush" Value="{x:Null}"/>
+            <Setter Property="Cursor" Value="Hand" />
+
+        </Style>
+
+
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="AUTO"/>
@@ -16,36 +35,76 @@
         <Grid x:Name="TerrainGrid"  PreviewMouseWheel="Terrain_PreviewMouseWheel"  Background="#FFF6F6F6" Grid.Row="1" Grid.ColumnSpan="2" PreviewMouseDown="TerrainGrid_PreviewMouseDown">
             <ScrollViewer x:Name="TerrainScroll" HorizontalScrollBarVisibility="Visible" PanningMode="Both" VerticalContentAlignment="Top" HorizontalContentAlignment="Left" >
                 <Grid x:Name="GameViewGrid" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0,0">
-                    <Image x:Name="TerrainImage" HorizontalAlignment="Left" VerticalAlignment="Top" RenderOptions.BitmapScalingMode="NearestNeighbor" Source="/Resources/resources.png" RenderTransformOrigin="1,0" />
+                    <Image x:Name="TerrainImage" HorizontalAlignment="Left" VerticalAlignment="Top" Source="/Resources/resources.png" RenderTransformOrigin="1,0" />
                     <Border x:Name="TerrainSelector" HorizontalAlignment="Left" VerticalAlignment="Top" Width="16" Height="16" BorderBrush="#FF4FEA25" BorderThickness="2,2,2,2" />
                 </Grid>
             </ScrollViewer>
         </Grid>
 
         <Border Grid.Column="0" Grid.Row="1" BorderBrush="#FFFEFEFE" BorderThickness="1,1,1,1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,20,0,0">
-        <StackPanel  Orientation="Horizontal"  HorizontalAlignment="Left" VerticalAlignment="Top" Background="#FF545454">
-            <StackPanel.Effect>
-                <DropShadowEffect Opacity="0.35" ShadowDepth="25" Color="#FF756A6A" />
-            </StackPanel.Effect>
+            <StackPanel  Orientation="Horizontal"  HorizontalAlignment="Left" VerticalAlignment="Top" Background="#FF545454">
+                <StackPanel.Effect>
+                    <DropShadowEffect Opacity="0.35" ShadowDepth="25" Color="#FF756A6A" />
+                </StackPanel.Effect>
 
-            <StackPanel Width="36" HorizontalAlignment="Left">
-                    <Button Width="32" Height="32" Margin="2,2" x:Name="BuildozerButton" Content="BD" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE"  />
-                    <Button Width="32" Height="32"  Margin="2,2" x:Name="WireButton" Content="WR" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE" Click="WireButton_Click"  />
-                    <Button Width="32" Height="32"  Margin="2,2" x:Name="GardenButton" Content="GD" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE" Click="GardenButton_Click"  />
-                    <Button Width="32" Height="32"  Margin="2,2" x:Name="ComercialButton" Content="CM" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE" Click="ComercialButton_Click"  />
-                    <Button Width="32" Height="32"  Margin="2,2" x:Name="PoliceDepartmentButton" Content="PD" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE" Click="PoliceDepartmentButton_Click"  />
-                    <Button Width="32" Height="32"  Margin="2,2" x:Name="StadiumButton" Content="SD" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE" Click="StadiumButton_Click"  />
-                    <Button Width="32" Height="32"  Margin="2,2" x:Name="SeaPortButton" Content="SP" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE" Click="SeaPortButton_Click"  />
+                <StackPanel Width="50" HorizontalAlignment="Left">
+                    <Button x:Name="BuildozerButton" Style="{StaticResource DashboardButtonStyle}" >
+                        <Image x:Name="BuldozerImage" />
+                    </Button>
+                    <Button Tag="wire" Style="{StaticResource DashboardButtonStyle}" Click="BuildButton_Click">
+                        <Image x:Name="WireImage" />
+                    </Button>
+
+                    <Button Tag="garden" Style="{StaticResource DashboardButtonStyle}" Click="BuildButton_Click">
+                        <Image x:Name="GardenImage" />
+                    </Button>
+
+                    <Button Tag="comercial0" Style="{StaticResource DashboardButtonStyle}" Click="BuildButton_Click">
+                        <Image x:Name="ComercialImage" />
+                    </Button>
+
+                    <Button Tag="policedepartment" Style="{StaticResource DashboardButtonStyle}" Click="BuildButton_Click">
+                        <Image x:Name="PoliceDepartmentImage" />
+                    </Button>
+
+                    <Button Tag="stadium" Style="{StaticResource DashboardButtonStyle}" Click="BuildButton_Click">
+                        <Image x:Name="StadiumImage" />
+                    </Button>
+
+                    <Button Tag="seaport" Style="{StaticResource DashboardButtonStyle}" Click="BuildButton_Click">
+                        <Image x:Name="SeaPortImage" />
+                    </Button>
+
                 </StackPanel>
 
-                <StackPanel Width="36" HorizontalAlignment="Left">
-                    <Button Width="32" Height="32" Margin="2,2" x:Name="RoadButton" Content="RD" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE" Click="RoadButton_Click"  />
-                    <Button Width="32" Height="32" Margin="2,2" x:Name="RailButton" Content="RL" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE" Click="RailButton_Click"  />
-                    <Button Width="32" Height="32" Margin="2,2" x:Name="ResidentButton" Content="RD" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE" Click="ResidentButton_Click"  />
-                    <Button Width="32" Height="32" Margin="2,2" x:Name="IndustrialButton" Content="IL" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE" Click="IndustrialButton_Click"  />
-                    <Button Width="32" Height="32" Margin="2,2" x:Name="FireDepartmentButton" Content="FD" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE" Click="FireDepartmentButton_Click"  />
-                    <Button Width="32" Height="32" Margin="2,2" x:Name="PowerButton" Content="PW" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE" Click="PowerButton_Click"  />
-                    <Button Width="32" Height="32" Margin="2,2" x:Name="AirPortButton" Content="AP" Background="#FFA8A8A8" BorderBrush="#FFFEFEFE" Click="AirPortButton_Click"  />
+                <StackPanel Width="50" HorizontalAlignment="Left">
+                    <Button Tag="road" Style="{StaticResource DashboardButtonStyle}" Click="BuildButton_Click">
+                        <Image x:Name="RoadImage" />
+                    </Button>
+
+                    <Button Tag="rail" Style="{StaticResource DashboardButtonStyle}" Click="BuildButton_Click">
+                        <Image x:Name="RailImage" />
+                    </Button>
+
+                    <Button Tag="resident0" Style="{StaticResource DashboardButtonStyle}" Click="BuildButton_Click">
+                        <Image x:Name="ResidentImage" />
+                    </Button>
+
+                    <Button Tag="industrial0" Style="{StaticResource DashboardButtonStyle}" Click="BuildButton_Click">
+                        <Image x:Name="IndustrialImage" />
+                    </Button>
+
+                    <Button Tag="firedepartment" Style="{StaticResource DashboardButtonStyle}" Click="BuildButton_Click">
+                        <Image x:Name="FireDepartmentImage" />
+                    </Button>
+
+                    <Button Tag="coalpowerplant" Style="{StaticResource DashboardButtonStyle}" Click="BuildButton_Click">
+                        <Image x:Name="PowerplantImage" />
+                    </Button>
+
+                    <Button Tag="airport" Style="{StaticResource DashboardButtonStyle}" Click="BuildButton_Click">
+                        <Image x:Name="AirPortImage" />
+                    </Button>
                 </StackPanel>
             </StackPanel>
         </Border>

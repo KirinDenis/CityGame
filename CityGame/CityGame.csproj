@@ -9,12 +9,16 @@
 
   <ItemGroup>
     <None Remove="Resources\Blocks.json" />
+    <None Remove="Resources\dashboard.png" />
     <None Remove="Resources\Groups.json" />
     <None Remove="Resources\resources.png" />
     <None Remove="Resources\resources256.bmp" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Resources\dashboard.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\Groups.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

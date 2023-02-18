@@ -42,7 +42,11 @@ namespace CityGame.Graphics
 
         private static string spritesImageFilePath = @"\Resources\resources.png";
 
+        private static string dashboardImageFilePath = @"\Resources\dashboard.png";
+
         private const int spriteSize = 16;
+
+        private const int dashboardSize = 24;
 
         private static ResourceInfoDTO? _resourceInfo = GetResourceInfo();
         public static ResourceInfoDTO? ResourceInfo
@@ -52,7 +56,9 @@ namespace CityGame.Graphics
                 return _resourceInfo;
             }
         }
+
         private static Bitmap? source = null;
+        private static Bitmap? dashboardBMP = null;
 
         private static readonly Dictionary<Point, BitmapImage> bufferBitmaps = new Dictionary<Point, BitmapImage>();
         private static readonly Dictionary<Point, byte[]> bufferPixels = new Dictionary<Point, byte[]>();
@@ -174,6 +180,34 @@ namespace CityGame.Graphics
             }
             return bitmapimage;
         }
+
+        public static BitmapImage? GetDashboard(int x, int y)
+        {
+            //loading once 
+            if (dashboardBMP == null)
+            {
+                dashboardBMP = new Bitmap(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + dashboardImageFilePath);
+            }
+
+            BitmapImage bitmapimage;
+            using (MemoryStream memory = new MemoryStream())
+            {
+                dashboardBMP.Clone(new Rectangle(x * dashboardSize, y * dashboardSize + y, dashboardSize, dashboardSize), dashboardBMP.PixelFormat).Save(memory, System.Drawing.Imaging.ImageFormat.Png);
+                memory.Position = 0;
+                bitmapimage = new BitmapImage();
+                bitmapimage.BeginInit();
+                bitmapimage.StreamSource = memory;
+                bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapimage.EndInit();
+            }
+
+            if (!bufferBitmaps.ContainsKey(new Point(x, y)))
+            {
+                bufferBitmaps[new Point(x, y)] = bitmapimage;
+            }
+            return bitmapimage;
+        }
+
 
         public static BitmapImage? GetSprite(PositionDTO? position)
         {

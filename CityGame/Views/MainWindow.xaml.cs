@@ -69,6 +69,21 @@ namespace CityGame
                     GameViewGrid.Children.Add(previewImages[x, y]);
                 }
             }
+            BuldozerImage.Source = SpriteRepository.GetDashboard(0, 0);
+            WireImage.Source = SpriteRepository.GetDashboard(0, 1);
+            GardenImage.Source = SpriteRepository.GetDashboard(0, 2);
+            ComercialImage.Source = SpriteRepository.GetDashboard(0, 3);
+            PoliceDepartmentImage.Source = SpriteRepository.GetDashboard(0, 4);
+            StadiumImage.Source = SpriteRepository.GetDashboard(0, 5);
+            SeaPortImage.Source = SpriteRepository.GetDashboard(0, 6);
+
+            RoadImage.Source = SpriteRepository.GetDashboard(1, 0);
+            RailImage.Source = SpriteRepository.GetDashboard(1, 1);
+            ResidentImage.Source = SpriteRepository.GetDashboard(1, 2);
+            IndustrialImage.Source = SpriteRepository.GetDashboard(1, 3);
+            FireDepartmentImage.Source = SpriteRepository.GetDashboard(1, 4);
+            PowerplantImage.Source = SpriteRepository.GetDashboard(1, 5);
+            AirPortImage.Source = SpriteRepository.GetDashboard(1, 6);
         }
 
         private void CityGameEngine_RenderCompleted(object? sender, EventArgs e)
@@ -170,8 +185,7 @@ namespace CityGame
         }
 
         private void TerrainGrid_PreviewMouseMove(object sender, MouseEventArgs e)
-        {
-            return;
+        {         
             if (!lockScroll)
             {
                 lockScroll = true;
@@ -352,69 +366,9 @@ namespace CityGame
             }
         }
 
-        private void ResidentButton_Click(object sender, RoutedEventArgs e)
+        private void BuildButton_Click(object sender, RoutedEventArgs e)
         {
-            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.resident0));
-        }
-
-        private void RoadButton_Click(object sender, RoutedEventArgs e)
-        {
-            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.road));
-        }
-
-        private void WireButton_Click(object sender, RoutedEventArgs e)
-        {
-            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.wire));
-        }
-
-        private void RailButton_Click(object sender, RoutedEventArgs e)
-        {
-            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.rail));
-        }
-
-        private void GardenButton_Click(object sender, RoutedEventArgs e)
-        {
-            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.garden));
-        }
-
-        private void ComercialButton_Click(object sender, RoutedEventArgs e)
-        {
-            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.comercial0));
-        }
-
-        private void IndustrialButton_Click(object sender, RoutedEventArgs e)
-        {
-            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.industrial0));
-        }
-
-        private void PoliceDepartmentButton_Click(object sender, RoutedEventArgs e)
-        {
-            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.policedepartment));
-        }
-
-        private void FireDepartmentButton_Click(object sender, RoutedEventArgs e)
-        {
-            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.firedepartment));
-        }
-
-        private void StadiumButton_Click(object sender, RoutedEventArgs e)
-        {
-            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.stadium));
-        }
-
-        private void PowerButton_Click(object sender, RoutedEventArgs e)
-        {
-            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.coalpowerplant));
-        }
-
-        private void SeaPortButton_Click(object sender, RoutedEventArgs e)
-        {
-            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.seaport));
-        }
-
-        private void AirPortButton_Click(object sender, RoutedEventArgs e)
-        {
-            SelectGroup(spriteBusiness.GetGroupByName(SpritesGroupEnum.airport));
+            SelectGroup(spriteBusiness.GetGroupByName((string)(sender as Button).Tag));
         }
 
         private void MenuItem_Click_1(object sender, RoutedEventArgs e)

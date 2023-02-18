@@ -39,6 +39,8 @@ namespace CityGame
 
         private Image[,] previewImages = new Image[GameConsts.GroupSize, GameConsts.GroupSize];
 
+        private Button? saveDashboardButton = null;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -369,11 +371,44 @@ namespace CityGame
         private void BuildButton_Click(object sender, RoutedEventArgs e)
         {
             SelectGroup(spriteBusiness.GetGroupByName((string)(sender as Button).Tag));
+
+            if (saveDashboardButton != null)
+            {
+                saveDashboardButton.Background = null;
+            }
+            (sender as Button).Background = new SolidColorBrush(Colors.Yellow);
+            saveDashboardButton = (sender as Button);
+
+            e.Handled = true;
         }
+
+        private void BuildMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            SelectGroup(spriteBusiness.GetGroupByName((string)(sender as MenuItem).Tag));
+
+            if (saveDashboardButton != null)
+            {
+                saveDashboardButton.Background = null;
+            }
+            PowerPlantButton.Background = new SolidColorBrush(Colors.Yellow);
+            saveDashboardButton = PowerPlantButton;
+            e.Handled = true;
+        }
+
+        private void PowerPlantButton_Click(object sender, RoutedEventArgs e)
+        {
+            PowerPlantButton.ContextMenu.IsOpen = true;
+            PowerPlantButton.ContextMenu.PlacementTarget = PowerPlantButton;
+            PowerPlantButton.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Right;
+        }
+
+
 
         private void MenuItem_Click_1(object sender, RoutedEventArgs e)
         {
             Close();
         }
+
+
     }
 }

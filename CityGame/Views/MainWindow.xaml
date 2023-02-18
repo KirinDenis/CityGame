@@ -19,6 +19,7 @@
             <Setter Property="Background" Value="{x:Null}"/>
             <Setter Property="BorderBrush" Value="{x:Null}"/>
             <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Padding" Value="3" />
 
         </Style>
 
@@ -48,7 +49,7 @@
                 </StackPanel.Effect>
 
                 <StackPanel Width="50" HorizontalAlignment="Left">
-                    <Button x:Name="BuildozerButton" Style="{StaticResource DashboardButtonStyle}" >
+                    <Button x:Name="BuildozerButton" Style="{StaticResource DashboardButtonStyle}" Click="BuildButton_Click" >
                         <Image x:Name="BuldozerImage" />
                     </Button>
                     <Button Tag="wire" Style="{StaticResource DashboardButtonStyle}" Click="BuildButton_Click">
@@ -75,6 +76,7 @@
                         <Image x:Name="SeaPortImage" />
                     </Button>
 
+                    
                 </StackPanel>
 
                 <StackPanel Width="50" HorizontalAlignment="Left">
@@ -98,7 +100,13 @@
                         <Image x:Name="FireDepartmentImage" />
                     </Button>
 
-                    <Button Tag="coalpowerplant" Style="{StaticResource DashboardButtonStyle}" Click="BuildButton_Click">
+                    <Button x:Name="PowerPlantButton"  Style="{StaticResource DashboardButtonStyle}" Click="PowerPlantButton_Click" ContextMenuService.Placement="Right" >
+                        <Button.ContextMenu>
+                            <ContextMenu x:Name="PowerPantContextMenu">
+                                <MenuItem Tag="coalpowerplant" Header="Coal" Click="BuildMenuItem_Click"></MenuItem>
+                                <MenuItem Tag="nuclearpowerplant" Header="Nuclear" Click="BuildMenuItem_Click"></MenuItem>
+                            </ContextMenu>
+                        </Button.ContextMenu>
                         <Image x:Name="PowerplantImage" />
                     </Button>
 
@@ -107,6 +115,7 @@
                     </Button>
                 </StackPanel>
             </StackPanel>
+
         </Border>
 
         <Menu x:Name="MainMenu" IsMainMenu="True" HorizontalContentAlignment="Stretch" Background="#FF00AAFF" Foreground="#FF0033C4" >

@@ -1,4 +1,31 @@
-﻿using CityGame.Data.DTO;
+﻿
+
+/* ----------------------------------------------------------------------------
+Ready IoT Solution - OWLOS
+Copyright 2019, 2020, 2021, 2022, 2023 by:
+- ChatGPT, as a language model from OpenAI that provided guidance or suggestions.
+- Denis Kirin (deniskirinacs@gmail.com)
+
+This file is part of Ready IoT Solution - OWLOS
+
+OWLOS is free software : you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+OWLOS is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with OWLOS. If not, see < https://www.gnu.org/licenses/>.
+
+GitHub: https://github.com/KirinDenis/CityGame
+
+--------------------------------------------------------------------------------------*/
+
+using CityGame.Data.DTO;
 using CityGame.DTOs.Const;
 using CityGame.DTOs.Enum;
 using CityGame.Graphics;
@@ -40,6 +67,10 @@ namespace CityGame
         private Image[,] previewImages = new Image[GameConsts.GroupSize, GameConsts.GroupSize];
 
         private Button? saveDashboardButton = null;
+
+        private bool isCaptured = false;
+        private Point mousePosition;
+
 
         public MainWindow()
         {
@@ -187,7 +218,8 @@ namespace CityGame
         }
 
         private void TerrainGrid_PreviewMouseMove(object sender, MouseEventArgs e)
-        {         
+        {
+            return;
             if (!lockScroll)
             {
                 lockScroll = true;
@@ -409,6 +441,91 @@ namespace CityGame
             Close();
         }
 
+        private void TerrainScroll_MouseEnter(object sender, MouseEventArgs e)
+        {
 
+            if (!isCaptured)
+            {
+              //  isCaptured = true;
+             //   mousePosition = e.GetPosition(GameViewGrid);
+             //   GameViewGrid.CaptureMouse();
+            }
+        }
+
+        private bool isUpdatingScroll = false;
+
+        private void GameViewGrid_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (!lockScroll)
+            {
+                lockScroll = true;
+                TerrainGrid.CaptureMouse();
+
+                Point currentPosition = e.GetPosition(this);
+                double deltaX = currentPosition.X - mousePosition.X;
+                double deltaY = currentPosition.Y - mousePosition.Y;
+
+                double newHorizontalOffset = TerrainScroll.HorizontalOffset - deltaX;
+                double newVerticalOffset = TerrainScroll.VerticalOffset - deltaY;
+
+                if (newHorizontalOffset < 0)
+                {
+                    newHorizontalOffset = 0;
+                }
+                else if (newHorizontalOffset > TerrainScroll.ScrollableWidth)
+                {
+                    newHorizontalOffset = TerrainScroll.ScrollableWidth;
+                }
+
+                if (newVerticalOffset < 0)
+                {
+                    newVerticalOffset = 0;
+                }
+                else if (newVerticalOffset > TerrainScroll.ScrollableHeight)
+                {
+                    newVerticalOffset = TerrainScroll.ScrollableHeight;
+                }
+
+                // Check if the mouse is within a certain range of the edges of the image
+                double edgeThreshold = 50; // Change this value to adjust the sensitivity of the scrolling
+
+                if (currentPosition.X <= edgeThreshold && newHorizontalOffset > 0)
+                {
+                    newHorizontalOffset -= edgeThreshold - currentPosition.X;
+                }
+                else if (currentPosition.X >= TerrainGrid.ActualWidth - edgeThreshold && newHorizontalOffset < TerrainScroll.ScrollableWidth)
+                {
+                    newHorizontalOffset += currentPosition.X - (TerrainGrid.ActualWidth - edgeThreshold);
+                }
+
+                if (currentPosition.Y <= edgeThreshold && newVerticalOffset > 0)
+                {
+                    newVerticalOffset -= edgeThreshold - currentPosition.Y;
+                }
+                else if (currentPosition.Y >= TerrainGrid.ActualHeight - edgeThreshold && newVerticalOffset < TerrainScroll.ScrollableHeight)
+                {
+                    newVerticalOffset += currentPosition.Y - (TerrainGrid.ActualHeight - edgeThreshold);
+                }
+
+                TerrainScroll.ScrollToHorizontalOffset(newHorizontalOffset);
+                TerrainScroll.ScrollToVerticalOffset(newVerticalOffset);
+
+                mousePosition = currentPosition;
+                TerrainGrid.ReleaseMouseCapture();
+                lockScroll = false;
+            }
+        }
+
+        private void GameViewGrid_MouseLeave(object sender, MouseEventArgs e)
+        {
+                if (isCaptured)
+                {
+                 //   isCaptured = false;
+                //ameViewGrid.ReleaseMouseCapture();
+                }
+
+
+        }
     }
 }
+

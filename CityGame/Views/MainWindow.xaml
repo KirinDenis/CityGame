@@ -33,9 +33,9 @@
         </Grid.RowDefinitions>
 
 
-        <Grid x:Name="TerrainGrid"  PreviewMouseWheel="Terrain_PreviewMouseWheel"  Background="#FFF6F6F6" Grid.Row="1" Grid.ColumnSpan="2" PreviewMouseDown="TerrainGrid_PreviewMouseDown">
-            <ScrollViewer x:Name="TerrainScroll" HorizontalScrollBarVisibility="Visible" PanningMode="Both" VerticalContentAlignment="Top" HorizontalContentAlignment="Left" >
-                <Grid x:Name="GameViewGrid" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0,0">
+        <Grid x:Name="TerrainGrid"  PreviewMouseWheel="Terrain_PreviewMouseWheel"  Background="#FFF6F6F6" Grid.Row="1" Grid.ColumnSpan="2" PreviewMouseDown="TerrainGrid_PreviewMouseDown" MouseMove="GameViewGrid_MouseMove" MouseEnter="TerrainScroll_MouseEnter" MouseLeave="GameViewGrid_MouseLeave">
+            <ScrollViewer x:Name="TerrainScroll" HorizontalScrollBarVisibility="Visible" PanningMode="Both" VerticalContentAlignment="Top" HorizontalContentAlignment="Left"  >
+                <Grid x:Name="GameViewGrid" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0,0" >
                     <Image x:Name="TerrainImage" HorizontalAlignment="Left" VerticalAlignment="Top" Source="/Resources/resources.png" RenderTransformOrigin="1,0" />
                     <Border x:Name="TerrainSelector" HorizontalAlignment="Left" VerticalAlignment="Top" Width="16" Height="16" BorderBrush="#FF4FEA25" BorderThickness="2,2,2,2" />
                 </Grid>

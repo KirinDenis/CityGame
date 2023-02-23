@@ -37,9 +37,9 @@
             <ScrollViewer x:Name="TerrainScroll" HorizontalScrollBarVisibility="Visible" PanningMode="Both" VerticalContentAlignment="Top" HorizontalContentAlignment="Left"  >
                 <Grid x:Name="GameViewGrid" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0,0" >
                     <Image x:Name="TerrainImage" HorizontalAlignment="Left" VerticalAlignment="Top" Source="/Resources/resources.png" RenderTransformOrigin="1,0" />
-                    <Border x:Name="TerrainSelector" HorizontalAlignment="Left" VerticalAlignment="Top" Width="16" Height="16" BorderBrush="#FF4FEA25" BorderThickness="2,2,2,2" />
                 </Grid>
             </ScrollViewer>
+            <Border x:Name="TerrainSelector" HorizontalAlignment="Left" VerticalAlignment="Top" Width="16" Height="16" BorderBrush="#FF4FEA25" BorderThickness="2,2,2,2" />
         </Grid>
 
         <Border Grid.Column="0" Grid.Row="1" BorderBrush="#FFFEFEFE" BorderThickness="1,1,1,1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,20,0,0">

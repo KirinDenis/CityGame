@@ -99,7 +99,7 @@ namespace CityGame
                     previewImages[x, y].VerticalAlignment = VerticalAlignment.Top;
                     previewImages[x, y].OpacityMask = (Brush)new BrushConverter().ConvertFrom("#90000000");
                     RenderOptions.SetBitmapScalingMode(previewImages[x, y], BitmapScalingMode.NearestNeighbor);
-                    GameViewGrid.Children.Add(previewImages[x, y]);
+                    TerrainGrid.Children.Add(previewImages[x, y]);
                 }
             }
             BuldozerImage.Source = SpriteRepository.GetDashboard(0, 0);
@@ -167,7 +167,8 @@ namespace CityGame
             Point mousePos = e.GetPosition(TerrainScroll);
 
             // Calculate the scale factor for zooming
-            double zoomScale = e.Delta > 0 ? 1.1 : 0.9;
+            double zoomScale = e.Delta > 0 ? 1.01 : 0.99;
+            
 
             // Get the current scroll position
             double scrollX = TerrainScroll.HorizontalOffset;
@@ -492,12 +493,13 @@ namespace CityGame
 
         private void GameViewGrid_MouseMove(object sender, MouseEventArgs e)
         {
+            Point currentPosition = e.GetPosition(this);
             if (!lockScroll)
             {
                 lockScroll = true;
                 TerrainGrid.CaptureMouse();
 
-                Point currentPosition = e.GetPosition(this);
+                
                 double deltaX = currentPosition.X - mousePosition.X;
                 double deltaY = currentPosition.Y - mousePosition.Y;
 
@@ -564,10 +566,23 @@ namespace CityGame
                 lockScroll = false;
             }
 
-            double actualSpriteSizeInPixels = TerrainImage.ActualWidth / cityGameEngine.GetTerrainSize();
+            double actualSpriteSizeInPixels = TerrainImage.DesiredSize.Width / cityGameEngine.GetTerrainSize();
 
-            double x = e.GetPosition(TerrainImage).X - (e.GetPosition(TerrainImage).X % actualSpriteSizeInPixels); // + TerrainScroll.HorizontalOffset;
-            double y = e.GetPosition(TerrainImage).Y - (e.GetPosition(TerrainImage).Y % actualSpriteSizeInPixels); // + TerrainScroll.VerticalOffset;
+            double x = e.GetPosition(TerrainGrid).X - (e.GetPosition(TerrainGrid).X % actualSpriteSizeInPixels); // + TerrainScroll.HorizontalOffset;
+            double y = e.GetPosition(TerrainGrid).Y - (e.GetPosition(TerrainGrid).Y % actualSpriteSizeInPixels); // + TerrainScroll.VerticalOffset;
+
+            //double x = mousePosition.X - (mousePosition.X % actualSpriteSizeInPixels); // + TerrainScroll.HorizontalOffset;
+            //double y = mousePosition.Y - (mousePosition.Y % actualSpriteSizeInPixels); // + TerrainScroll.VerticalOffset;
+
+            //double x = mousePosition.X;
+            //double y = mousePosition.Y;
+
+            //double x = currentPosition.X; 
+            //double y = currentPosition.Y;
+
+            Debug.WriteLine(actualSpriteSizeInPixels);
+            Debug.WriteLine("M: " + mousePosition.X);
+            Debug.WriteLine("E: " + x);
 
             TerrainSelector.Width = TerrainSelector.Height = actualSpriteSizeInPixels;
 

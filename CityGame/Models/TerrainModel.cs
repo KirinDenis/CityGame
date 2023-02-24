@@ -4,7 +4,7 @@ using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Drawing;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
@@ -38,7 +38,8 @@ namespace CityGame.Models
 
         private Random random = new Random();
 
-        public WriteableBitmap bitmapSource;
+        public WriteableBitmap terrainBitmap;
+        public WriteableBitmap mapBitmap;
 
         public TerrainModel(int terrainSize)
         {
@@ -54,24 +55,77 @@ namespace CityGame.Models
 
 
             BitmapImage sImage = SpriteRepository.GetSprite(0, 0);
-            bitmapSource = new WriteableBitmap(terrainSize * 16, terrainSize * 16, sImage.DpiX, sImage.DpiY, sImage.Format, sImage.Palette);
+            terrainBitmap = new WriteableBitmap(terrainSize * 16, terrainSize * 16, sImage.DpiX, sImage.DpiY, sImage.Format, sImage.Palette);
+            mapBitmap = new WriteableBitmap(terrainSize, terrainSize, sImage.DpiX, sImage.DpiY, sImage.Format, sImage.Palette);
 
 
             GenerateNewTerrain();
 
         }
 
-        public void PutSprite(ushort x, ushort y, ushort? bx, ushort? by)
-        {            
-                Int32Rect rect = new Int32Rect(x * SpriteRepository.ResourceInfo.SpriteSize, y * SpriteRepository.ResourceInfo.SpriteSize, SpriteRepository.ResourceInfo.SpriteSize, SpriteRepository.ResourceInfo.SpriteSize);
+        //http://www.java2s.com/example/csharp/system/color-to-byte-array.html
+        private byte[] ColorToByteArray(Color color)
+        {
+            byte[] colorArray = new byte[4];
+            colorArray[0] = color.B;
+            colorArray[1] = color.G;
+            colorArray[2] = color.R;
+            colorArray[3] = color.A;
 
-                    bitmapSource.WritePixels(rect, SpriteRepository.GetPixels((int)bx, (int)by), SpriteRepository.ResourceInfo.SpriteSize * 4, 0);
-
-
-
+            return colorArray;
         }
 
-        public bool BuildObject(ushort x, ushort y, GroupDTO group, int animationFrame = 0)
+        public bool PutSprite(ushort x, ushort y, GroupDTO? group, byte animationFrame, int spriteX, int spriteY)
+        {
+            if ((group == null) || (group?.Sprites.Count <= animationFrame)
+                || (group?.Sprites == null) || (group?.Sprites[animationFrame] == null) || (group?.Sprites[animationFrame].Sprites[spriteX, spriteY] == null)
+                || (x >= terrainSize) || (y >= terrainSize))
+            {
+                return false;
+            }
+
+            terrain[x, y] = group?.Sprites?[animationFrame]?.Sprites[spriteX, spriteY];
+
+
+
+            Int32Rect rect = new Int32Rect(x * SpriteRepository.ResourceInfo.SpriteSize, y * SpriteRepository.ResourceInfo.SpriteSize, SpriteRepository.ResourceInfo.SpriteSize, SpriteRepository.ResourceInfo.SpriteSize);
+
+            terrainBitmap.WritePixels(rect, SpriteRepository.GetPixels((int)terrain[x, y].x, (int)terrain[x, y].y), SpriteRepository.ResourceInfo.SpriteSize * 4, 0);
+
+            rect = new Int32Rect(x, y, 1, 1);
+
+            byte[] pixel;
+
+            switch (SpritesGroupEnum.GetObjectTypeByGroupName(group.Name))
+            {
+                case ObjectType.terrain: pixel = ColorToByteArray(Color.Brown); break;
+                case ObjectType.forest: pixel = ColorToByteArray(Color.Green); break;
+                case ObjectType.water: pixel = ColorToByteArray(Color.Blue); break;
+                case ObjectType.network: pixel = ColorToByteArray(Color.Black); break;
+                case ObjectType.garden: pixel = ColorToByteArray(Color.Green); break;
+                case ObjectType.building: 
+                    switch (group.Name)
+                    {
+                        case SpritesGroupEnum.firedepartment: pixel = ColorToByteArray(Color.Red); break;
+                        case SpritesGroupEnum.policedepartment: pixel = ColorToByteArray(Color.LightBlue); break;
+                        case SpritesGroupEnum.coalpowerplant: pixel = ColorToByteArray(Color.Red); break;
+                            default: pixel = ColorToByteArray(Color.LightCyan); break;
+                    }
+                    break;
+                default: pixel = ColorToByteArray(Color.Gray); break;
+            }
+
+            mapBitmap.WritePixels(rect, pixel, 4, 0);//SpriteRepository.ResourceInfo.SpriteSize * SpriteRepository.ResourceInfo.SpriteSize / 2);
+
+            return true;
+        }
+
+        public bool PutSprite(ushort x, ushort y, GroupDTO? group, PositionDTO spritePosition)
+        {
+            return PutSprite(x, y, group, 0, spritePosition.x, spritePosition.y);
+        }
+
+        public bool BuildObject(ushort x, ushort y, GroupDTO group, byte animationFrame = 0)
         {
 
 
@@ -97,8 +151,8 @@ namespace CityGame.Models
 
                     if (group?.Sprites[animationFrame].Sprites[sx, sy] != null)
                     {
-                        terrain[x + sx, y + sy] = group?.Sprites[animationFrame].Sprites[sx, sy];
-                        PutSprite((ushort)(x + sx), (ushort)(y + sy), group?.Sprites[animationFrame].Sprites[sx, sy].x, group?.Sprites[animationFrame].Sprites[sx, sy].y);
+                        //   terrain[x + sx, y + sy] = group?.Sprites[animationFrame].Sprites[sx, sy];
+                        PutSprite((ushort)(x + sx), (ushort)(y + sy), group, animationFrame, sx, sy);
                     }
                 }
             }
@@ -114,11 +168,11 @@ namespace CityGame.Models
             }
 
             if ((position.x >= 0) && (position.x < terrainSize)
-                && 
+                &&
                 (position.y >= 0) && (position.y < terrainSize))
             {
                 return true;
-            }    
+            }
             return false;
         }
 
@@ -133,8 +187,8 @@ namespace CityGame.Models
             if (!TestRange(position))
             {
                 return result;
-            }    
-            
+            }
+
             result.PositionArea = new ObjectType[group.Width, group.Height];
             result.CanBuild = true;
 
@@ -323,9 +377,14 @@ namespace CityGame.Models
                     }
                     if (SpriteRepository.GetPixels(terrain[x, y]) != null)
                     {
+                        byte[] pixels = SpriteRepository.GetPixels(terrain[x, y]);
                         Int32Rect rect = new Int32Rect(x * 16, y * 16, 16, 16);
+                        terrainBitmap.WritePixels(rect, pixels, 16 * 4, 0);
 
-                        bitmapSource.WritePixels(rect, SpriteRepository.GetPixels(terrain[x, y]), 16 * 4, 0);
+                        rect = new Int32Rect(x, y, 1, 1);
+                        mapBitmap.WritePixels(rect, pixels, 4, 0);
+
+
                     }
                 }
             }

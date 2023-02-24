@@ -125,9 +125,17 @@ namespace CityGame
             {
                 drawingContext.DrawImage(cityGameEngine.GetTerrainBitmap(), new Rect(0, 0, cityGameEngine.GetTerrainSize(), cityGameEngine.GetTerrainSize()));
                 drawingContext.Close();
+                TerrainImage.Source = new DrawingImage(drawingVisual.Drawing);
             }
-            TerrainImage.Source = new DrawingImage(drawingVisual.Drawing);
-            MapImage.Source = new DrawingImage(drawingVisual.Drawing);
+
+            using (DrawingContext drawingContext = drawingVisual.RenderOpen())
+            {
+                drawingContext.DrawImage(cityGameEngine.GetMapBitmap(), new Rect(0, 0, cityGameEngine.GetTerrainSize(), cityGameEngine.GetTerrainSize()));
+                drawingContext.Close();
+                MapImage.Source = new DrawingImage(drawingVisual.Drawing);
+            }
+
+            
         }
 
         private void ResourceExplorerButton_Click(object sender, RoutedEventArgs e)

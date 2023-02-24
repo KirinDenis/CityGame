@@ -54,7 +54,7 @@ namespace CityGame.Models
         {
             
             gameObjects.Remove(gameObjectDTO);
-            int destroyStep = 0;
+            byte destroyStep = 0;
             GroupDTO destroyGroup = spriteBusiness.GetGroupByName(SpritesGroupEnum.explosion);
             Task destroyTask = Task.Run(async delegate
             {
@@ -73,8 +73,9 @@ namespace CityGame.Models
 
                                             if (destroyGroup?.Sprites[destroyStep].Sprites[0, 0] != null)
                                             {
-                                                terrainModel.terrain[gameObjectDTO.positionDTO.x + sx, gameObjectDTO.positionDTO.y + sy] = destroyGroup.Sprites[destroyStep].Sprites[0, 0];
-                                                terrainModel.PutSprite((ushort)(gameObjectDTO.positionDTO.x + sx), (ushort)(gameObjectDTO.positionDTO.y + sy), destroyGroup.Sprites[destroyStep].Sprites[0, 0].x, destroyGroup.Sprites[destroyStep].Sprites[0, 0].y);
+                                                //terrainModel.terrain[gameObjectDTO.positionDTO.x + sx, gameObjectDTO.positionDTO.y + sy] = destroyGroup.Sprites[destroyStep].Sprites[0, 0];
+                                                //terrainModel.PutSprite((ushort)(gameObjectDTO.positionDTO.x + sx), (ushort)(gameObjectDTO.positionDTO.y + sy), destroyGroup.Sprites[destroyStep].Sprites[0, 0].x, destroyGroup.Sprites[destroyStep].Sprites[0, 0].y);
+                                                terrainModel.PutSprite((ushort)(gameObjectDTO.positionDTO.x + sx), (ushort)(gameObjectDTO.positionDTO.y + sy), destroyGroup, destroyStep, 0, 0);
                                             }
                                         }
                                     }

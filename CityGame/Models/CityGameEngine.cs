@@ -89,8 +89,14 @@ namespace CityGame.Models
 
         public WriteableBitmap GetTerrainBitmap()
         {
-            return terrainModel.bitmapSource;
+            return terrainModel.terrainBitmap;
         }
+
+        public WriteableBitmap GetMapBitmap()
+        {
+            return terrainModel.mapBitmap;
+        }
+
 
         public void GenerateTerrain()
         {

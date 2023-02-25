@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CityGame"
         mc:Ignorable="d"
-        Title="City Game" Height="800" Width="800" WindowStartupLocation="CenterScreen" PreviewKeyDown="Window_PreviewKeyDown" PreviewMouseMove="TerrainGrid_PreviewMouseMove" >
+        Title="City Game" Height="800" Width="800" WindowStartupLocation="CenterScreen" PreviewKeyDown="Window_PreviewKeyDown">
 
     <Window.Resources>
         <Style TargetType="Image">
@@ -20,10 +20,7 @@
             <Setter Property="BorderBrush" Value="{x:Null}"/>
             <Setter Property="Cursor" Value="Hand" />
             <Setter Property="Padding" Value="3" />
-
         </Style>
-
-
     </Window.Resources>
 
     <Grid>
@@ -32,17 +29,46 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <Grid x:Name="TerrainViewGrid" PreviewMouseWheel="Terrain_PreviewMouseWheel"  Background="#FFF6F6F6" Grid.Row="1" Grid.ColumnSpan="2" PreviewMouseDown="TerrainGrid_PreviewMouseDown" MouseMove="GameViewGrid_MouseMove">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <Grid x:Name="TerrainGrid"  PreviewMouseWheel="Terrain_PreviewMouseWheel"  Background="#FFF6F6F6" Grid.Row="1" Grid.ColumnSpan="2" PreviewMouseDown="TerrainGrid_PreviewMouseDown" MouseMove="GameViewGrid_MouseMove" MouseEnter="TerrainScroll_MouseEnter" MouseLeave="GameViewGrid_MouseLeave">
-            <ScrollViewer x:Name="TerrainScroll" HorizontalScrollBarVisibility="Visible" PanningMode="Both" VerticalContentAlignment="Top" HorizontalContentAlignment="Left"  >
-                <Grid x:Name="GameViewGrid" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0,0" >
-                    <Image x:Name="TerrainImage" HorizontalAlignment="Left" VerticalAlignment="Top" Source="/Resources/resources.png" RenderTransformOrigin="1,0" />
-                </Grid>
-            </ScrollViewer>
-            <Border x:Name="TerrainSelector" HorizontalAlignment="Left" VerticalAlignment="Top" Width="16" Height="16" BorderBrush="#FF4FEA25" BorderThickness="2,2,2,2" />
+            <Grid x:Name="TerrainHeader" Grid.Row="0" Background="#FFA8A8A8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="CloseTerrainTextBlock" Grid.Column="0" Text="*" VerticalAlignment="Center" Margin="5,0" Foreground="#FF545454"/>
+                <TextBlock x:Name="CityNameTextBlock" Grid.Column="1" Text="City Name" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FF545454"/>
+                <TextBlock x:Name="CityDateTextBlock" Grid.Column="2" Text="1 Jan 1900" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0" Foreground="#FF545454"/>
+            </Grid>
+
+            <Grid x:Name="TerrainInfo" Grid.Row="1" Background="#FF545454">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="AUTO"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="FundsTextBlock" Grid.Column="0" Text="Funds: $20,000" VerticalAlignment="Center" Margin="5,0" Foreground="#FFA8A8A8"/>
+                <TextBlock x:Name="MessageTextBlock" Grid.Column="1" Text="Build more residentals" VerticalAlignment="Center" Foreground="#FFA8A8A8"/>
+                <TextBlock x:Name="InfoTextBlock" Grid.Column="2" Text="" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0" Foreground="#FFA8A8A8"/>
+            </Grid>
+
+            <Grid x:Name="TerrainGrid" Grid.Row="2">
+                <ScrollViewer x:Name="TerrainScroll" HorizontalScrollBarVisibility="Visible" PanningMode="Both" VerticalContentAlignment="Top" HorizontalContentAlignment="Left"  >
+                    <Grid x:Name="GameViewGrid" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0,0" >
+                        <Image x:Name="TerrainImage" HorizontalAlignment="Left" VerticalAlignment="Top" Source="/Resources/resources.png" RenderTransformOrigin="1,0" />
+                    </Grid>
+                </ScrollViewer>
+                <Border x:Name="TerrainSelector" HorizontalAlignment="Left" VerticalAlignment="Top" Width="16" Height="16" BorderBrush="#FF4FEA25" BorderThickness="2,2,2,2" />
+            </Grid>
         </Grid>
 
-        <Border Grid.Column="0" Grid.Row="1" BorderBrush="#FFFEFEFE" BorderThickness="1,1,1,1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,20,0,0">
+        <Border Grid.Column="0" Grid.Row="1" BorderBrush="#FFFEFEFE" BorderThickness="1,1,1,1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,60,0,0">
             <StackPanel  Orientation="Horizontal"  HorizontalAlignment="Left" VerticalAlignment="Top" Background="#FF545454">
                 <StackPanel.Effect>
                     <DropShadowEffect Opacity="0.35" ShadowDepth="25" Color="#FF756A6A" />
@@ -76,7 +102,7 @@
                         <Image x:Name="SeaPortImage" />
                     </Button>
 
-                    
+
                 </StackPanel>
 
                 <StackPanel Width="50" HorizontalAlignment="Left">

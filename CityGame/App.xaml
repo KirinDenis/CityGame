@@ -4,10 +4,22 @@
              xmlns:local="clr-namespace:CityGame"
              StartupUri="Views\MainWindow.xaml">
     <Application.Resources>
+        <Style TargetType="{x:Type Window}">
+            <Setter Property="FontFamily" Value="Consolas" />
+            <Setter Property="FontSize" Value="16" />
+        </Style>
+        <Style  x:Key="BaseStyle" TargetType="{x:Type Control}">
+            <Setter Property="FontFamily" Value="Consolas" />
+            <Setter Property="FontSize" Value="16" />
+        </Style>
+
+        <Style TargetType="{x:Type StatusBar}" BasedOn="{StaticResource BaseStyle}" />
+        <Style TargetType="{x:Type Menu}" BasedOn="{StaticResource BaseStyle}" />
+        <Style TargetType="{x:Type local:MainWindow}" BasedOn="{StaticResource BaseStyle}" />
+
 
     </Application.Resources>
 
-    
-    
-    
+
+
 </Application>

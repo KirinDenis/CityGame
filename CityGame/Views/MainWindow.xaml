@@ -206,11 +206,15 @@
             </MenuItem>
         </Menu>
 
-        <Image Grid.Column="0" Grid.Row="1"  x:Name="MapImage" Width="300" Height="300" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="40,40" RenderOptions.BitmapScalingMode="NearestNeighbor">
-            <Image.Effect>
+        <Grid x:Name="MapGrid" Grid.Column="0" Grid.Row="1" Width="300" Height="300" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="40,40">
+            <Grid.Effect>
                 <DropShadowEffect Opacity="0.35" ShadowDepth="25" Color="#FF756A6A" />
-            </Image.Effect>
-        </Image>
+            </Grid.Effect>
+
+            <Image x:Name="MapImage"  RenderOptions.BitmapScalingMode="NearestNeighbor" PreviewMouseDown="MapImage_PreviewMouseDown" />
+            <Border x:Name="MapSelector" HorizontalAlignment="Left" VerticalAlignment="Top" BorderThickness="4,4,4,4" Width="20" Height="20" BorderBrush="#FFF30A0A" />
+
+        </Grid>
 
         <Button x:Name="CloseButton" Content="X" Width="20" HorizontalAlignment="Right" BorderBrush="{x:Null}" Background="{x:Null}" Foreground="#FF0033C4" Click="MenuItem_Click_1"  />
 

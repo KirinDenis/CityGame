@@ -164,9 +164,154 @@ namespace CityGame
             Title = "Benchmark result " + count + " objects";
         }
 
+        private void TerrainGrid_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            PositionDTO p = GetTerrainPosition(e);
+
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                cityGameEngine.BuildObject(p, selectedGroup);
+            }
+            else
+            if (e.RightButton == MouseButtonState.Pressed)
+            {
+                cityGameEngine.DestroyObjectAtPosition(p);
+            }
+        }
+
+        private void GameViewGrid_MouseMove(object sender, MouseEventArgs e)
+        {
+            Point currentPosition = e.GetPosition(this);
+            if (!lockScroll)
+            {
+                lockScroll = true;
+                TerrainGrid.CaptureMouse();
+
+
+                double deltaX = currentPosition.X - mousePosition.X;
+                double deltaY = currentPosition.Y - mousePosition.Y;
+
+                double newHorizontalOffset = TerrainScroll.HorizontalOffset - deltaX;
+                double newVerticalOffset = TerrainScroll.VerticalOffset - deltaY;
+
+                if (newHorizontalOffset < 0)
+                {
+                    newHorizontalOffset = 0;
+                }
+                else if (newHorizontalOffset > TerrainScroll.ScrollableWidth)
+                {
+                    newHorizontalOffset = TerrainScroll.ScrollableWidth;
+                }
+
+                if (newVerticalOffset < 0)
+                {
+                    newVerticalOffset = 0;
+                }
+                else if (newVerticalOffset > TerrainScroll.ScrollableHeight)
+                {
+                    newVerticalOffset = TerrainScroll.ScrollableHeight;
+                }
+
+                bool edge = false;
+                if (e.MiddleButton != MouseButtonState.Pressed)
+                {
+                    // Check if the mouse is within a certain range of the edges of the image
+                    double edgeThreshold = scrollBorder; // Change this value to adjust the sensitivity of the scrolling
+
+
+                    if (currentPosition.X <= edgeThreshold && newHorizontalOffset > 0)
+                    {
+                        newHorizontalOffset -= (edgeThreshold - currentPosition.X) / startScrollSpeed;
+                       // edge = true;
+                    }
+                    else if (currentPosition.X >= TerrainGrid.ActualWidth - edgeThreshold && newHorizontalOffset < TerrainScroll.ScrollableWidth)
+                    {
+                        newHorizontalOffset += (currentPosition.X - (TerrainGrid.ActualWidth - edgeThreshold)) / startScrollSpeed;
+                        //edge = true;
+                    }
+
+                    if (currentPosition.Y <= edgeThreshold && newVerticalOffset > 0)
+                    {
+                        newVerticalOffset -= (edgeThreshold - currentPosition.Y) / startScrollSpeed;
+                        //edge = true;
+                    }
+                    else if (currentPosition.Y >= TerrainGrid.ActualHeight - edgeThreshold && newVerticalOffset < TerrainScroll.ScrollableHeight)
+                    {
+                        newVerticalOffset += (currentPosition.Y - (TerrainGrid.ActualHeight - edgeThreshold)) / startScrollSpeed;
+                        //edge = true;
+                    }
+                }
+
+                if ((e.MiddleButton == MouseButtonState.Pressed) || (edge))
+                {
+                    TerrainScroll.ScrollToHorizontalOffset(newHorizontalOffset);
+                    TerrainScroll.ScrollToVerticalOffset(newVerticalOffset);
+
+
+                }
+                mousePosition = currentPosition;
+                TerrainGrid.ReleaseMouseCapture();
+                lockScroll = false;
+            }
+
+            double actualSpriteSizeInPixels = TerrainImage.DesiredSize.Width / cityGameEngine.GetTerrainSize();
+
+            double x = e.GetPosition(TerrainGrid).X - (e.GetPosition(TerrainGrid).X % actualSpriteSizeInPixels);
+            double y = e.GetPosition(TerrainGrid).Y - (e.GetPosition(TerrainGrid).Y % actualSpriteSizeInPixels);
+
+            //Debug.WriteLine(actualSpriteSizeInPixels);
+            //Debug.WriteLine("M: " + mousePosition.X);
+            //Debug.WriteLine("E: " + x);
+
+            TerrainSelector.Width = TerrainSelector.Height = actualSpriteSizeInPixels;
+
+            if ((x < TerrainImage.ActualWidth) && (y < TerrainImage.ActualHeight))
+            {
+                TerrainSelector.Margin = new Thickness(x, y, 0, 0);
+
+                PositionDTO position = GetTerrainPosition(e);
+
+                ObjectType[,] newPositionMap = cityGameEngine.TestPosition(selectedGroup, position)?.PositionArea;
+
+                for (int px = 0; px < GameConsts.GroupSize; px++)
+                {
+                    for (int py = 0; py < GameConsts.GroupSize; py++)
+                    {
+                        previewImages[px, py].Width = previewImages[px, py].Height = actualSpriteSizeInPixels;
+                        previewImages[px, py].Margin = new Thickness(x + px * actualSpriteSizeInPixels, y + py * actualSpriteSizeInPixels, 0, 0);
+
+                        if ((newPositionMap != null)
+                            && (px < newPositionMap.GetLength(0))
+                            && (py < newPositionMap.GetLength(1))
+                            &&
+                            (newPositionMap != null) && (newPositionMap[px, py] != null))
+
+                        {
+                            switch (newPositionMap[px, py])
+                            {
+                                case ObjectType.terrain:
+                                case ObjectType.forest:
+                                case ObjectType.network:
+                                    previewImages[px, py].Source = previewImages[px, py].Tag as ImageSource;
+                                    break;
+                                default:
+                                    previewImages[px, py].Source = SpriteRepository.GetSprite(spriteBusiness.GetGroupByName(SpritesGroupEnum.select)?.Sprites[0].Sprites[0, 0]);
+                                    break;
+                            }
+                        }
+                    }
+                }
+                if (e.LeftButton == MouseButtonState.Pressed)
+                {
+                    cityGameEngine.BuildObject(position, selectedGroup);
+                }
+            }
+            MoveMapSelector();
+        }
 
         private void Terrain_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
+            
             // Get the position of the mouse relative to the TerrainScroll control
             Point mousePos = e.GetPosition(TerrainScroll);
 
@@ -194,11 +339,25 @@ namespace CityGame
             newScrollY = Math.Max(0, Math.Min(newHeight - TerrainScroll.ActualHeight, newScrollY));
 
             // Zoom the image
-            TerrainImage.LayoutTransform = new ScaleTransform(newScale, newScale);
+            //TerrainImage.LayoutTransform = new ScaleTransform(newScale, newScale);
+            TerrainImage.Width  = TerrainImage.Height = newWidth;
+            double actualSpriteSizeInPixels = newWidth / cityGameEngine.GetTerrainSize();
+            //TerrainImage.Margin = new Thickness(TerrainImage.Width % actualSpriteSizeInPixels, TerrainImage.Height % actualSpriteSizeInPixels, 0, 0);
 
             // Scroll to the new position
-            TerrainScroll.ScrollToHorizontalOffset(newScrollX);
-            TerrainScroll.ScrollToVerticalOffset(newScrollY);
+            TerrainScroll.ScrollToHorizontalOffset(newScrollX + newWidth % actualSpriteSizeInPixels);
+            TerrainScroll.ScrollToVerticalOffset(newScrollY + newWidth % actualSpriteSizeInPixels);
+
+            MoveMapSelector();
+        }
+
+        private void MoveMapSelector()
+        {
+            double scale = TerrainImage.DesiredSize.Width / 300.0;
+            MapSelector.Width = TerrainGrid.ActualWidth / scale;
+            MapSelector.Height = TerrainGrid.ActualHeight / scale;
+            MapSelector.Margin = new Thickness(TerrainScroll.HorizontalOffset / scale, TerrainScroll.VerticalOffset / scale, 0, 0);
+
         }
 
         private PositionDTO GetTerrainPosition(MouseEventArgs e)
@@ -210,21 +369,6 @@ namespace CityGame
                 x = (ushort)((e.GetPosition(TerrainImage).X - (e.GetPosition(TerrainImage).X % actualSpriteSizeInPixels)) / actualSpriteSizeInPixels),
                 y = (ushort)((e.GetPosition(TerrainImage).Y - (e.GetPosition(TerrainImage).Y % actualSpriteSizeInPixels)) / actualSpriteSizeInPixels),
             };
-        }
-
-        private void TerrainGrid_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            PositionDTO p = GetTerrainPosition(e);
-
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                cityGameEngine.BuildObject(p, selectedGroup);
-            }
-            else
-            if (e.RightButton == MouseButtonState.Pressed)
-            {
-                cityGameEngine.DestroyObjectAtPosition(p);
-            }
         }
 
         private void Window_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
@@ -324,133 +468,14 @@ namespace CityGame
             Close();
         }
 
-        private void GameViewGrid_MouseMove(object sender, MouseEventArgs e)
+        private void MapImage_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            Point currentPosition = e.GetPosition(this);
-            if (!lockScroll)
-            {
-                lockScroll = true;
-                TerrainGrid.CaptureMouse();
+            Point p = e.GetPosition(MapImage);
+            TerrainScroll.ScrollToHorizontalOffset(p.X * (TerrainImage.ActualWidth / 300));
+            TerrainScroll.ScrollToVerticalOffset(p.Y * (TerrainImage.ActualHeight / 300));
 
+            MoveMapSelector();
 
-                double deltaX = currentPosition.X - mousePosition.X;
-                double deltaY = currentPosition.Y - mousePosition.Y;
-
-                double newHorizontalOffset = TerrainScroll.HorizontalOffset - deltaX;
-                double newVerticalOffset = TerrainScroll.VerticalOffset - deltaY;
-
-                if (newHorizontalOffset < 0)
-                {
-                    newHorizontalOffset = 0;
-                }
-                else if (newHorizontalOffset > TerrainScroll.ScrollableWidth)
-                {
-                    newHorizontalOffset = TerrainScroll.ScrollableWidth;
-                }
-
-                if (newVerticalOffset < 0)
-                {
-                    newVerticalOffset = 0;
-                }
-                else if (newVerticalOffset > TerrainScroll.ScrollableHeight)
-                {
-                    newVerticalOffset = TerrainScroll.ScrollableHeight;
-                }
-
-                bool edge = false;
-                if (e.MiddleButton != MouseButtonState.Pressed)
-                {
-                    // Check if the mouse is within a certain range of the edges of the image
-                    double edgeThreshold = scrollBorder; // Change this value to adjust the sensitivity of the scrolling
-
-
-                    if (currentPosition.X <= edgeThreshold && newHorizontalOffset > 0)
-                    {
-                        newHorizontalOffset -= (edgeThreshold - currentPosition.X) / startScrollSpeed;
-                        edge = true;
-                    }
-                    else if (currentPosition.X >= TerrainGrid.ActualWidth - edgeThreshold && newHorizontalOffset < TerrainScroll.ScrollableWidth)
-                    {
-                        newHorizontalOffset += (currentPosition.X - (TerrainGrid.ActualWidth - edgeThreshold)) / startScrollSpeed;
-                        edge = true;
-                    }
-
-                    if (currentPosition.Y <= edgeThreshold && newVerticalOffset > 0)
-                    {
-                        newVerticalOffset -= (edgeThreshold - currentPosition.Y) / startScrollSpeed;
-                        edge = true;
-                    }
-                    else if (currentPosition.Y >= TerrainGrid.ActualHeight - edgeThreshold && newVerticalOffset < TerrainScroll.ScrollableHeight)
-                    {
-                        newVerticalOffset += (currentPosition.Y - (TerrainGrid.ActualHeight - edgeThreshold)) / startScrollSpeed;
-                        edge = true;
-                    }
-                }
-
-                if ((e.MiddleButton == MouseButtonState.Pressed) || (edge))
-                {
-                    TerrainScroll.ScrollToHorizontalOffset(newHorizontalOffset);
-                    TerrainScroll.ScrollToVerticalOffset(newVerticalOffset);
-
-
-                }
-                mousePosition = currentPosition;
-                TerrainGrid.ReleaseMouseCapture();
-                lockScroll = false;
-            }
-
-            double actualSpriteSizeInPixels = TerrainImage.DesiredSize.Width / cityGameEngine.GetTerrainSize();
-
-            double x = e.GetPosition(TerrainGrid).X - (e.GetPosition(TerrainGrid).X % actualSpriteSizeInPixels); 
-            double y = e.GetPosition(TerrainGrid).Y - (e.GetPosition(TerrainGrid).Y % actualSpriteSizeInPixels); 
-
-            Debug.WriteLine(actualSpriteSizeInPixels);
-            Debug.WriteLine("M: " + mousePosition.X);
-            Debug.WriteLine("E: " + x);
-
-            TerrainSelector.Width = TerrainSelector.Height = actualSpriteSizeInPixels;
-
-            if ((x < TerrainImage.ActualWidth) && (y < TerrainImage.ActualHeight))
-            {
-                TerrainSelector.Margin = new Thickness(x, y, 0, 0);
-
-                PositionDTO position = GetTerrainPosition(e);
-
-                ObjectType[,] newPositionMap = cityGameEngine.TestPosition(selectedGroup, position)?.PositionArea;
-
-                for (int px = 0; px < GameConsts.GroupSize; px++)
-                {
-                    for (int py = 0; py < GameConsts.GroupSize; py++)
-                    {
-                        previewImages[px, py].Width = previewImages[px, py].Height = actualSpriteSizeInPixels;
-                        previewImages[px, py].Margin = new Thickness(x + px * actualSpriteSizeInPixels, y + py * actualSpriteSizeInPixels, 0, 0);
-
-                        if ((newPositionMap != null)
-                            && (px < newPositionMap.GetLength(0))
-                            && (py < newPositionMap.GetLength(1))
-                            &&
-                            (newPositionMap != null) && (newPositionMap[px, py] != null))
-
-                        {
-                            switch (newPositionMap[px, py])
-                            {
-                                case ObjectType.terrain:
-                                case ObjectType.forest:
-                                case ObjectType.network:
-                                    previewImages[px, py].Source = previewImages[px, py].Tag as ImageSource;
-                                    break;
-                                default:
-                                    previewImages[px, py].Source = SpriteRepository.GetSprite(spriteBusiness.GetGroupByName(SpritesGroupEnum.select)?.Sprites[0].Sprites[0, 0]);
-                                    break;
-                            }
-                        }
-                    }
-                }
-                if (e.LeftButton == MouseButtonState.Pressed)
-                {
-                    cityGameEngine.BuildObject(position, selectedGroup);
-                }
-            }
         }
     }
 }

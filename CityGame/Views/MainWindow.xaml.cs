@@ -36,7 +36,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-
+using System.Windows.Media.Animation;
+using System.Windows.Threading;
 
 namespace CityGame
 {
@@ -115,10 +116,128 @@ namespace CityGame
             FireDepartmentImage.Source = SpriteRepository.GetDashboard(1, 4);
             PowerplantImage.Source = SpriteRepository.GetDashboard(1, 5);
             AirPortImage.Source = SpriteRepository.GetDashboard(1, 6);
+
+
+            // Создаем таймер
+            DispatcherTimer timer = new DispatcherTimer();
+
+            // Задаем интервал обновления в миллисекундах
+            timer.Interval = TimeSpan.FromMilliseconds(100);
+
+            // Задаем обработчик события Tick
+            timer.Tick += Timer_Tick;
+
+            // Запускаем таймер
+            timer.Start();
+
+//            var rotationAnimation = new DoubleAnimation(50, TimeSpan.FromSeconds(5));
+            //imageRotation.BeginAnimation(TranslateTransform.XProperty, rotationAnimation);
+        }
+
+        int last = 0;
+        DoubleAnimation rotationAnimation = new DoubleAnimation(0, TimeSpan.FromSeconds(10));
+            private void Timer_Tick(object sender, EventArgs e)
+            {
+            //TerrainGrid.CaptureMouse();
+            lockScroll = true;
+
+            Point currentPosition = TerrainGrid.PointToScreen(Mouse.GetPosition(this));
+            Debug.WriteLine("-----------------");
+            Debug.WriteLine(currentPosition.X);
+            Debug.WriteLine(currentPosition.Y);
+            Debug.WriteLine(last);
+
+            if (currentPosition.X < 200)
+            {
+                if (last == 1)
+                {
+                    return;
+                }    
+                last = 1;
+                //rotationAnimation = new DoubleAnimation( 500, TimeSpan.FromSeconds(10));
+                rotationAnimation.To = 500;
+                rotationAnimation.AccelerationRatio = 0.1f;
+                rotationAnimation.Completed += new EventHandler(RotationAnimation_Completed);
+                imageRotation.BeginAnimation(TranslateTransform.XProperty, rotationAnimation);
+                
+
+//                TerrainImage.Margin = new Thickness(TerrainImage.Margin.Left + 1, TerrainImage.Margin.Top, 0, 0);
+            }
+            else 
+            if (currentPosition.X > 1600)
+            {
+                if (last == 2)
+                {
+                    return;
+                }
+
+                last = 2;
+                //rotationAnimation = new DoubleAnimation(-500, TimeSpan.FromSeconds(10));
+                rotationAnimation.To = -500;
+                rotationAnimation.AccelerationRatio = 0.1f;
+                rotationAnimation.Completed += new EventHandler(RotationAnimation_Completed);
+                imageRotation.BeginAnimation(TranslateTransform.XProperty, rotationAnimation);
+                
+
+                //                TerrainImage.Margin = new Thickness(TerrainImage.Margin.Left - 1, TerrainImage.Margin.Top, 0, 0);
+            }
+            if (currentPosition.Y < 200)
+            {
+                if (last == 1)
+                {
+                    return;
+                }
+                last = 1;
+                //rotationAnimation = new DoubleAnimation( 500, TimeSpan.FromSeconds(10));
+                rotationAnimation.To = 500;
+                rotationAnimation.AccelerationRatio = 0.1f;
+                rotationAnimation.Completed += new EventHandler(RotationAnimation_Completed);
+                imageRotation.BeginAnimation(TranslateTransform.YProperty, rotationAnimation);
+
+
+                //                TerrainImage.Margin = new Thickness(TerrainImage.Margin.Left + 1, TerrainImage.Margin.Top, 0, 0);
+            }
+            else
+            if (currentPosition.Y > 1000)
+            {
+                if (last == 2)
+                {
+                    return;
+                }
+
+                last = 2;
+                //rotationAnimation = new DoubleAnimation(-500, TimeSpan.FromSeconds(10));
+                rotationAnimation.To = -500;
+                rotationAnimation.AccelerationRatio = 0.1f;
+                rotationAnimation.Completed += new EventHandler(RotationAnimation_Completed);
+                imageRotation.BeginAnimation(TranslateTransform.YProperty, rotationAnimation);
+
+
+                //                TerrainImage.Margin = new Thickness(TerrainImage.Margin.Left - 1, TerrainImage.Margin.Top, 0, 0);
+            }
+
+            else
+            {
+                last = 0;
+                rotationAnimation.To = -0;
+                imageRotation.BeginAnimation(TranslateTransform.XProperty, rotationAnimation);
+                imageRotation.BeginAnimation(TranslateTransform.YProperty, rotationAnimation);
+            }
+            lockScroll = false;
+            // TerrainGrid.ReleaseMouseCapture();
+        }
+
+        private void RotationAnimation_Completed(object? sender, EventArgs e)
+        {
+            last = 0;
         }
 
         private void CityGameEngine_RenderCompleted(object? sender, EventArgs e)
         {
+            if (lockScroll)
+            {
+                return;
+            }    
             using (DrawingContext drawingContext = drawingVisual.RenderOpen())
             {
                 drawingContext.DrawImage(cityGameEngine.GetTerrainBitmap(), new Rect(0, 0, cityGameEngine.GetTerrainSize(), cityGameEngine.GetTerrainSize()));
@@ -164,6 +283,17 @@ namespace CityGame
             Title = "Benchmark result " + count + " objects";
         }
 
+        private PositionDTO GetTerrainPosition(MouseEventArgs e)
+        {
+            double actualSpriteSizeInPixels = TerrainImage.ActualWidth / cityGameEngine.GetTerrainSize();
+
+            return new PositionDTO()
+            {
+                x = (ushort)((e.GetPosition(TerrainImage).X - (e.GetPosition(TerrainImage).X % actualSpriteSizeInPixels)) / actualSpriteSizeInPixels),
+                y = (ushort)((e.GetPosition(TerrainImage).Y - (e.GetPosition(TerrainImage).Y % actualSpriteSizeInPixels)) / actualSpriteSizeInPixels),
+            };
+        }
+
         private void TerrainGrid_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             PositionDTO p = GetTerrainPosition(e);
@@ -181,7 +311,10 @@ namespace CityGame
 
         private void GameViewGrid_MouseMove(object sender, MouseEventArgs e)
         {
-            Point currentPosition = e.GetPosition(this);
+         //  TerrainGrid.CaptureMouse();
+         //   TerrainGrid.ReleaseMouseCapture();
+
+            /*
             if (!lockScroll)
             {
                 lockScroll = true;
@@ -246,15 +379,14 @@ namespace CityGame
                 {
                     TerrainScroll.ScrollToHorizontalOffset(newHorizontalOffset);
                     TerrainScroll.ScrollToVerticalOffset(newVerticalOffset);
-
-
                 }
                 mousePosition = currentPosition;
                 TerrainGrid.ReleaseMouseCapture();
                 lockScroll = false;
-            }
+            
+        }
 
-            double actualSpriteSizeInPixels = TerrainImage.DesiredSize.Width / cityGameEngine.GetTerrainSize();
+        double actualSpriteSizeInPixels = TerrainImage.DesiredSize.Width / cityGameEngine.GetTerrainSize();
 
             double x = e.GetPosition(TerrainGrid).X - (e.GetPosition(TerrainGrid).X % actualSpriteSizeInPixels);
             double y = e.GetPosition(TerrainGrid).Y - (e.GetPosition(TerrainGrid).Y % actualSpriteSizeInPixels);
@@ -307,6 +439,7 @@ namespace CityGame
                 }
             }
             MoveMapSelector();
+            */
         }
 
         private void Terrain_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
@@ -360,16 +493,6 @@ namespace CityGame
 
         }
 
-        private PositionDTO GetTerrainPosition(MouseEventArgs e)
-        {
-            double actualSpriteSizeInPixels = TerrainImage.ActualWidth / cityGameEngine.GetTerrainSize();
-
-            return new PositionDTO()
-            {
-                x = (ushort)((e.GetPosition(TerrainImage).X - (e.GetPosition(TerrainImage).X % actualSpriteSizeInPixels)) / actualSpriteSizeInPixels),
-                y = (ushort)((e.GetPosition(TerrainImage).Y - (e.GetPosition(TerrainImage).Y % actualSpriteSizeInPixels)) / actualSpriteSizeInPixels),
-            };
-        }
 
         private void Window_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {

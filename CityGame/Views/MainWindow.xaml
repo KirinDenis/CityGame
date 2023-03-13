@@ -61,10 +61,20 @@
             <Grid x:Name="TerrainGrid" Grid.Row="2">
                 <ScrollViewer x:Name="TerrainScroll" HorizontalScrollBarVisibility="Visible" PanningMode="Both" VerticalContentAlignment="Top" HorizontalContentAlignment="Left"  >
                     <Grid x:Name="GameViewGrid" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0,0" >
-                        <Image x:Name="TerrainImage" HorizontalAlignment="Left" VerticalAlignment="Top" Source="/Resources/resources.png" RenderTransformOrigin="1,0" />
+                       
                     </Grid>
                 </ScrollViewer>
                 <Border x:Name="TerrainSelector" HorizontalAlignment="Left" VerticalAlignment="Top" Width="16" Height="16" BorderBrush="#FF4FEA25" BorderThickness="2,2,2,2" />
+                <Image x:Name="TerrainImage" HorizontalAlignment="Left" VerticalAlignment="Top" Source="/Resources/resources.png"  >
+                    <Image.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <TranslateTransform x:Name="imageRotation"/>
+                            <RotateTransform />
+                        </TransformGroup>
+                    </Image.RenderTransform>
+                </Image>
             </Grid>
         </Grid>
 

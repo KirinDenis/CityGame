@@ -47,7 +47,7 @@ namespace CityGame
     /// </summary>
     public partial class MainWindow : Window
     {
-        private int terrainSize = 100;
+        private int terrainSize = 200;
 
         private DrawingVisual drawingVisual = new DrawingVisual();
 
@@ -68,7 +68,7 @@ namespace CityGame
         private Image[,] previewImages = new Image[GameConsts.GroupSize, GameConsts.GroupSize];
 
         private Button? saveDashboardButton = null;
-        
+
         private Point mousePosition;
 
         public MainWindow()
@@ -85,8 +85,8 @@ namespace CityGame
 
             TerrainImage.Width = TerrainImage.Height = cityGameEngine.GetTerrainSize() * SpriteRepository.ResourceInfo.SpriteSize * zoom;
 
-            TerrainScroll.ScrollToVerticalOffset(TerrainImage.Width / 2.0f);
-            TerrainScroll.ScrollToHorizontalOffset(TerrainImage.Height / 2.0f);
+            //TerrainScroll.ScrollToVerticalOffset(TerrainImage.Width / 2.0f);
+            //TerrainScroll.ScrollToHorizontalOffset(TerrainImage.Height / 2.0f);
 
             for (int x = 0; x < GameConsts.GroupSize; x++)
             {
@@ -130,18 +130,19 @@ namespace CityGame
             // Запускаем таймер
             timer.Start();
 
-//            var rotationAnimation = new DoubleAnimation(50, TimeSpan.FromSeconds(5));
+            //            var rotationAnimation = new DoubleAnimation(50, TimeSpan.FromSeconds(5));
             //imageRotation.BeginAnimation(TranslateTransform.XProperty, rotationAnimation);
         }
 
         int last = 0;
-        DoubleAnimation rotationAnimation = new DoubleAnimation(0, TimeSpan.FromSeconds(10));
-            private void Timer_Tick(object sender, EventArgs e)
-            {
+        DoubleAnimation rotationAnimation = new DoubleAnimation(0, TimeSpan.FromSeconds(5));
+        private void Timer_Tick(object sender, EventArgs e)
+        {
             //TerrainGrid.CaptureMouse();
             lockScroll = true;
 
-            Point currentPosition = TerrainGrid.PointToScreen(Mouse.GetPosition(this));
+            //Point currentPosition = TerrainGrid.PointToScreen(Mouse.GetPosition(this));
+            Point currentPosition = Mouse.GetPosition(TerrainGrid);
             Debug.WriteLine("-----------------");
             Debug.WriteLine(currentPosition.X);
             Debug.WriteLine(currentPosition.Y);
@@ -152,19 +153,19 @@ namespace CityGame
                 if (last == 1)
                 {
                     return;
-                }    
+                }
                 last = 1;
                 //rotationAnimation = new DoubleAnimation( 500, TimeSpan.FromSeconds(10));
-                rotationAnimation.To = 500;
-                rotationAnimation.AccelerationRatio = 0.1f;
+                rotationAnimation.To = 0;
+                //  rotationAnimation.AccelerationRatio = 0.1f;
                 rotationAnimation.Completed += new EventHandler(RotationAnimation_Completed);
                 imageRotation.BeginAnimation(TranslateTransform.XProperty, rotationAnimation);
-                
 
-//                TerrainImage.Margin = new Thickness(TerrainImage.Margin.Left + 1, TerrainImage.Margin.Top, 0, 0);
+
+                //                TerrainImage.Margin = new Thickness(TerrainImage.Margin.Left + 1, TerrainImage.Margin.Top, 0, 0);
             }
-            else 
-            if (currentPosition.X > 1600)
+            else
+            if (currentPosition.X > TerrainGrid.ActualWidth - 200)
             {
                 if (last == 2)
                 {
@@ -173,14 +174,15 @@ namespace CityGame
 
                 last = 2;
                 //rotationAnimation = new DoubleAnimation(-500, TimeSpan.FromSeconds(10));
-                rotationAnimation.To = -500;
-                rotationAnimation.AccelerationRatio = 0.1f;
+                rotationAnimation.To = -210;
+                //   rotationAnimation.AccelerationRatio = 0.2f;
                 rotationAnimation.Completed += new EventHandler(RotationAnimation_Completed);
                 imageRotation.BeginAnimation(TranslateTransform.XProperty, rotationAnimation);
-                
+
 
                 //                TerrainImage.Margin = new Thickness(TerrainImage.Margin.Left - 1, TerrainImage.Margin.Top, 0, 0);
             }
+            else
             if (currentPosition.Y < 200)
             {
                 if (last == 1)
@@ -189,8 +191,8 @@ namespace CityGame
                 }
                 last = 1;
                 //rotationAnimation = new DoubleAnimation( 500, TimeSpan.FromSeconds(10));
-                rotationAnimation.To = 500;
-                rotationAnimation.AccelerationRatio = 0.1f;
+                rotationAnimation.To = 0;
+                //   rotationAnimation.AccelerationRatio = 0.2f;
                 rotationAnimation.Completed += new EventHandler(RotationAnimation_Completed);
                 imageRotation.BeginAnimation(TranslateTransform.YProperty, rotationAnimation);
 
@@ -198,7 +200,7 @@ namespace CityGame
                 //                TerrainImage.Margin = new Thickness(TerrainImage.Margin.Left + 1, TerrainImage.Margin.Top, 0, 0);
             }
             else
-            if (currentPosition.Y > 1000)
+            if (currentPosition.Y > TerrainGrid.ActualHeight - 200)
             {
                 if (last == 2)
                 {
@@ -207,8 +209,8 @@ namespace CityGame
 
                 last = 2;
                 //rotationAnimation = new DoubleAnimation(-500, TimeSpan.FromSeconds(10));
-                rotationAnimation.To = -500;
-                rotationAnimation.AccelerationRatio = 0.1f;
+                rotationAnimation.To = -TerrainGrid.ActualHeight;
+                //    rotationAnimation.AccelerationRatio = 0.2f;
                 rotationAnimation.Completed += new EventHandler(RotationAnimation_Completed);
                 imageRotation.BeginAnimation(TranslateTransform.YProperty, rotationAnimation);
 
@@ -237,7 +239,7 @@ namespace CityGame
             if (lockScroll)
             {
                 return;
-            }    
+            }
             using (DrawingContext drawingContext = drawingVisual.RenderOpen())
             {
                 drawingContext.DrawImage(cityGameEngine.GetTerrainBitmap(), new Rect(0, 0, cityGameEngine.GetTerrainSize(), cityGameEngine.GetTerrainSize()));
@@ -247,9 +249,9 @@ namespace CityGame
 
             using (DrawingContext drawingContext = drawingVisual.RenderOpen())
             {
-                drawingContext.DrawImage(cityGameEngine.GetMapBitmap(), new Rect(0, 0, cityGameEngine.GetTerrainSize(), cityGameEngine.GetTerrainSize()));
-                drawingContext.Close();
-                MapImage.Source = new DrawingImage(drawingVisual.Drawing);
+             //   drawingContext.DrawImage(cityGameEngine.GetMapBitmap(), new Rect(0, 0, cityGameEngine.GetTerrainSize(), cityGameEngine.GetTerrainSize()));
+             //   drawingContext.Close();
+             //   MapImage.Source = new DrawingImage(drawingVisual.Drawing);
             }
         }
 
@@ -311,8 +313,8 @@ namespace CityGame
 
         private void GameViewGrid_MouseMove(object sender, MouseEventArgs e)
         {
-         //  TerrainGrid.CaptureMouse();
-         //   TerrainGrid.ReleaseMouseCapture();
+            //  TerrainGrid.CaptureMouse();
+            //   TerrainGrid.ReleaseMouseCapture();
 
             /*
             if (!lockScroll)
@@ -444,6 +446,7 @@ namespace CityGame
 
         private void Terrain_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
+            /*
             
             // Get the position of the mouse relative to the TerrainScroll control
             Point mousePos = e.GetPosition(TerrainScroll);
@@ -480,6 +483,7 @@ namespace CityGame
             // Scroll to the new position
             TerrainScroll.ScrollToHorizontalOffset(newScrollX + newWidth % actualSpriteSizeInPixels);
             TerrainScroll.ScrollToVerticalOffset(newScrollY + newWidth % actualSpriteSizeInPixels);
+            */
 
             MoveMapSelector();
         }
@@ -489,7 +493,7 @@ namespace CityGame
             double scale = TerrainImage.DesiredSize.Width / 300.0;
             MapSelector.Width = TerrainGrid.ActualWidth / scale;
             MapSelector.Height = TerrainGrid.ActualHeight / scale;
-            MapSelector.Margin = new Thickness(TerrainScroll.HorizontalOffset / scale, TerrainScroll.VerticalOffset / scale, 0, 0);
+            //MapSelector.Margin = new Thickness(TerrainScroll.HorizontalOffset / scale, TerrainScroll.VerticalOffset / scale, 0, 0);
 
         }
 
@@ -594,8 +598,8 @@ namespace CityGame
         private void MapImage_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             Point p = e.GetPosition(MapImage);
-            TerrainScroll.ScrollToHorizontalOffset(p.X * (TerrainImage.ActualWidth / 300));
-            TerrainScroll.ScrollToVerticalOffset(p.Y * (TerrainImage.ActualHeight / 300));
+            //TerrainScroll.ScrollToHorizontalOffset(p.X * (TerrainImage.ActualWidth / 300));
+            //TerrainScroll.ScrollToVerticalOffset(p.Y * (TerrainImage.ActualHeight / 300));
 
             MoveMapSelector();
 

@@ -32,10 +32,12 @@ namespace CityGame.Models
                 {
                     if (!Canceled)
                     {
-                        terrainModel.BuildObject(gameObject.positionDTO.x, gameObject.positionDTO.y, gameObject.Group, gameObject.animationFrame);
+                        if ((gameObject != null) && (gameObject.Group != null) && (gameObject.positionDTO != null))
+                        {
+                            terrainModel.BuildObject(gameObject.positionDTO.x, gameObject.positionDTO.y, gameObject.Group, gameObject.animationFrame);
+                        }
                     }
                 });
-
             }
         }
     }

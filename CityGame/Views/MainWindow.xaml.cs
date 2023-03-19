@@ -1,25 +1,25 @@
 ﻿
 
 /* ----------------------------------------------------------------------------
-Ready IoT Solution - OWLOS
-Copyright 2019, 2020, 2021, 2022, 2023 by:
+Simple City
+Copyright 2023 by:
 - ChatGPT, as a language model from OpenAI that provided guidance or suggestions.
 - Denis Kirin (deniskirinacs@gmail.com)
 
-This file is part of Ready IoT Solution - OWLOS
+This file is part of Simple City
 
 OWLOS is free software : you can redistribute it and/or modify it under the
 terms of the GNU General Public License as published by the Free Software
 Foundation, either version 3 of the License, or (at your option) any later
 version.
 
-OWLOS is distributed in the hope that it will be useful, but WITHOUT ANY
+Simple City is distributed in the hope that it will be useful, but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with OWLOS. If not, see < https://www.gnu.org/licenses/>.
+with Simple City. If not, see < https://www.gnu.org/licenses/>.
 
 GitHub: https://github.com/KirinDenis/CityGame
 
@@ -46,22 +46,19 @@ namespace CityGame
     {
         private int terrainSize = 200;
 
-        private DrawingVisual drawingVisual = new DrawingVisual();
-
-        private bool lockScroll = false;
-
-        private CityGameEngine cityGameEngine;
-
-        private double zoom = 2;
-
-        public GroupDTO selectedGroup;
+        private CityGameEngine? cityGameEngine;
 
         private SpriteBusiness spriteBusiness = new SpriteBusiness();
+
+        private DrawingVisual drawingVisual = new DrawingVisual();
+
+        public GroupDTO? selectedGroup;
 
         private Image[,] previewImages = new Image[GameConsts.GroupSize, GameConsts.GroupSize];
 
         private Button? saveDashboardButton = null;
 
+        private int zoom = 2;
 
         public MainWindow()
         {
@@ -73,7 +70,8 @@ namespace CityGame
             }
 
             cityGameEngine = new CityGameEngine("new city", terrainSize);
-            cityGameEngine.RenderCompleted += CityGameEngine_RenderCompleted;
+            cityGameEngine.TerrainRenderCompleted += CityGameEngine_TerrainRenderCompleted;
+            cityGameEngine.MapRenderCompleted += CityGameEngine_MapRenderCompleted;
 
             TerrainImage.Width = TerrainImage.Height = cityGameEngine.GetTerrainSize() * SpriteRepository.ResourceInfo.SpriteSize * zoom;
 
@@ -88,7 +86,7 @@ namespace CityGame
                     previewImages[x, y].Width = previewImages[x, y].Height = SpriteRepository.ResourceInfo.SpriteSize;
                     previewImages[x, y].HorizontalAlignment = HorizontalAlignment.Left;
                     previewImages[x, y].VerticalAlignment = VerticalAlignment.Top;
-                    previewImages[x, y].OpacityMask = (Brush)new BrushConverter().ConvertFrom("#90000000");
+                    previewImages[x, y].OpacityMask = new SolidColorBrush(Colors.LightGreen) { Opacity = 0.5 };
                     RenderOptions.SetBitmapScalingMode(previewImages[x, y], BitmapScalingMode.NearestNeighbor);
                     TerrainGrid.Children.Add(previewImages[x, y]);
                 }
@@ -110,27 +108,31 @@ namespace CityGame
             AirPortImage.Source = SpriteRepository.GetDashboard(1, 6);
         }
 
-        private void CityGameEngine_RenderCompleted(object? sender, EventArgs e)
+        private void CityGameEngine_TerrainRenderCompleted(object? sender, EventArgs e)
         {
-            if (lockScroll)
-            {
-                return;
-            }
             using (DrawingContext drawingContext = drawingVisual.RenderOpen())
             {
-                drawingContext.DrawImage(cityGameEngine.GetTerrainBitmap(), new Rect(0, 0, cityGameEngine.GetTerrainSize(), cityGameEngine.GetTerrainSize()));
-                drawingContext.Close();
-                TerrainImage.Source = new DrawingImage(drawingVisual.Drawing);
-            }
-
-            using (DrawingContext drawingContext = drawingVisual.RenderOpen())
-            {
-                drawingContext.DrawImage(cityGameEngine.GetMapBitmap(), new Rect(0, 0, cityGameEngine.GetTerrainSize(), cityGameEngine.GetTerrainSize()));
-                drawingContext.Close();
-                MapImage.Source = new DrawingImage(drawingVisual.Drawing);
+                if (cityGameEngine != null)
+                {
+                    drawingContext.DrawImage(cityGameEngine.GetTerrainBitmap(), new Rect(0, 0, cityGameEngine.GetTerrainSize(), cityGameEngine.GetTerrainSize()));
+                    drawingContext.Close();
+                    TerrainImage.Source = new DrawingImage(drawingVisual.Drawing);
+                }
             }
         }
 
+        private void CityGameEngine_MapRenderCompleted(object? sender, EventArgs e)
+        {
+            using (DrawingContext drawingContext = drawingVisual.RenderOpen())
+            {
+                if (cityGameEngine != null)
+                {
+                    drawingContext.DrawImage(cityGameEngine.GetMapBitmap(), new Rect(0, 0, cityGameEngine.GetTerrainSize(), cityGameEngine.GetTerrainSize()));
+                    drawingContext.Close();
+                    MapImage.Source = new DrawingImage(drawingVisual.Drawing);
+                }
+            }
+        }
         private void ResourceExplorerButton_Click(object sender, RoutedEventArgs e)
         {
             new ResourceExplorerWindow().Show();
@@ -138,7 +140,7 @@ namespace CityGame
 
         private void GenerateMapButton_Click(object sender, RoutedEventArgs e)
         {
-            cityGameEngine.GenerateTerrain();
+            cityGameEngine?.GenerateTerrain();
         }
 
         private void BenchmarkButton_Click(object sender, RoutedEventArgs e)
@@ -153,7 +155,7 @@ namespace CityGame
                     {
                         groupIndex = 0;
                     }
-                    cityGameEngine.BuildObject(new PositionDTO() { x = x, y = y }, spriteBusiness.groups[groupIndex]);
+                    cityGameEngine?.BuildObject(new PositionDTO() { x = x, y = y }, spriteBusiness.groups[groupIndex]);
                     count++;
                 }
             }
@@ -163,6 +165,10 @@ namespace CityGame
 
         private PositionDTO GetTerrainPosition(MouseEventArgs e)
         {
+            if (cityGameEngine == null)
+            {
+                return new PositionDTO();
+            }
             double actualSpriteSizeInPixels = TerrainImage.ActualWidth / cityGameEngine.GetTerrainSize();
 
             return new PositionDTO()
@@ -178,23 +184,26 @@ namespace CityGame
 
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                cityGameEngine.BuildObject(p, selectedGroup);
+                cityGameEngine?.BuildObject(p, selectedGroup);
             }
             else
             if (e.RightButton == MouseButtonState.Pressed)
             {
-                cityGameEngine.DestroyObjectAtPosition(p);
+                cityGameEngine?.DestroyObjectAtPosition(p);
             }
         }
 
         private void GameViewGrid_MouseMove(object sender, MouseEventArgs e)
         {
+            if (cityGameEngine == null)
+            {
+                return;
+            }
 
             double actualSpriteSizeInPixels = TerrainImage.DesiredSize.Width / cityGameEngine.GetTerrainSize();
 
             double x = e.GetPosition(TerrainGrid).X - (e.GetPosition(TerrainGrid).X % actualSpriteSizeInPixels);
             double y = e.GetPosition(TerrainGrid).Y - (e.GetPosition(TerrainGrid).Y % actualSpriteSizeInPixels);
-
 
             TerrainSelector.Width = TerrainSelector.Height = actualSpriteSizeInPixels;
 
@@ -204,7 +213,7 @@ namespace CityGame
 
                 PositionDTO position = GetTerrainPosition(e);
 
-                ObjectType[,] newPositionMap = cityGameEngine.TestPosition(selectedGroup, position)?.PositionArea;
+                ObjectType[,]? newPositionMap = cityGameEngine?.TestPosition(selectedGroup, position)?.PositionArea;
 
                 for (int px = 0; px < GameConsts.GroupSize; px++)
                 {
@@ -217,7 +226,7 @@ namespace CityGame
                             && (px < newPositionMap.GetLength(0))
                             && (py < newPositionMap.GetLength(1))
                             &&
-                            (newPositionMap != null) && (newPositionMap[px, py] != null))
+                            (newPositionMap != null) && (newPositionMap?[px, py] != null))
 
                         {
                             switch (newPositionMap[px, py])
@@ -236,12 +245,11 @@ namespace CityGame
                 }
                 if (e.LeftButton == MouseButtonState.Pressed)
                 {
-                    cityGameEngine.BuildObject(position, selectedGroup);
+                    cityGameEngine?.BuildObject(position, selectedGroup);
                 }
             }
             MoveMapSelector();
         }
-
 
         private void MoveMapSelector()
         {
@@ -258,14 +266,14 @@ namespace CityGame
                 switch (e.Key)
                 {
                     case Key.R: new ResourceExplorerWindow().Show(); break;
-                    case Key.T: cityGameEngine.GenerateTerrain(); break;
+                    case Key.T: cityGameEngine?.GenerateTerrain(); break;
                 }
             }
 
             switch (e.Key)
             {
                 case Key.F2: new ResourceExplorerWindow().Show(); break;
-                case Key.F5: cityGameEngine.GenerateTerrain(); break;
+                case Key.F5: cityGameEngine?.GenerateTerrain(); break;
             }
         }
 
@@ -311,28 +319,35 @@ namespace CityGame
 
         private void BuildButton_Click(object sender, RoutedEventArgs e)
         {
-            SelectGroup(spriteBusiness.GetGroupByName((string)(sender as Button).Tag));
-
-            if (saveDashboardButton != null)
+            Button? button = sender as Button;
+            if (button != null)
             {
-                saveDashboardButton.Background = null;
-            }
-            (sender as Button).Background = new SolidColorBrush(Colors.Yellow);
-            saveDashboardButton = (sender as Button);
+                SelectGroup(spriteBusiness.GetGroupByName((string)button.Tag));
 
+                if (saveDashboardButton != null)
+                {
+                    saveDashboardButton.Background = null;
+                }
+                button.Background = new SolidColorBrush(Colors.Yellow);
+                saveDashboardButton = (sender as Button);
+            }
             e.Handled = true;
         }
 
         private void BuildMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            SelectGroup(spriteBusiness.GetGroupByName((string)(sender as MenuItem).Tag));
-
-            if (saveDashboardButton != null)
+            MenuItem? menuItem = sender as MenuItem;
+            if (menuItem != null)
             {
-                saveDashboardButton.Background = null;
+                SelectGroup(spriteBusiness.GetGroupByName((string)menuItem.Tag));
+
+                if (saveDashboardButton != null)
+                {
+                    saveDashboardButton.Background = null;
+                }
+                PowerPlantButton.Background = new SolidColorBrush(Colors.Yellow);
+                saveDashboardButton = PowerPlantButton;
             }
-            PowerPlantButton.Background = new SolidColorBrush(Colors.Yellow);
-            saveDashboardButton = PowerPlantButton;
             e.Handled = true;
         }
 

@@ -5,13 +5,13 @@ namespace CityGame.Data.DTO
 {
     public class GroupSpritesDTO
     {
-        public PositionDTO?[,] Sprites = new PositionDTO?[GameConsts.GroupSize, GameConsts.GroupSize];
+        public PositionDTO?[,]? Sprites = new PositionDTO?[GameConsts.GroupSize, GameConsts.GroupSize];
     }
 
     public class GroupDTO
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         public ushort Width { get; set; } = 3;
         public ushort Height { get; set; } = 3;

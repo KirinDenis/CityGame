@@ -13,6 +13,10 @@ namespace CityGame.Models
         public bool[,] BuildNetworkItem(ushort x, ushort y, bool current = false)
         {
             bool[,] FS = new bool[3, 3]; //FS means friendly sprites, the sprites of selected network item type
+            if ((spriteBusiness == null) || (startingGroup == null))
+            {
+                return FS;
+            }    
             int ox = 0;
             for (ushort tx = CLeft(x); tx < CRight(x) + 1; tx++, ox++)
             {
@@ -25,6 +29,10 @@ namespace CityGame.Models
                     }    
 
                     FS[ox, oy] = false;
+                    if (startingGroup?.Sprites[0].Sprites == null)
+                    {
+                        continue;
+                    }
                     foreach (PositionDTO? position in startingGroup?.Sprites[0].Sprites)
                     {
                         if (terrainModel.terrain[tx, ty] == position)
@@ -40,9 +48,9 @@ namespace CityGame.Models
             PositionDTO spritePosition;
 
             //check previos sprite 
-            GroupDTO previosGroup = spriteBusiness.GetGroupBySpritePosition(previosSptite);
-            GroupDTO cross = spriteBusiness.GetGroupByName(SpritesGroupEnum.cross);
-            if (previosGroup != null)
+            GroupDTO? previosGroup = spriteBusiness.GetGroupBySpritePosition(previosSptite);
+            GroupDTO? cross = spriteBusiness.GetGroupByName(SpritesGroupEnum.cross);
+            if ((previosGroup != null) && (cross != null))
             {
                 if ((spriteBusiness.GetObjectTypeByGrop(previosGroup) == ObjectType.network)
                     ||
@@ -58,17 +66,15 @@ namespace CityGame.Models
                         }
                     }
 
-
                     if (current)
                     {
-
-                        if (!previosGroup.Name.Equals(startingGroup.Name))
+                        if (!string.IsNullOrEmpty(previosGroup.Name) && (!previosGroup.Name.Equals(startingGroup?.Name)))
                         {
                             if (previosGroup.Name.Equals(SpritesGroupEnum.rail))
                             {
-                                if ((previosGroup.Sprites[0].Sprites[3, 0].x == terrainModel.terrain[x, y].x)
+                                if ((previosGroup?.Sprites[0]?.Sprites?[3, 0]?.x == terrainModel.terrain[x, y].x)
                                     &&
-                                    (previosGroup.Sprites[0].Sprites[3, 0].y == terrainModel.terrain[x, y].y))
+                                    (previosGroup?.Sprites[0]?.Sprites?[3, 0]?.y == terrainModel.terrain[x, y].y))
                                 {
                                     spritePosition = new PositionDTO() { x = 3, y = 2 }; // startingGroup?.Sprites[0].Sprites[3, 2];
                                 }
@@ -84,9 +90,9 @@ namespace CityGame.Models
                             else
                             if (previosGroup.Name.Equals(SpritesGroupEnum.road))
                             {
-                                if ((previosGroup.Sprites[0].Sprites[3, 0].x == terrainModel.terrain[x, y].x)
+                                if ((previosGroup?.Sprites[0]?.Sprites?[3, 0]?.x == terrainModel.terrain[x, y].x)
                                     &&
-                                    (previosGroup.Sprites[0].Sprites[3, 0].y == terrainModel.terrain[x, y].y))
+                                    (previosGroup?.Sprites[0]?.Sprites?[3, 0]?.y == terrainModel.terrain[x, y].y))
                                 {
                                     //spritePosition = startingGroup?.Sprites[0].Sprites[3, 1];
                                     spritePosition = new PositionDTO() { x = 3, y = 1};
@@ -104,9 +110,9 @@ namespace CityGame.Models
                             else
                             if (previosGroup.Name.Equals(SpritesGroupEnum.wire))
                             {
-                                if ((previosGroup.Sprites[0].Sprites[3, 0].x == terrainModel.terrain[x, y].x)
+                                if ((previosGroup?.Sprites[0]?.Sprites?[3, 0]?.x == terrainModel.terrain[x, y].x)
                                     &&
-                                    (previosGroup.Sprites[0].Sprites[3, 0].y == terrainModel.terrain[x, y].y))
+                                    (previosGroup?.Sprites[0]?.Sprites?[3, 0]?.y == terrainModel.terrain[x, y].y))
                                 {
                                     //spritePosition = startingGroup?.Sprites[0].Sprites[3, 3];
                                     spritePosition = new PositionDTO() { x = 3, y = 3 };
@@ -133,18 +139,10 @@ namespace CityGame.Models
                                 terrainModel.PutSprite(x, y, startingGroup, spritePosition);
                                 return FS;
                             }
-
-
-
-
                         }
                     }
                 }
             }
-
-
-
-
             //spritePosition = startingGroup?.Sprites[0].Sprites[4, 0];
             spritePosition = new PositionDTO() { x = 4, y = 0 };
 

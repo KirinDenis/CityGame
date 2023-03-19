@@ -1,4 +1,5 @@
 ﻿using CityGame.Data.DTO;
+using CityGame.DTOs.Const;
 using CityGame.Graphics;
 using System;
 using System.Collections.Generic;
@@ -10,54 +11,27 @@ namespace CityGame.Models
 {
     public class CityGameEngine
     {
+        private string _cityName = "Where the streets have no name";
+        public string cityName 
+            { get { return _cityName; } set { _cityName = value; } }
+
+        private int _size = GameConsts.DefaultTerrainSize;
+        public int size { get { return _size; } set { _size = value; } }
+
+        private int lifeCycleTime = 100;
         private SpriteBusiness spriteBusiness = new SpriteBusiness();
         private TerrainModel terrainModel;
 
-        /*
-        private RoadGameObjectModel roadGameObjectModel;
-        private RailGameObjectModel railGameObjectModel;
-        private WireGameObjectModel wireGameObjectModel;
-        private GardenModel gardenModel;
-        private ResidentModel residentModel;
-        private IndustrialModel industrialModel;
-        private ComercialModel comercialModel;
-
-        private PoliceDepartmentModel policeDepartmentModel;
-        private FireDepartmentModel fireDepartmentModel;
-        private StadiumModel stadiumModel;
-        private CoalPowerPlantModel coalPowerPlantModel;
-        private NuclearPowerPlantModel nuclearPowerPlantModel;
-        private SeaPortModel seaPortModel;
-        private AirPortModel airPortModel;
-        */
         private List<GameObjectModel> gameObjectModels = new List<GameObjectModel>();
 
+        public event EventHandler? TerrainRenderCompleted = null;
+        public event EventHandler? MapRenderCompleted = null;
 
-
-
-        public event EventHandler RenderCompleted;
-
-
-        public CityGameEngine(string cityName, int size = 100)
+        public CityGameEngine(string cityName, int size = GameConsts.DefaultTerrainSize)
         {
+            _cityName = cityName;
+            _size = size;
             terrainModel = new TerrainModel(size);
-            /*
-            roadGameObjectModel = new RoadGameObjectModel(spriteBusiness, terrainModel);
-            railGameObjectModel = new RailGameObjectModel(spriteBusiness, terrainModel);
-            wireGameObjectModel = new WireGameObjectModel(spriteBusiness, terrainModel);
-            gardenModel = new GardenModel(spriteBusiness, terrainModel);
-            residentModel = new ResidentModel(spriteBusiness, terrainModel);
-            industrialModel = new IndustrialModel(spriteBusiness, terrainModel);
-            comercialModel = new ComercialModel(spriteBusiness, terrainModel);
-            policeDepartmentModel = new PoliceDepartmentModel(spriteBusiness, terrainModel);
-            fireDepartmentModel = new FireDepartmentModel(spriteBusiness, terrainModel);
-            stadiumModel = new  StadiumModel(spriteBusiness, terrainModel);
-            coalPowerPlantModel = new CoalPowerPlantModel(spriteBusiness, terrainModel);
-            nuclearPowerPlantModel = new  NuclearPowerPlantModel(spriteBusiness, terrainModel);
-            seaPortModel = new  SeaPortModel(spriteBusiness, terrainModel);
-            airPortModel = new AirPortModel(spriteBusiness, terrainModel);
-            */
-
             gameObjectModels.Add(new RoadGameObjectModel(spriteBusiness, terrainModel));
             gameObjectModels.Add(new RailGameObjectModel(spriteBusiness, terrainModel));
             gameObjectModels.Add(new WireGameObjectModel(spriteBusiness, terrainModel));
@@ -73,30 +47,41 @@ namespace CityGame.Models
             gameObjectModels.Add(new SeaPortModel(spriteBusiness, terrainModel));
             gameObjectModels.Add(new AirPortModel(spriteBusiness, terrainModel));
 
-
-
-
             DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(100);
+            timer.Interval = TimeSpan.FromMilliseconds(lifeCycleTime);
             timer.Tick += Timer_Tick; ;
             timer.Start();
         }
 
         public int GetTerrainSize()
         {
-            return terrainModel.terrainSize;
+            return size;
         }
 
-        public WriteableBitmap GetTerrainBitmap()
+        public WriteableBitmap? GetTerrainBitmap()
         {
-            return terrainModel.terrainBitmap;
+            if ((terrainModel != null) && (terrainModel.terrainBitmap != null))
+            {
+                return terrainModel.terrainBitmap;
+            }
+            else 
+            {
+                return null;
+            } 
+                
         }
 
-        public WriteableBitmap GetMapBitmap()
+        public WriteableBitmap? GetMapBitmap()
         {
-            return terrainModel.mapBitmap;
+            if ((terrainModel != null) && (terrainModel.mapBitmap != null))
+            {
+                return terrainModel.mapBitmap;
+            }
+            else 
+            {
+                return null;
+            }                 
         }
-
 
         public void GenerateTerrain()
         {
@@ -109,33 +94,17 @@ namespace CityGame.Models
             {
                 foreach (GameObjectModel gameObjectModel in gameObjectModels)
                 {
+                    if ((gameObjectModel == null) || (gameObjectModel.startingGroup == null) || (string.IsNullOrEmpty(gameObjectModel.startingGroup.Name)))
+                    {
+                        continue;
+                    }
+
                     if (gameObjectModel.startingGroup.Name.Equals(group?.Name))
                     {
                         gameObjectModel.Build(position);
                         return true;
                     }
                 }
-                /*
-                switch (group?.Name)
-                {
-                    case SpritesGroupEnum.road: roadGameObjectModel.Build(position); return true;
-                    case SpritesGroupEnum.rail: railGameObjectModel.Build(position); return true;
-                    case SpritesGroupEnum.wire: wireGameObjectModel.Build(position); return true;
-                    case SpritesGroupEnum.garden: gardenModel.Build(position); return true;
-                    case SpritesGroupEnum.resident0: residentModel.Build(position); return true;
-                    case SpritesGroupEnum.industrial0: industrialModel.Build(position); return true;
-                    case SpritesGroupEnum.comercial0: comercialModel.Build(position); return true;
-                    case SpritesGroupEnum.policedepartment: policeDepartmentModel.Build(position); return true;
-                    case SpritesGroupEnum.firedepartment: fireDepartmentModel.Build(position); return true;
-                    case SpritesGroupEnum.stadium: stadiumModel.Build(position); return true;
-                    case SpritesGroupEnum.coalpowerplant: coalPowerPlantModel.Build(position); return true;
-                    case SpritesGroupEnum.nuclearpowerplant: nuclearPowerPlantModel.Build(position); return true;
-                    case SpritesGroupEnum.seaport: seaPortModel.Build(position); return true;
-                    case SpritesGroupEnum.airport: airPortModel.Build(position); return true;
-                    default:
-                        return false;
-                }
-                */
             }
             return false;
         }
@@ -147,38 +116,44 @@ namespace CityGame.Models
 
         public bool DestroyObjectAtPosition(PositionDTO position)
         {
-            GameObjectModel gameObjectModel = gameObjectModels.Where(g => g.gameObjects.Where(o =>
-             o.positionDTO.x <= position.x && o.positionDTO.y <= position.y &&
-             o.positionDTO.x + o.Group.Width >= position.x && o.positionDTO.y + o.Group.Height >= position.y
-             ).Any()).FirstOrDefault();
+            if ((gameObjectModels != null) && (position != null))
+            {
+                GameObjectModel? gameObjectModel = gameObjectModels.Where(g => g.gameObjects.Where(o =>
+                 o.positionDTO != null && o.Group != null && (o.positionDTO.x <= position?.x && o.positionDTO.y <= position.y &&
+                 o.positionDTO.x + o.Group.Width >= position.x && o.positionDTO.y + o.Group.Height >= position.y
+                 )).Any()).FirstOrDefault();
 
-            if (gameObjectModel != null)
-            {
-                GameObjectDTO gameObjectDTO = gameObjectModel.gameObjects.FirstOrDefault(o =>
-                             o.positionDTO.x <= position.x && o.positionDTO.y <= position.y &&
-                             o.positionDTO.x + o.Group.Width >= position.x && o.positionDTO.y + o.Group.Height >= position.y);
-                gameObjectModel.Destroy(gameObjectDTO);
-                return true;
+                if (gameObjectModel != null)
+                {
+                    GameObjectDTO? gameObjectDTO = gameObjectModel.gameObjects.FirstOrDefault(o =>
+                                 o.positionDTO != null && o.Group != null && (
+                                 o.positionDTO.x <= position.x && o.positionDTO.y <= position.y &&
+                                 o.positionDTO.x + o.Group.Width >= position.x && o.positionDTO.y + o.Group.Height >= position.y));
+                    if (gameObjectDTO != null)
+                    {
+                        gameObjectModel.Destroy(gameObjectDTO);
+                        return true;
+                    }
+                }
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         private void Timer_Tick(object? sender, EventArgs e)
         {
-            OnRenderCompleted(EventArgs.Empty);
+            OnTerrainRenderCompleted(EventArgs.Empty);
+            OnMapRenderCompleted(EventArgs.Empty);
         }
 
-        protected virtual void OnRenderCompleted(EventArgs e)
+        protected virtual void OnTerrainRenderCompleted(EventArgs e)
         {
-            RenderCompleted?.Invoke(this, e);
+            TerrainRenderCompleted?.Invoke(this, e);
         }
 
-
-
-
+        protected virtual void OnMapRenderCompleted(EventArgs e)
+        {
+            MapRenderCompleted?.Invoke(this, e);
+        }
 
     }
 }

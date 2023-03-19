@@ -62,8 +62,10 @@ namespace CityGame.Graphics
             }
             for (int i = 0; i < _groups.Count; i++)
             {
-                //fix case
-                _groups[i].Name = _groups[i].Name.ToLower();
+                if ((_groups[i] != null) && (!string.IsNullOrEmpty(_groups[i].Name)))
+                {
+                    _groups[i].Name = _groups[i]?.Name?.ToLower();
+                }
             }
             
             if (foundNotExists)
@@ -90,7 +92,7 @@ namespace CityGame.Graphics
         {
             if (!string.IsNullOrEmpty(groupItemName))
             {
-                return groups.FirstOrDefault(g => g.Name.ToLower().Equals(groupItemName.ToLower()));
+                return groups.FirstOrDefault(g => !string.IsNullOrEmpty(g.Name) && g.Name.ToLower().Equals(groupItemName.ToLower()));
             }
             return null; //no group by default        
         }
@@ -99,7 +101,7 @@ namespace CityGame.Graphics
         {
             if (!string.IsNullOrEmpty(groupItemName))
             {
-                return groups.FirstOrDefault(g => g.Name.ToLower().Equals(groupItemName.ToLower()))?.Id;
+                return groups.FirstOrDefault(g => !string.IsNullOrEmpty(g.Name) && g.Name.ToLower().Equals(groupItemName.ToLower()))?.Id;
             }
             return 0; //no group by default        
         }
@@ -133,17 +135,25 @@ namespace CityGame.Graphics
 
         public GroupDTO? GetGroupBySpritePosition(PositionDTO position)
         {
-            foreach (GroupDTO group in groups)
+            if (position != null)
             {
-                foreach (GroupSpritesDTO groupSprites in group.Sprites)
+                foreach (GroupDTO group in groups)
                 {
-                    for (int x = 0; x < groupSprites.Sprites.GetLength(0); x++)
+                    foreach (GroupSpritesDTO groupSprites in group.Sprites)
                     {
-                        for (int y = 0; y < groupSprites.Sprites.GetLength(1); y++)
+                        if ((groupSprites == null) || (groupSprites.Sprites == null))
                         {
-                            if ((groupSprites.Sprites[x, y] != null) && (groupSprites.Sprites[x,y].x == position.x) && (groupSprites.Sprites[x,y].y == position.y))
+                            continue;
+                        }
+                        for (int x = 0; x < groupSprites?.Sprites.GetLength(0); x++)
+                        {
+                            for (int y = 0; y < groupSprites?.Sprites.GetLength(1); y++)
                             {
-                                return group;
+                                if ((groupSprites.Sprites[x, y] != null) && (groupSprites?.Sprites?[x, y]?.x != null) && (groupSprites?.Sprites?[x, y]?.y != null) &&
+                                    (groupSprites?.Sprites?[x, y]?.x == position.x) && (groupSprites?.Sprites?[x, y]?.y == position.y))
+                                {
+                                    return group;
+                                }
                             }
                         }
                     }

@@ -14,7 +14,7 @@ namespace CityGame.Graphics
         private int terrainSize;
         private int roughness;
         private Random rnd = new Random();
-        private double[,] t;
+        private double[,]? t;
 
         public DiamondSquare(int terrainSize, int roughness)
         {
@@ -26,11 +26,19 @@ namespace CityGame.Graphics
         {
             int x = x1 + halfSide;
             int y = y1 + halfSide;
-            t[x, y] = (t[x1, y1] + t[x2, y2] + t[x1, y2] + t[x2, y1] + rnd.NextDouble()) / 5.0f;
+            if (t == null)
+            {
+                return;
+            }            
+            t[x, y] = (t[x1, y1] + t[x2, y2] + t[x1, y2] + t[x2, y1] + rnd.NextDouble()) / 5.0f;            
         }
 
         private void SquareStep(int x1, int y1, int x2, int y2, int halfSide)
         {
+            if (t == null)
+            {
+                return;
+            }
             //sum of square
             double sum = (t[x1, y1] + t[x2, y2] + t[x1, y2] + t[x2, y1] + t[x1 + halfSide, y1 + halfSide]) / 5.0f;
             //point 1
@@ -48,6 +56,10 @@ namespace CityGame.Graphics
 
         private void DeomandApStep(int x1, int y1, int x2, int y2, int halfSide)
         {
+            if (t == null)
+            {
+                return;
+            }
             int x = x1 + halfSide;
             int y = y1 + halfSide;
             t[x, y] = (t[x, y] + t[x1, y1] + t[x2, y2] + t[x1, y2] + t[x2, y1]) / 5.0f;
@@ -55,6 +67,10 @@ namespace CityGame.Graphics
 
         private void SquareApStep(int x1, int y1, int x2, int y2, int halfSide)
         {
+            if (t == null)
+            {
+                return;
+            }
             //sum of square
             double sum = (t[x1, y1] + t[x2, y2] + t[x1, y2] + t[x2, y1] + t[x1 + halfSide, y1 + halfSide]) / 5.0f;
             //point 1

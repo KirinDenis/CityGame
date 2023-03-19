@@ -696,7 +696,7 @@ namespace CityGame
             }
             spriteBusiness.SetGroups();
             RefreshGroupsList();
-            GroupItem_Selected(SpriteGroupsTreeView.SelectedItem, null);
+            GroupItem_Selected(SpriteGroupsTreeView.SelectedItem, new RoutedEventArgs());
         }
     }
 }

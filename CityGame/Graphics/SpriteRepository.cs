@@ -99,9 +99,9 @@ namespace CityGame.Graphics
 
         public static byte[] GetPixels(int x, int y)
         {
-            if ((x >= ResourceInfo.CountX) || (y >= ResourceInfo.CountY))
+            if ((x >= ResourceInfo?.CountX) || (y >= ResourceInfo?.CountY))
             {
-                return null;
+                return new byte[0];
             }
 
             if (bufferPixels.ContainsKey(new Point(x, y)))

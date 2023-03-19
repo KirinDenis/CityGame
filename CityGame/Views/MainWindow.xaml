@@ -39,7 +39,7 @@
 
             <ScrollViewer x:Name="TerrainScroll" Grid.Row="2" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" ScrollChanged="TerrainScroll_ScrollChanged">
                 <Grid x:Name="TerrainGrid" PreviewMouseDown="TerrainGrid_PreviewMouseDown">
-                    <Image x:Name="TerrainImage" HorizontalAlignment="Left" VerticalAlignment="Top" Source="/Resources/resources.png" RenderTransformOrigin="0.5,0.5" MouseMove="GameViewGrid_MouseMove" >
+                    <Image x:Name="TerrainImage" HorizontalAlignment="Left" VerticalAlignment="Top" Source="/Resources/resources.png" RenderTransformOrigin="0.5,0.5" PreviewMouseMove="GameViewGrid_MouseMove" >
                         <Image.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform/>

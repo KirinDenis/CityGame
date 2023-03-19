@@ -92,7 +92,7 @@ namespace CityGame.Graphics
         /// Путь к файлу с иконками
         /// </summary>
         public static string iconsImageFilePath = @"\Resources\resources256.bmp";
-        private static Bitmap source = null;
+        private static Bitmap? source = null;
 
         private static readonly Dictionary<Point, BitmapImage> bufferBitmaps = new Dictionary<Point, BitmapImage>();
         private static readonly Dictionary<Point, byte[]> bufferPixels = new Dictionary<Point, byte[]>();
@@ -134,7 +134,7 @@ namespace CityGame.Graphics
         /// <returns></returns>
         public static BitmapImage GetBlock(int x, int y)
         {
-            BitmapImage bitmapimage = null;
+            BitmapImage? bitmapimage = null;
 
             if (bufferBitmaps.ContainsKey(new Point(x, y)))
             {
@@ -167,9 +167,10 @@ namespace CityGame.Graphics
                 {
                     bufferBitmaps[new Point(x, y)] = bitmapimage;
                 }
+                return bitmapimage;
             }
             catch { }
-            return bitmapimage;
+            return new BitmapImage();
         }
 
         /// <summary>

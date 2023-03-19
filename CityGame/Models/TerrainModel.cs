@@ -26,7 +26,7 @@ namespace CityGame.Models
         private const bool fackeDiomand = false;
 
         //Terrain map - sprite offsets
-        public PositionDTO[,] terrain;
+        public PositionDTO?[,]? terrain;
 
         public int waterLevel = 140;
 
@@ -36,10 +36,9 @@ namespace CityGame.Models
 
         private SpriteBusiness spriteBusiness = new SpriteBusiness();
 
-        private Random random = new Random();
+        public WriteableBitmap? terrainBitmap;
 
-        public WriteableBitmap terrainBitmap;
-        public WriteableBitmap mapBitmap;
+        public WriteableBitmap? mapBitmap;
 
         public TerrainModel(int terrainSize)
         {
@@ -54,13 +53,14 @@ namespace CityGame.Models
             terrain = new PositionDTO[terrainSize, terrainSize];
 
 
-            BitmapImage sImage = SpriteRepository.GetSprite(0, 0);
-            terrainBitmap = new WriteableBitmap(terrainSize * 16, terrainSize * 16, sImage.DpiX, sImage.DpiY, sImage.Format, sImage.Palette);
-            mapBitmap = new WriteableBitmap(terrainSize, terrainSize, sImage.DpiX, sImage.DpiY, sImage.Format, sImage.Palette);
-
+            BitmapImage? sImage = SpriteRepository.GetSprite(0, 0);
+            if (sImage != null)
+            {
+                terrainBitmap = new WriteableBitmap(terrainSize * 16, terrainSize * 16, sImage.DpiX, sImage.DpiY, sImage.Format, sImage.Palette);
+                mapBitmap = new WriteableBitmap(terrainSize, terrainSize, sImage.DpiX, sImage.DpiY, sImage.Format, sImage.Palette);
+            }
 
             GenerateNewTerrain();
-
         }
 
         //http://www.java2s.com/example/csharp/system/color-to-byte-array.html
@@ -77,20 +77,36 @@ namespace CityGame.Models
 
         public bool PutSprite(ushort x, ushort y, GroupDTO? group, byte animationFrame, int spriteX, int spriteY)
         {
-            if ((group == null) || (group?.Sprites.Count <= animationFrame)
+
+            if ((group == null) || (group?.Sprites.Count <= animationFrame) || (string.IsNullOrEmpty(group?.Name))
                 || (group?.Sprites == null) || (group?.Sprites[animationFrame] == null) || (group?.Sprites[animationFrame].Sprites[spriteX, spriteY] == null)
-                || (x >= terrainSize) || (y >= terrainSize))
+                || (x >= terrainSize) || (y >= terrainSize)
+                || (terrain == null)
+                || (SpriteRepository.ResourceInfo == null)
+                )
             {
                 return false;
             }
 
-            terrain[x, y] = group?.Sprites?[animationFrame]?.Sprites[spriteX, spriteY];
+            GroupSpritesDTO? sprites = group.Sprites[animationFrame];
 
+            if (sprites == null)
+            {
+                return false;
+            }
 
+            PositionDTO? positionDTO = sprites.Sprites[spriteX, spriteY];
+
+            if (positionDTO == null)
+            {
+                return false;
+            }
+
+            terrain[x, y] = positionDTO;
 
             Int32Rect rect = new Int32Rect(x * SpriteRepository.ResourceInfo.SpriteSize, y * SpriteRepository.ResourceInfo.SpriteSize, SpriteRepository.ResourceInfo.SpriteSize, SpriteRepository.ResourceInfo.SpriteSize);
 
-            terrainBitmap.WritePixels(rect, SpriteRepository.GetPixels((int)terrain[x, y].x, (int)terrain[x, y].y), SpriteRepository.ResourceInfo.SpriteSize * 4, 0);
+            terrainBitmap?.WritePixels(rect, SpriteRepository.GetPixels((int)terrain[x, y].x, (int)terrain[x, y].y), SpriteRepository.ResourceInfo.SpriteSize * 4, 0);
 
             rect = new Int32Rect(x, y, 1, 1);
 
@@ -103,19 +119,19 @@ namespace CityGame.Models
                 case ObjectType.water: pixel = ColorToByteArray(Color.Blue); break;
                 case ObjectType.network: pixel = ColorToByteArray(Color.Black); break;
                 case ObjectType.garden: pixel = ColorToByteArray(Color.Green); break;
-                case ObjectType.building: 
+                case ObjectType.building:
                     switch (group.Name)
                     {
                         case SpritesGroupEnum.firedepartment: pixel = ColorToByteArray(Color.Red); break;
                         case SpritesGroupEnum.policedepartment: pixel = ColorToByteArray(Color.LightBlue); break;
                         case SpritesGroupEnum.coalpowerplant: pixel = ColorToByteArray(Color.Red); break;
-                            default: pixel = ColorToByteArray(Color.LightCyan); break;
+                        default: pixel = ColorToByteArray(Color.LightCyan); break;
                     }
                     break;
                 default: pixel = ColorToByteArray(Color.Gray); break;
             }
 
-            mapBitmap.WritePixels(rect, pixel, 4, 0);//SpriteRepository.ResourceInfo.SpriteSize * SpriteRepository.ResourceInfo.SpriteSize / 2);
+            mapBitmap?.WritePixels(rect, pixel, 4, 0);//SpriteRepository.ResourceInfo.SpriteSize * SpriteRepository.ResourceInfo.SpriteSize / 2);
 
             return true;
         }
@@ -127,8 +143,6 @@ namespace CityGame.Models
 
         public bool BuildObject(ushort x, ushort y, GroupDTO group, byte animationFrame = 0)
         {
-
-
             if (group == null)
             {
                 return false;
@@ -157,7 +171,6 @@ namespace CityGame.Models
                 }
             }
             return true;
-
         }
 
         public bool TestRange(PositionDTO position)
@@ -243,6 +256,13 @@ namespace CityGame.Models
 
         protected Func<TerrainModel, ushort, ushort, int[,], TerrainType, GroupSpritesDTO, GroupSpritesDTO, bool> PutTerrainBlock = delegate (TerrainModel terrainModel, ushort x, ushort y, int[,] sourceTerraing, TerrainType groupType, GroupSpritesDTO groupSprites, GroupSpritesDTO borderSprites)
         {
+            if ((terrainModel == null) || (terrainModel?.terrain?[x, y] == null) 
+            || (borderSprites == null) || (borderSprites.Sprites == null)
+            || (groupSprites == null) || (groupSprites.Sprites == null)
+            )
+            {
+                return false;
+            }
 
             if ((x > 0) && (y > 0) && (sourceTerraing[terrainModel.CLeft(x), y] != (int)groupType) && (sourceTerraing[x, terrainModel.CTop(y)] != (int)groupType))
             {

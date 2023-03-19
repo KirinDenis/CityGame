@@ -11,7 +11,7 @@ namespace CityGame.Models.Interfaces
     public class CheckPositionDTO
     {
         public bool IsPossible { get; set; }
-        public bool[,] Colisions { get; set; }
+        public bool[,]? Colisions { get; set; }
     }
 
     internal interface IGameObjectModel

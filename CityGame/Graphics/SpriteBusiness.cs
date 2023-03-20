@@ -1,11 +1,11 @@
-﻿using CityGame.DTOs;
-using CityGame.DTOs.Enum;
+﻿using CityGame.DTOs.Enum;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows;
+using CityGame.Data.DTO;
 
 namespace CityGame.Graphics
 {
@@ -151,5 +151,25 @@ namespace CityGame.Graphics
             }
             return null;
         }
+
+        public ObjectType GetObjectTypeByGrop(GroupDTO? group)
+        {
+            switch (group?.Name)
+            {
+                case SpritesGroupEnum.road:
+                case SpritesGroupEnum.rail:
+                case SpritesGroupEnum.wire:
+                    return ObjectType.network;
+                case SpritesGroupEnum.garden:
+                    return ObjectType.garden;
+                case SpritesGroupEnum.water:
+                    return ObjectType.water;
+                default:
+                    return ObjectType.building;
+            }
+        }
+
+
+
     }
 }

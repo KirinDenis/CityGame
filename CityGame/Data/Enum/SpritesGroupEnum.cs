@@ -1,4 +1,6 @@
-﻿namespace CityGame.DTOs.Enum
+﻿using System.CodeDom;
+
+namespace CityGame.DTOs.Enum
 {
     /// <summary>
     /// Game object sprite's groups enum
@@ -8,11 +10,15 @@
     public static class SpritesGroupEnum
     {
         public const string nogroup = "nogroup";
+        public const string terrain = "terrain";
         public const string water = "water";
         public const string forest = "forest";
         public const string road = "road";
         public const string rail = "rail";
         public const string wire = "wire";
+        public const string cross = "cross";
+
+        public const string residentBase = "resident";
         public const string resident0 = "resident0";
         public const string resident1 = "resident1";
         public const string resident2 = "resident2";
@@ -33,8 +39,8 @@
         public const string resident16 = "resident16";
         public const string resident17 = "resident17";
         public const string resident18 = "resident18";
-        
 
+        public const string comercialBase = "comercial";
         public const string comercial0 = "comercial0";
         public const string comercial1 = "comercial1";
         public const string comercial2 = "comercial2";
@@ -59,6 +65,7 @@
         public const string comercial20 = "comercial20";
 
 
+        public const string industrialBase = "industrial";
         public const string industrial0 = "industrial0";
         public const string industrial1 = "industrial1";
         public const string industrial2 = "industrial2";
@@ -95,8 +102,10 @@
         public const string strange5 = "strange5";
         public const string strange6 = "strange6";
         public const string strange7 = "strange7";
+        public const string select = "select";
+        public const string coast = "coast";
 
-        public static string[] groups = { water , forest, road, rail, wire,
+        public static string[] groups = { terrain, water , forest, road, rail, wire, cross,
             resident0,
             resident1,
             resident2,
@@ -142,7 +151,6 @@
             comercial19,
             comercial20,
 
-
             industrial0,
             industrial1,
             industrial2,
@@ -176,13 +184,14 @@
             strange4,
             strange5,
             strange6,
-            strange7 }; 
+            strange7,
+            select,
+            coast
+        }; 
 
-
-
+        /*
         public static string ByObjectType(ObjectType objectType)
-        {
-            
+        {            
             switch (objectType)
             {
                 case ObjectType.road: return road;
@@ -193,6 +202,28 @@
                 case ObjectType.industrial: return industrial0;
                 case ObjectType.policeDepartment: return policedepartment;
                 default: return road;
+            }
+        }
+        */
+
+       public static ObjectType GetObjectTypeByGroupName(string groupName)
+        {
+            switch(groupName)
+            {
+                case road:
+                case rail:
+                case wire:
+                    return ObjectType.network; 
+                case terrain:
+                case coast:                
+                    return ObjectType.terrain;
+                case forest:
+                    return ObjectType.forest;
+                case water:
+                    return ObjectType.water;
+                default:
+                    return ObjectType.building;
+
             }
         }
 

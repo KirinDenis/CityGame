@@ -23,12 +23,12 @@ namespace CityGame.Models
         /// <summary>
         /// Inline Left, Top
         /// </summary>
-        protected Func<int, int> CLeft = delegate (int x)
+        protected Func<ushort, ushort> CLeft = delegate (ushort x)
         {
             return --x;
         };
 
-        protected Func<int, int> CTop = delegate (int y)
+        protected Func<ushort, ushort> CTop = delegate (ushort y)
         {
             return --y;
         };
@@ -36,12 +36,12 @@ namespace CityGame.Models
         /// <summary>
         /// Inline Right, Bottom
         /// </summary>
-        protected Func<int, int> CRight = delegate (int x)
+        protected Func<ushort, ushort> CRight = delegate (ushort x)
         {
             return ++x;
         };
 
-        protected Func<int, int> CBottom = delegate (int y)
+        protected Func<ushort, ushort> CBottom = delegate (ushort y)
         {
             return ++y;
         };

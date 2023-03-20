@@ -1,4 +1,4 @@
-﻿using CityGame.DTOs;
+﻿using CityGame.Data.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,10 +16,6 @@ namespace CityGame.Models.Interfaces
 
     internal interface IGameObjectModel
     {
-        public GroupDTO? Group { get; set; }
-
-    public CheckPositionDTO CheckPosition(ushort x, ushort y);
-
-        public bool Put(ushort x, ushort y);
+        public GroupDTO? startingGroup { get; set; }
     }
 }

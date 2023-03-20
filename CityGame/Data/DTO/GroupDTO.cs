@@ -1,7 +1,7 @@
 ﻿using CityGame.DTOs.Const;
 using System.Collections.Generic;
 
-namespace CityGame.DTOs
+namespace CityGame.Data.DTO
 {
     public class GroupSpritesDTO
     {

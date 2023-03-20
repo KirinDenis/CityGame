@@ -22,7 +22,7 @@ GitHub: https://github.com/KirinDenis/owlos
 
 --------------------------------------------------------------------------------------*/
 
-using CityGame.DTOs;
+using CityGame.Data.DTO;
 using CityGame.DTOs.Const;
 using CityGame.Graphics;
 using System;
@@ -42,7 +42,7 @@ namespace CityGame
     /// <summary>
     /// Interaction logic for ResourceExplorer.xaml
     /// </summary>
-    public partial class ResourceExplorer : Window
+    public partial class ResourceExplorerWindow : Window
     {
         private SpriteBusiness spriteBusiness = new SpriteBusiness();
 
@@ -71,7 +71,7 @@ namespace CityGame
             return SpriteRepository.ResourceInfo != null ? true : false;
         };
 
-        public ResourceExplorer()
+        public ResourceExplorerWindow()
         {
             InitializeComponent();
         }
@@ -117,11 +117,11 @@ namespace CityGame
                     for (int y = 0; y < SpriteRepository.ResourceInfo.CountY; y++)
                     {
                         Int32Rect rect = new Int32Rect(x * (SpriteRepository.ResourceInfo.SpriteSize + SP), y * (SpriteRepository.ResourceInfo.SpriteSize + SP), SpriteRepository.ResourceInfo.SpriteSize + SP, SpriteRepository.ResourceInfo.SpriteSize + SP);
-                        bitmapSource.WritePixels(rect, spriteBackground, SpriteRepository.ResourceInfo.SpriteSize + SP, 0);
+                        bitmapSource.WritePixels(rect, spriteBackground, (SpriteRepository.ResourceInfo.SpriteSize + SP) * 4, 0);
 
                         rect = new Int32Rect(x * (SpriteRepository.ResourceInfo.SpriteSize + SP) + (SP >> 1), y * (SpriteRepository.ResourceInfo.SpriteSize + SP) + (SP >> 1), SpriteRepository.ResourceInfo.SpriteSize, SpriteRepository.ResourceInfo.SpriteSize);
 
-                        bitmapSource.WritePixels(rect, SpriteRepository.GetPixels(x, y), SpriteRepository.ResourceInfo.SpriteSize, 0);
+                        bitmapSource.WritePixels(rect, SpriteRepository.GetPixels(x, y), SpriteRepository.ResourceInfo.SpriteSize * 4, 0);
                     }
                 }
 
@@ -347,7 +347,7 @@ namespace CityGame
                     Y = 0,
                     Width = animationPriviewBitmap.PixelWidth,
                     Height = animationPriviewBitmap.PixelHeight
-                }, Enumerable.Repeat((byte)0xFF, animationPriviewBitmap.PixelWidth * animationPriviewBitmap.PixelHeight * (animationPriviewBitmap.Format.BitsPerPixel / 8)).ToArray(), animationPriviewBitmap.PixelWidth, 0);
+                }, Enumerable.Repeat((byte)0xFF, animationPriviewBitmap.PixelWidth * animationPriviewBitmap.PixelHeight * (animationPriviewBitmap.Format.BitsPerPixel / 8)).ToArray(), animationPriviewBitmap.PixelWidth * 4, 0);
 
                 AnimationPreviewImage.Tag = selectedGroup;
                 animationFrameCount = 0;
@@ -370,7 +370,7 @@ namespace CityGame
 
                         if (pixels != null)
                         {
-                            animationPriviewBitmap?.WritePixels(rect, pixels, SpriteRepository.ResourceInfo.SpriteSize, 0);
+                            animationPriviewBitmap?.WritePixels(rect, pixels, SpriteRepository.ResourceInfo.SpriteSize * 4, 0);
                         }
                     }
                 }

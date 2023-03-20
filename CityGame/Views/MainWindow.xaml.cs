@@ -31,6 +31,8 @@ using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 using CityGame.Models;
 using System;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -359,6 +361,57 @@ namespace CityGame
         private void TerrainScroll_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             MoveMapSelector();
+        }
+
+        private void TerrainViewGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            e.Handled = true;
+            Point mouse = Mouse.GetPosition(TerrainGrid);
+            var zoom = 0.001;
+            var scrollMove = 120 * zoom;
+            this.scale.ScaleX += e.Delta * zoom;
+            this.scale.ScaleY += e.Delta * zoom;
+            if (e.Delta > 0)
+            {
+                TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset + mouse.X * scrollMove);
+                TerrainScroll.ScrollToVerticalOffset(TerrainScroll.VerticalOffset + mouse.Y * scrollMove);
+            }
+            if (e.Delta < 0)
+            {
+
+                TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset - mouse.X * scrollMove);
+                TerrainScroll.ScrollToVerticalOffset(TerrainScroll.VerticalOffset - mouse.Y * scrollMove);
+            }
+
+        }
+
+        private void TerrainGrid_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            Point mouse = Mouse.GetPosition(TerrainViewGrid);
+
+            if (mouse.X > TerrainViewGrid.ActualWidth - TerrainSelector.ActualWidth)
+            {
+                TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset + 0.3);
+
+            }
+            else
+            {
+                if (mouse.X < (TerrainViewGrid.ActualWidth / TerrainViewGrid.ActualWidth) + TerrainSelector.ActualWidth )
+                {
+                    TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset - 0.3);
+                }
+            }
+            if (mouse.Y > TerrainViewGrid.ActualHeight - TerrainSelector.ActualHeight)
+            {
+                TerrainScroll.ScrollToVerticalOffset(TerrainScroll.VerticalOffset + 0.3);
+            }
+            else
+            {
+                if (mouse.Y <  TerrainSelector.ActualHeight * 2)
+                {
+                    TerrainScroll.ScrollToVerticalOffset(TerrainScroll.VerticalOffset - 0.3);
+                }
+            } 
         }
     }
 }

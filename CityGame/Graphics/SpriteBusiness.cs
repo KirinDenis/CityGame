@@ -133,7 +133,7 @@ namespace CityGame.Graphics
             return GetSpritesByGroupIndex(GetGroupId(groupItemName), animationFrame);
         }
 
-        public GroupDTO? GetGroupBySpritePosition(PositionDTO position)
+        public GroupDTO? GetGroupBySpritePosition(PositionDTO? position)
         {
             if (position != null)
             {

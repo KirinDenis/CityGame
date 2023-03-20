@@ -311,7 +311,7 @@ namespace CityGame
                 {
                     if (selectedPosition != null)
                     {
-                        if (selectedGroup.Sprites.Count == 0)
+                        if (selectedGroup.Sprites?.Count == 0)
                         {
                             AnimationFrameComboBox.Items.Add(1);
                             AnimationFrameComboBox.SelectedIndex = 0;
@@ -500,11 +500,11 @@ namespace CityGame
 
                 foreach (GroupSpritesDTO groupSprites in selectedGroup.Sprites)
                 {
-                    for (int x = 0; x < groupSprites.Sprites.GetLength(0); x++)
+                    for (int x = 0; x < groupSprites?.Sprites?.GetLength(0); x++)
                     {
-                        for (int y = 0; y < groupSprites.Sprites.GetLength(1); y++)
+                        for (int y = 0; y < groupSprites?.Sprites?.GetLength(1); y++)
                         {
-                            if (groupSprites.Sprites[x, y] != null)
+                            if ((groupSprites.Sprites[x, y] != null) && (SpriteRepository.ResourceInfo != null))
                             {
                                 Border border = new Border();
 

@@ -192,12 +192,7 @@ namespace CityGame.Models
         public TestPositionDTO TestPosition(GroupDTO? group, PositionDTO position)
         {
             TestPositionDTO result = new TestPositionDTO();
-            if (group == null)
-            {
-                return result;
-            }
-
-            if (!TestRange(position))
+            if ((group == null) || (position == null) || (terrain == null) || (!TestRange(position)))
             {
                 return result;
             }
@@ -214,9 +209,14 @@ namespace CityGame.Models
                     ry = 0;
                     for (int sy = position.y; sy < position.y + group.Height; sy++, ry++)
                     {
-                        if ((sx < terrainSize) && (sy < terrainSize))
+                        if ((sx < terrainSize) && (sy < terrainSize) && (terrain[sx, sy] != null))
                         {
-                            result.PositionArea[rx, ry] = SpritesGroupEnum.GetObjectTypeByGroupName(spriteBusiness.GetGroupBySpritePosition(terrain[sx, sy])?.Name);
+                            GroupDTO? groupDTO = spriteBusiness.GetGroupBySpritePosition(terrain[sx, sy]);
+                            if ((groupDTO == null) || (string.IsNullOrEmpty(groupDTO.Name)))
+                            {
+                                continue;
+                            }
+                            result.PositionArea[rx, ry] = SpritesGroupEnum.GetObjectTypeByGroupName(groupDTO.Name);
 
                             if ((result.PositionArea[rx, ry] != ObjectType.terrain)
                                 &&
@@ -256,7 +256,7 @@ namespace CityGame.Models
 
         protected Func<TerrainModel, ushort, ushort, int[,], TerrainType, GroupSpritesDTO, GroupSpritesDTO, bool> PutTerrainBlock = delegate (TerrainModel terrainModel, ushort x, ushort y, int[,] sourceTerraing, TerrainType groupType, GroupSpritesDTO groupSprites, GroupSpritesDTO borderSprites)
         {
-            if ((terrainModel == null) || (terrainModel?.terrain?[x, y] == null) 
+            if ((terrainModel == null) 
             || (borderSprites == null) || (borderSprites.Sprites == null)
             || (groupSprites == null) || (groupSprites.Sprites == null)
             )
@@ -312,6 +312,11 @@ namespace CityGame.Models
         };
         public void GenerateNewTerrain()
         {
+            if (terrain == null)
+            {
+                return;
+            }
+
             List<GroupSpritesDTO> water = new List<GroupSpritesDTO>();
             water.Add(spriteBusiness.GetSpritesByGroupName(SpritesGroupEnum.water, 0));
             water.Add(spriteBusiness.GetSpritesByGroupName(SpritesGroupEnum.water, 1));
@@ -397,18 +402,18 @@ namespace CityGame.Models
                     }
                     if (SpriteRepository.GetPixels(terrain[x, y]) != null)
                     {
-                        byte[] pixels = SpriteRepository.GetPixels(terrain[x, y]);
-                        Int32Rect rect = new Int32Rect(x * 16, y * 16, 16, 16);
-                        terrainBitmap.WritePixels(rect, pixels, 16 * 4, 0);
+                        byte[]? pixels = SpriteRepository.GetPixels(terrain[x, y]);
+                        if (pixels != null)
+                        {
+                            Int32Rect rect = new Int32Rect(x * 16, y * 16, 16, 16);
+                            terrainBitmap?.WritePixels(rect, pixels, 16 * 4, 0);
 
-                        rect = new Int32Rect(x, y, 1, 1);
-                        mapBitmap.WritePixels(rect, pixels, 4, 0);
-
-
+                            rect = new Int32Rect(x, y, 1, 1);
+                            mapBitmap?.WritePixels(rect, pixels, 4, 0);
+                        }
                     }
                 }
             }
-
         }
     }
 }

@@ -5,7 +5,7 @@ VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CityGame", "CityGame\CityGame.csproj", "{6832AE7C-FCB2-4C76-B518-DE09A826A08C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiamondLands", "..\..\..\OneDrive\Desktop\DSAlgorithm\src\DiamondLands\DiamondLands.csproj", "{547A448B-1D19-472A-83F6-39BA5F15358A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiamondLands", "DSAlgorithm\src\DiamondLands\DiamondLands.csproj", "{547A448B-1D19-472A-83F6-39BA5F15358A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

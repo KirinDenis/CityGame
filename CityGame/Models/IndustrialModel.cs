@@ -25,7 +25,7 @@ namespace CityGame.Models
                     gameObject.Group = startingGroup;
                 }
                 gameObject.animationFrame = 0;
-                Application.Current.Dispatcher.Invoke(async () =>
+                Application.Current.Dispatcher.Invoke(() =>
                 {
                     if (!Canceled)
                     {

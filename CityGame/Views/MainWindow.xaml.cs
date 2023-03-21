@@ -237,7 +237,7 @@ namespace CityGame
                                     previewImages[px, py].Source = previewImages[px, py].Tag as ImageSource;
                                     break;
                                 default:
-                                    previewImages[px, py].Source = SpriteRepository.GetSprite(spriteBusiness.GetGroupByName(SpritesGroupEnum.select)?.Sprites[0].Sprites[0, 0]);
+                                    previewImages[px, py].Source = SpriteRepository.GetSprite(spriteBusiness.GetGroupByName(SpritesGroupEnum.select)?.Sprites?[0]?.Sprites?[0, 0]);
                                     break;
                             }
                         }
@@ -299,7 +299,7 @@ namespace CityGame
                             previewImages[x, y].Tag = null;
                         }
                     }
-                    previewImages[0, 0].Source = SpriteRepository.GetSprite(selectedGroup.Sprites[0].Sprites[4, 0]);
+                    previewImages[0, 0].Source = SpriteRepository.GetSprite(selectedGroup?.Sprites?[0]?.Sprites?[4, 0]);
                     previewImages[0, 0].Tag = previewImages[0, 0].Source;
                 }
                 else
@@ -309,7 +309,7 @@ namespace CityGame
                     {
                         for (int y = 0; y < GameConsts.GroupSize; y++)
                         {
-                            previewImages[x, y].Source = SpriteRepository.GetSprite(selectedGroup.Sprites[0].Sprites[x, y]);
+                            previewImages[x, y].Source = SpriteRepository.GetSprite(selectedGroup?.Sprites?[0]?.Sprites?[x, y]);
                             previewImages[x, y].Tag = previewImages[x, y].Source;
                         }
                     }

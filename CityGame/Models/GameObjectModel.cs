@@ -59,25 +59,23 @@ namespace CityGame.Models
                 while (destroyStep < 7)
                 {
                     destroyStep++;
-                    Application.Current.Dispatcher.Invoke(async () =>
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
                         if (!Canceled)
                         {
-                            //TEMP
-                            for (ushort sx = 0; sx < gameObjectDTO.Group.Width; sx++)
+                            for (ushort sx = 0; sx < gameObjectDTO?.Group?.Width; sx++)
                             {
-                                for (ushort sy = 0; sy < gameObjectDTO.Group.Height; sy++)
+                                for (ushort sy = 0; sy < gameObjectDTO?.Group?.Height; sy++)
                                 {
-
-                                    if (destroyGroup?.Sprites[destroyStep].Sprites[0, 0] != null)
+                                    if (destroyGroup?.Sprites?[destroyStep]?.Sprites?[0, 0] != null)
                                     {
-                                        //terrainModel.terrain[gameObjectDTO.positionDTO.x + sx, gameObjectDTO.positionDTO.y + sy] = destroyGroup.Sprites[destroyStep].Sprites[0, 0];
-                                        //terrainModel.PutSprite((ushort)(gameObjectDTO.positionDTO.x + sx), (ushort)(gameObjectDTO.positionDTO.y + sy), destroyGroup.Sprites[destroyStep].Sprites[0, 0].x, destroyGroup.Sprites[destroyStep].Sprites[0, 0].y);
-                                        terrainModel.PutSprite((ushort)(gameObjectDTO.positionDTO.x + sx), (ushort)(gameObjectDTO.positionDTO.y + sy), destroyGroup, destroyStep, 0, 0);
+                                        if ((gameObjectDTO != null) && (destroyGroup != null) && (gameObjectDTO.positionDTO != null))
+                                        {
+                                            terrainModel.PutSprite((ushort)(gameObjectDTO.positionDTO.x + sx), (ushort)(gameObjectDTO.positionDTO.y + sy), destroyGroup, destroyStep, 0, 0);
+                                        }
                                     }
                                 }
                             }
-
                             if ((gameObjectDTO != null) && (destroyGroup != null) && (gameObjectDTO.positionDTO != null))
                             {
                                 terrainModel.BuildObject(gameObjectDTO.positionDTO.x, gameObjectDTO.positionDTO.y, destroyGroup, destroyStep);

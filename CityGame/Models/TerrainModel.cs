@@ -79,7 +79,9 @@ namespace CityGame.Models
         {
 
             if ((group == null) || (group?.Sprites.Count <= animationFrame) || (string.IsNullOrEmpty(group?.Name))
-                || (group?.Sprites == null) || (group?.Sprites[animationFrame] == null) || (group?.Sprites[animationFrame].Sprites[spriteX, spriteY] == null)
+                || (group.Sprites == null) || (group.Sprites == null) || (group.Sprites[animationFrame] == null)
+                || (group.Sprites[animationFrame].Sprites == null)
+                || (group.Sprites[animationFrame].Sprites?[spriteX, spriteY] == null)
                 || (x >= terrainSize) || (y >= terrainSize)
                 || (terrain == null)
                 || (SpriteRepository.ResourceInfo == null)
@@ -95,7 +97,7 @@ namespace CityGame.Models
                 return false;
             }
 
-            PositionDTO? positionDTO = sprites.Sprites[spriteX, spriteY];
+            PositionDTO? positionDTO = sprites.Sprites?[spriteX, spriteY];
 
             if (positionDTO == null)
             {
@@ -106,7 +108,10 @@ namespace CityGame.Models
 
             Int32Rect rect = new Int32Rect(x * SpriteRepository.ResourceInfo.SpriteSize, y * SpriteRepository.ResourceInfo.SpriteSize, SpriteRepository.ResourceInfo.SpriteSize, SpriteRepository.ResourceInfo.SpriteSize);
 
-            terrainBitmap?.WritePixels(rect, SpriteRepository.GetPixels((int)terrain[x, y].x, (int)terrain[x, y].y), SpriteRepository.ResourceInfo.SpriteSize * 4, 0);
+            if (terrain[x, y] != null)
+            {
+                terrainBitmap?.WritePixels(rect, SpriteRepository.GetPixels(positionDTO.x, positionDTO.y), SpriteRepository.ResourceInfo.SpriteSize * 4, 0);
+            }
 
             rect = new Int32Rect(x, y, 1, 1);
 
@@ -163,7 +168,7 @@ namespace CityGame.Models
                 for (ushort sy = 0; sy < group?.Height; sy++)
                 {
 
-                    if (group?.Sprites[animationFrame].Sprites[sx, sy] != null)
+                    if (group?.Sprites?[animationFrame]?.Sprites?[sx, sy] != null)
                     {
                         //   terrain[x + sx, y + sy] = group?.Sprites[animationFrame].Sprites[sx, sy];
                         PutSprite((ushort)(x + sx), (ushort)(y + sy), group, animationFrame, sx, sy);
@@ -238,16 +243,23 @@ namespace CityGame.Models
             }
             else
             {
-                result.PositionArea[0, 0] = SpritesGroupEnum.GetObjectTypeByGroupName(spriteBusiness.GetGroupBySpritePosition(terrain[position.x, position.y])?.Name);
-                if ((result.PositionArea[0, 0] != ObjectType.terrain)
-                    &&
-                    (result.PositionArea[0, 0] != ObjectType.forest)
-                    &&
-                    (result.PositionArea[0, 0] != ObjectType.water)
-                    &&
-                    (result.PositionArea[0, 0] != ObjectType.network))
+                if (terrain[position.x, position.y] != null)
                 {
-                    result.CanBuild = false;
+                    string? name = spriteBusiness.GetGroupBySpritePosition(terrain[position.x, position.y])?.Name;
+                    if (!string.IsNullOrEmpty(name))
+                    {
+                        result.PositionArea[0, 0] = SpritesGroupEnum.GetObjectTypeByGroupName(name);
+                        if ((result.PositionArea[0, 0] != ObjectType.terrain)
+                            &&
+                            (result.PositionArea[0, 0] != ObjectType.forest)
+                            &&
+                            (result.PositionArea[0, 0] != ObjectType.water)
+                            &&
+                            (result.PositionArea[0, 0] != ObjectType.network))
+                        {
+                            result.CanBuild = false;
+                        }
+                    }
                 }
 
             }
@@ -259,6 +271,7 @@ namespace CityGame.Models
             if ((terrainModel == null) 
             || (borderSprites == null) || (borderSprites.Sprites == null)
             || (groupSprites == null) || (groupSprites.Sprites == null)
+            || (terrainModel.terrain == null)
             )
             {
                 return false;

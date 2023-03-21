@@ -77,7 +77,7 @@ namespace CityGame
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if ((!string.IsNullOrEmpty(SpriteRepository.LastError)) || (!EngineReady()))
+            if ((!string.IsNullOrEmpty(SpriteRepository.LastError)) || (!EngineReady()) || (SpriteRepository.ResourceInfo == null))
             {
                 ErrorTextBlock.Text = SpriteRepository.LastError;
                 ErrorTextBlock.Visibility = Visibility.Visible;
@@ -193,7 +193,7 @@ namespace CityGame
         
         private PositionDTO? GetSpritePositionByMouse(MouseEventArgs e)
         {
-            if (!EngineReady())
+            if ((!EngineReady()) || (SpriteRepository.ResourceInfo == null))
             {
                 return null;
             }
@@ -210,7 +210,7 @@ namespace CityGame
         {
             SpriteGroupsTreeView.Items.Clear();
 
-            if (!EngineReady())
+            if (!EngineReady() || (SpriteRepository.ResourceInfo == null))
             {
                 return;
             }
@@ -236,10 +236,10 @@ namespace CityGame
 
                     frameGrid.Width = frameGrid.Height = SpriteRepository.ResourceInfo.SpriteSize * GameConsts.GroupSize;
 
-                    for (int x = 0; x < groupSprites.Sprites.GetLength(0); x++)
+                    for (int x = 0; x < groupSprites?.Sprites?.GetLength(0); x++)
                     {
                         frameGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(SpriteRepository.ResourceInfo.SpriteSize) });
-                        for (int y = 0; y < groupSprites.Sprites.GetLength(1); y++)
+                        for (int y = 0; y < groupSprites?.Sprites?.GetLength(1); y++)
                         {
                             frameGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(SpriteRepository.ResourceInfo.SpriteSize) });
                             if (groupSprites.Sprites[x, y] != null)
@@ -296,14 +296,17 @@ namespace CityGame
             {
                 for (int y = 0; y < GameConsts.GroupSize; y++)
                 {
-                    groupsPreviewImages[x, y].Source = SpriteRepository.GetSprite(sprites.Sprites[x, y]);
+                    groupsPreviewImages[x, y].Source = SpriteRepository.GetSprite(sprites?.Sprites?[x, y]);
                 }
             }
         }
 
         private void GroupSrite_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (selectedGroup != null)
+            if ((selectedGroup != null) && (selectedGroup.Sprites != null)
+                && (selectedGroup.Sprites[AnimationFrameComboBox.SelectedIndex] != null)
+                && (selectedGroup.Sprites[AnimationFrameComboBox.SelectedIndex].Sprites != null)
+                )
             {
                 PositionDTO groupPosition = (PositionDTO)((TextBlock)sender).Tag;
 
@@ -318,7 +321,10 @@ namespace CityGame
                             selectedGroup.Sprites.Add(new GroupSpritesDTO());
                             spriteBusiness.SetGroups();
                         }
-                        selectedGroup.Sprites[AnimationFrameComboBox.SelectedIndex].Sprites[groupPosition.x, groupPosition.y] = selectedPosition;
+                        if (AnimationFrameComboBox.SelectedIndex != -1)
+                        {
+                            selectedGroup.Sprites[AnimationFrameComboBox.SelectedIndex].Sprites[groupPosition.x, groupPosition.y] = selectedPosition;
+                        }
                     }
                 }
                 else

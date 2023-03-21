@@ -8,7 +8,7 @@ namespace CityGame.Models
 {
     internal class ResidentModel : GameObjectModel
     {
-        private Random random = new Random();
+        private readonly Random random = new();
         public ResidentModel(SpriteBusiness spriteBusiness, TerrainModel terrainModel) : base(spriteBusiness, terrainModel)
         {
             startingGroup = spriteBusiness.GetGroupByName(SpritesGroupEnum.resident0);

@@ -2,11 +2,11 @@
 {
     public enum ObjectType
     {
-        terrain, 
+        terrain,
         forest,
         water,
         network,
         garden,
-        building        
+        building
     }
 }

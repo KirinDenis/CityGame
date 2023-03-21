@@ -1,6 +1,4 @@
-﻿using System.CodeDom;
-
-namespace CityGame.DTOs.Enum
+﻿namespace CityGame.DTOs.Enum
 {
     /// <summary>
     /// Game object sprite's groups enum
@@ -76,7 +74,7 @@ namespace CityGame.DTOs.Enum
         public const string industrial7 = "industrial7";
         public const string industrial8 = "industrial8";
         public const string industrial9 = "industrial9";
-        
+
         public const string policedepartment = "policedepartment";
         public const string firedepartment = "firedepartment";
 
@@ -105,7 +103,7 @@ namespace CityGame.DTOs.Enum
         public const string select = "select";
         public const string coast = "coast";
 
-        public static string[] groups = { terrain, water , forest, road, rail, wire, cross,
+        public static readonly string[] groups = { terrain, water , forest, road, rail, wire, cross,
             resident0,
             resident1,
             resident2,
@@ -126,7 +124,7 @@ namespace CityGame.DTOs.Enum
             resident16,
             resident17,
             resident18,
-            
+
 
             comercial0,
             comercial1,
@@ -187,7 +185,7 @@ namespace CityGame.DTOs.Enum
             strange7,
             select,
             coast
-        }; 
+        };
 
         /*
         public static string ByObjectType(ObjectType objectType)
@@ -206,30 +204,21 @@ namespace CityGame.DTOs.Enum
         }
         */
 
-       public static ObjectType GetObjectTypeByGroupName(string groupName)
+        public static ObjectType GetObjectTypeByGroupName(string groupName)
         {
-            switch(groupName)
+            return groupName switch
             {
-                case road:
-                case rail:
-                case wire:
-                    return ObjectType.network; 
-                case terrain:
-                case coast:                
-                    return ObjectType.terrain;
-                case forest:
-                    return ObjectType.forest;
-                case water:
-                    return ObjectType.water;
-                default:
-                    return ObjectType.building;
-
-            }
+                road or rail or wire => ObjectType.network,
+                terrain or coast => ObjectType.terrain,
+                forest => ObjectType.forest,
+                water => ObjectType.water,
+                _ => ObjectType.building,
+            };
         }
 
         public static bool CheckGroupName(string groupName)
         {
-            foreach(string group in groups)
+            foreach (string group in groups)
             {
                 if (group.ToLower().Equals(groupName.ToLower()))
                 {

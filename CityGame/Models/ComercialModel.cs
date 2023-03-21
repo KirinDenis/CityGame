@@ -6,9 +6,9 @@ using System.Windows;
 namespace CityGame.Models
 {
     internal class ComercialModel : GameObjectModel
-    {        
+    {
         public ComercialModel(SpriteBusiness spriteBusiness, TerrainModel terrainModel) : base(spriteBusiness, terrainModel)
-        {        
+        {
             startingGroup = spriteBusiness.GetGroupByName(SpritesGroupEnum.comercial0);
         }
         protected override void LiveCycle(GameObjectDTO gameObject)

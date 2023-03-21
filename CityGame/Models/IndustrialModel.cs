@@ -8,7 +8,7 @@ namespace CityGame.Models
     internal class IndustrialModel : GameObjectModel
     {
         public IndustrialModel(SpriteBusiness spriteBusiness, TerrainModel terrainModel) : base(spriteBusiness, terrainModel)
-        {        
+        {
             startingGroup = spriteBusiness.GetGroupByName(SpritesGroupEnum.industrial0);
         }
         protected override void LiveCycle(GameObjectDTO gameObject)

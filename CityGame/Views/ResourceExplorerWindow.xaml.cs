@@ -44,13 +44,13 @@ namespace CityGame
     /// </summary>
     public partial class ResourceExplorerWindow : Window
     {
-        private SpriteBusiness spriteBusiness = new SpriteBusiness();
+        private readonly SpriteBusiness spriteBusiness = new SpriteBusiness();
 
-        private Image[,] groupsPreviewImages = new Image[GameConsts.GroupSize, GameConsts.GroupSize];
+        private readonly Image[,] groupsPreviewImages = new Image[GameConsts.GroupSize, GameConsts.GroupSize];
 
         private bool spriteEditMode = false;
-        
-        private List<Border?> groupSelectorBorders = new List<Border?>();
+
+        private readonly List<Border?> groupSelectorBorders = new List<Border?>();
 
         /// <summary>
         /// Sprite step for resource image view
@@ -60,15 +60,15 @@ namespace CityGame
         private SolidColorBrush brush = new SolidColorBrush(Colors.Yellow);
         private ColorAnimation animation = new ColorAnimation(Colors.Yellow, Color.FromArgb(0x00, 0xFF, 0xFF, 0xFF), new Duration(TimeSpan.FromSeconds(2)));
 
-        private GroupDTO? selectedGroup = null;
-        private PositionDTO? selectedPosition = null;
+        private GroupDTO? selectedGroup = new GroupDTO();
+        private PositionDTO selectedPosition = new PositionDTO();
 
         private int animationFrameCount = 0;
         private WriteableBitmap? animationPriviewBitmap;
 
-        Func<bool> EngineReady = delegate ()
+        readonly Func<bool> EngineReady = delegate ()
         {
-            return SpriteRepository.ResourceInfo != null ? true : false;
+            return SpriteRepository.ResourceInfo != null;
         };
 
         public ResourceExplorerWindow()
@@ -116,7 +116,7 @@ namespace CityGame
                 {
                     for (int y = 0; y < SpriteRepository.ResourceInfo.CountY; y++)
                     {
-                        Int32Rect rect = new Int32Rect(x * (SpriteRepository.ResourceInfo.SpriteSize + SP), y * (SpriteRepository.ResourceInfo.SpriteSize + SP), SpriteRepository.ResourceInfo.SpriteSize + SP, SpriteRepository.ResourceInfo.SpriteSize + SP);
+                        Int32Rect rect = new(x * (SpriteRepository.ResourceInfo.SpriteSize + SP), y * (SpriteRepository.ResourceInfo.SpriteSize + SP), SpriteRepository.ResourceInfo.SpriteSize + SP, SpriteRepository.ResourceInfo.SpriteSize + SP);
                         bitmapSource.WritePixels(rect, spriteBackground, (SpriteRepository.ResourceInfo.SpriteSize + SP) * 4, 0);
 
                         rect = new Int32Rect(x * (SpriteRepository.ResourceInfo.SpriteSize + SP) + (SP >> 1), y * (SpriteRepository.ResourceInfo.SpriteSize + SP) + (SP >> 1), SpriteRepository.ResourceInfo.SpriteSize, SpriteRepository.ResourceInfo.SpriteSize);
@@ -190,7 +190,7 @@ namespace CityGame
                 ErrorTextBlock.Visibility = Visibility.Visible;
             }
         }
-        
+
         private PositionDTO? GetSpritePositionByMouse(MouseEventArgs e)
         {
             if ((!EngineReady()) || (SpriteRepository.ResourceInfo == null))
@@ -307,6 +307,7 @@ namespace CityGame
                 && (selectedGroup.Sprites[AnimationFrameComboBox.SelectedIndex] != null)
                 && (selectedGroup.Sprites[AnimationFrameComboBox.SelectedIndex].Sprites != null)
                 )
+
             {
                 PositionDTO groupPosition = (PositionDTO)((TextBlock)sender).Tag;
 
@@ -323,14 +324,34 @@ namespace CityGame
                         }
                         if (AnimationFrameComboBox.SelectedIndex != -1)
                         {
-                            selectedGroup.Sprites[AnimationFrameComboBox.SelectedIndex].Sprites[groupPosition.x, groupPosition.y] = selectedPosition;
+                            int index = AnimationFrameComboBox.SelectedIndex;
+                            if ((selectedGroup != null) && (selectedGroup?.Sprites != null)
+                                && (selectedGroup?.Sprites?[index] != null)
+                                && (selectedGroup?.Sprites?[index]?.Sprites != null)
+                                && (selectedGroup?.Sprites?[index]?.Sprites?[groupPosition.x, groupPosition.y] != null)
+                                )
+                            {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+                                selectedGroup.Sprites[index].Sprites[groupPosition.x, groupPosition.y] = selectedPosition;
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+                            }
                         }
                     }
                 }
                 else
                 if (e.RightButton == MouseButtonState.Pressed)
                 {
-                    selectedGroup.Sprites[AnimationFrameComboBox.SelectedIndex].Sprites[groupPosition.x, groupPosition.y] = null;
+                    int index = AnimationFrameComboBox.SelectedIndex;
+                    if ((selectedGroup != null) && (selectedGroup?.Sprites != null)
+                        && (selectedGroup?.Sprites?[index] != null)
+                        && (selectedGroup?.Sprites?[index]?.Sprites != null)
+                        && (selectedGroup?.Sprites?[index]?.Sprites?[groupPosition.x, groupPosition.y] != null)
+                        )
+                    {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+                        selectedGroup.Sprites[AnimationFrameComboBox.SelectedIndex].Sprites[groupPosition.x, groupPosition.y] = null;
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+                    }
                 }
                 spriteBusiness.SetGroups();
                 RefreshGroupsList();
@@ -340,7 +361,7 @@ namespace CityGame
 
         private void Timer_Tick(object? sender, EventArgs e)
         {
-            if (!EngineReady())
+            if ((!EngineReady()) || (SpriteRepository.ResourceInfo == null))
             {
                 return;
             }
@@ -372,7 +393,7 @@ namespace CityGame
                     {
                         Int32Rect rect = new Int32Rect(x * SpriteRepository.ResourceInfo.SpriteSize, y * SpriteRepository.ResourceInfo.SpriteSize, SpriteRepository.ResourceInfo.SpriteSize, SpriteRepository.ResourceInfo.SpriteSize);
 
-                        byte[]? pixels = SpriteRepository.GetPixels(sprites.Sprites[x, y]);
+                        byte[]? pixels = SpriteRepository.GetPixels(sprites?.Sprites?[x, y]);
 
                         if (pixels != null)
                         {
@@ -399,7 +420,7 @@ namespace CityGame
         /// <param name="e"></param>
         private void ResourceImage_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (!EngineReady())
+            if ((!EngineReady()) || (SpriteRepository.ResourceInfo == null))
             {
                 return;
             }
@@ -444,7 +465,7 @@ namespace CityGame
                 }
 
                 //Resourve image selector
-                Point actualMargin = ResourceImage.TransformToAncestor(MainGrid).Transform(new Point(0, 0));             
+                Point actualMargin = ResourceImage.TransformToAncestor(MainGrid).Transform(new Point(0, 0));
                 actualMargin.Y -= MainGrid.RowDefinitions[0].ActualHeight;
 
                 double actualSpriteSizeInPixels = ResourceImage.ActualWidth / SpriteRepository.ResourceInfo.CountX;
@@ -482,7 +503,7 @@ namespace CityGame
             RefreshGroupSprites(selectedGroup);
         }
 
-        private void GroupItem_Selected(object sender, RoutedEventArgs e)
+        private void GroupItem_Selected(object sender, RoutedEventArgs? e)
         {
             for (int i = 0; i < groupSelectorBorders.Count; i++)
             {
@@ -510,7 +531,7 @@ namespace CityGame
                     {
                         for (int y = 0; y < groupSprites?.Sprites?.GetLength(1); y++)
                         {
-                            if ((groupSprites.Sprites[x, y] != null) && (SpriteRepository.ResourceInfo != null))
+                            if ((groupSprites.Sprites != null) && (groupSprites.Sprites[x, y] != null) && (SpriteRepository.ResourceInfo != null))
                             {
                                 Border border = new Border();
 
@@ -522,7 +543,9 @@ namespace CityGame
                                 actualMargin.X -= MainGrid.ColumnDefinitions[0].ActualWidth;
                                 actualMargin.Y -= MainGrid.RowDefinitions[0].ActualHeight;
 
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                                 border.Margin = new Thickness(groupSprites.Sprites[x, y].x * WH + actualMargin.X, groupSprites.Sprites[x, y].y * WH + actualMargin.Y, 0, 0);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                                 border.HorizontalAlignment = HorizontalAlignment.Left;
                                 border.VerticalAlignment = VerticalAlignment.Top;
                                 border.SetValue(Grid.ColumnProperty, 1);
@@ -669,6 +692,11 @@ namespace CityGame
 
         private void AutoSelectSpritesButton_Click(object sender, RoutedEventArgs e)
         {
+            if ((!EngineReady()) || (SpriteRepository.ResourceInfo == null))
+            {
+                return;
+            }
+
             if ((selectedPosition != null) && (selectedGroup != null))
             {
                 int offset = selectedPosition.y * SpriteRepository.ResourceInfo.CountX + selectedPosition.x;
@@ -684,14 +712,19 @@ namespace CityGame
                         y = (ushort)(i / SpriteRepository.ResourceInfo.CountX)
                     };
 
-                    if (selectedGroup.Sprites.Count == 0)
+                    if (selectedGroup?.Sprites?.Count == 0)
                     {
                         selectedGroup.Sprites.Add(new GroupSpritesDTO());
                         AnimationFrameComboBox.Items.Add(1);
                         AnimationFrameComboBox.SelectedIndex = 0;
                     }
 
-                    selectedGroup.Sprites[AnimationFrameComboBox.SelectedIndex].Sprites[gx, gy] = selPposition;
+                    if (selectedGroup?.Sprites?[AnimationFrameComboBox.SelectedIndex]?.Sprites?[gx, gy] != null)
+                    {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+                        selectedGroup.Sprites[AnimationFrameComboBox.SelectedIndex].Sprites[gx, gy] = selPposition;
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+                    }
                     gx++;
                     if (gx > 2)
                     {

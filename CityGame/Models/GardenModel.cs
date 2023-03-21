@@ -5,7 +5,7 @@ using CityGame.Graphics;
 namespace CityGame.Models
 {
     internal class GardenModel : GameObjectModel
-    {        
+    {
         public GardenModel(SpriteBusiness spriteBusiness, TerrainModel terrainModel) : base(spriteBusiness, terrainModel)
         {
             startingGroup = spriteBusiness.GetGroupByName(SpritesGroupEnum.garden);

@@ -40,7 +40,6 @@ OWLOS распространяется в надежде, что она буде
 --------------------------------------------------------------------------------------*/
 
 
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -117,7 +116,7 @@ namespace CityGame.Graphics
 
             byte[] array = new byte[16 * 16];
             System.Windows.Int32Rect rect = new System.Windows.Int32Rect(0, 0, 16, 16);
-            
+
             BitmapImage bitmap = GetBlock(x, y);
             bitmap.CopyPixels(rect, array, 16, 0);
 
@@ -155,7 +154,7 @@ namespace CityGame.Graphics
                     source.Clone(new Rectangle(x * iconsSizeInPixels, y * iconsSizeInPixels, iconsSizeInPixels, iconsSizeInPixels), source.PixelFormat).Save(memory, System.Drawing.Imaging.ImageFormat.Png);
                     memory.Position = 0;
                     bitmapimage = new BitmapImage();
-                    
+
 
                     bitmapimage.BeginInit();
                     bitmapimage.StreamSource = memory;

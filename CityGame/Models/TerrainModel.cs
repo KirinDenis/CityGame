@@ -268,7 +268,7 @@ namespace CityGame.Models
 
         protected Func<TerrainModel, ushort, ushort, int[,], TerrainType, GroupSpritesDTO, GroupSpritesDTO, bool> PutTerrainBlock = delegate (TerrainModel terrainModel, ushort x, ushort y, int[,] sourceTerraing, TerrainType groupType, GroupSpritesDTO groupSprites, GroupSpritesDTO borderSprites)
         {
-            if ((terrainModel == null) 
+            if ((terrainModel == null)
             || (borderSprites == null) || (borderSprites.Sprites == null)
             || (groupSprites == null) || (groupSprites.Sprites == null)
             || (terrainModel.terrain == null)

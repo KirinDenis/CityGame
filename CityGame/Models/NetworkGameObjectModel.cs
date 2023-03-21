@@ -1,7 +1,6 @@
 ﻿using CityGame.Data.DTO;
 using CityGame.DTOs.Enum;
 using CityGame.Graphics;
-using System.Collections.Generic;
 
 namespace CityGame.Models
 {
@@ -17,20 +16,20 @@ namespace CityGame.Models
             if ((spriteBusiness == null) || (startingGroup == null))
             {
                 return FS;
-            }    
+            }
             int ox = 0;
             for (ushort tx = CLeft(x); tx < CRight(x) + 1; tx++, ox++)
             {
                 int oy = 0;
                 for (ushort ty = CLeft(y); ty < CRight(y) + 1; ty++, oy++)
                 {
-                    if (!terrainModel.TestRange(new PositionDTO() { x = tx, y = ty}))
+                    if (!terrainModel.TestRange(new PositionDTO() { x = tx, y = ty }))
                     {
                         continue;
-                    }    
+                    }
 
                     FS[ox, oy] = false;
-                    
+
                     if ((startingGroup.Sprites != null) && (startingGroup.Sprites[0] != null) && (startingGroup.Sprites[0].Sprites != null))
                     {
                         PositionDTO?[,]? positions = startingGroup.Sprites[0].Sprites;

@@ -90,7 +90,7 @@ namespace CityGame.Graphics
                     SpriteSize = spriteSize
                 };
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 LastError = e.Message;
             }
@@ -144,7 +144,7 @@ namespace CityGame.Graphics
             }
         }
 
-            public static BitmapImage? GetSprite(int x, int y)
+        public static BitmapImage? GetSprite(int x, int y)
         {
             if ((ResourceInfo == null) || (x >= ResourceInfo.CountX) || (y >= ResourceInfo.CountY))
             {

@@ -12,8 +12,8 @@ namespace CityGame.Models
     public class CityGameEngine
     {
         private string _cityName = "Where the streets have no name";
-        public string cityName 
-            { get { return _cityName; } set { _cityName = value; } }
+        public string cityName
+        { get { return _cityName; } set { _cityName = value; } }
 
         private int _size = GameConsts.DefaultTerrainSize;
         public int size { get { return _size; } set { _size = value; } }
@@ -64,11 +64,11 @@ namespace CityGame.Models
             {
                 return terrainModel.terrainBitmap;
             }
-            else 
+            else
             {
                 return null;
-            } 
-                
+            }
+
         }
 
         public WriteableBitmap? GetMapBitmap()
@@ -77,10 +77,10 @@ namespace CityGame.Models
             {
                 return terrainModel.mapBitmap;
             }
-            else 
+            else
             {
                 return null;
-            }                 
+            }
         }
 
         public void GenerateTerrain()

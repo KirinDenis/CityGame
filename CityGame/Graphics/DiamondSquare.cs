@@ -11,9 +11,9 @@ namespace CityGame.Graphics
 {
     public class DiamondSquare
     {
-        private int terrainSize;
-        private int roughness;
-        private Random rnd = new Random();
+        private readonly int terrainSize;
+        private readonly int roughness;
+        private readonly Random rnd = new Random();
         private double[,]? t;
 
         public DiamondSquare(int terrainSize, int roughness)
@@ -29,8 +29,8 @@ namespace CityGame.Graphics
             if (t == null)
             {
                 return;
-            }            
-            t[x, y] = (t[x1, y1] + t[x2, y2] + t[x1, y2] + t[x2, y1] + rnd.NextDouble()) / 5.0f;            
+            }
+            t[x, y] = (t[x1, y1] + t[x2, y2] + t[x1, y2] + t[x2, y1] + rnd.NextDouble()) / 5.0f;
         }
 
         private void SquareStep(int x1, int y1, int x2, int y2, int halfSide)
@@ -116,11 +116,11 @@ namespace CityGame.Graphics
                             //SquareStep(x, y, x + sideLength, y + sideLength, halfSide);
                             //^^^this generate flat terrain
                             //sum of square
-                            
+
                             //NOTE: this generate terrain with sea on righ buttom terrain side
                             sum = (t[x, y] + t[x + sideLength, y + sideLength] + t[x, y + sideLength] + t[x + sideLength, y] + t[x + halfSide, y + halfSide]) / 5.0f;
                             //point 1
-                            t[(x + sideLength) /2, y] = (sum + rnd.NextDouble()) / 2.0f;
+                            t[(x + sideLength) / 2, y] = (sum + rnd.NextDouble()) / 2.0f;
 
                             //point 2
                             t[x + sideLength, (y + sideLength) / 2] = (sum + rnd.NextDouble()) / 2.0f;
@@ -130,7 +130,7 @@ namespace CityGame.Graphics
 
                             //point 4
                             t[x, (y + sideLength) / 2] = (sum + rnd.NextDouble()) / 2.0f;
-                            
+
                         }
                         catch
                         {

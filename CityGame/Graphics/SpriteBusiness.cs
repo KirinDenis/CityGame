@@ -1,11 +1,9 @@
-﻿using CityGame.DTOs.Enum;
+﻿using CityGame.Data.DTO;
+using CityGame.DTOs.Enum;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Windows.Controls;
-using System.Windows;
-using CityGame.Data.DTO;
 
 namespace CityGame.Graphics
 {
@@ -67,7 +65,7 @@ namespace CityGame.Graphics
                     _groups[i].Name = _groups[i]?.Name?.ToLower();
                 }
             }
-            
+
             if (foundNotExists)
             {
                 SetGroups();

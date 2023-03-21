@@ -1,16 +1,8 @@
-﻿using CityGame.DTOs;
-using CityGame.DTOs.Enum;
-using CityGame.Graphics;
-using CityGame.Models.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace CityGame.Models
 {
-    public class BaseModel 
+    public class BaseModel
     {
         private const int left = -1;
         private const int top = -1;

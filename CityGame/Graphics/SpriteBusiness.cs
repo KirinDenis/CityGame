@@ -116,9 +116,9 @@ namespace CityGame.Graphics
                         animationFrame = 0;
                     }
 
-                    if (groupDTO.Sprites.Count > animationFrame)
+                    if (groupDTO.Frames.Count > animationFrame)
                     {
-                        return groupDTO.Sprites[animationFrame];
+                        return groupDTO.Frames[animationFrame];
                     }
                 }
             }
@@ -137,7 +137,7 @@ namespace CityGame.Graphics
             {
                 foreach (GroupDTO group in groups)
                 {
-                    foreach (GroupSpritesDTO groupSprites in group.Sprites)
+                    foreach (GroupSpritesDTO groupSprites in group.Frames)
                     {
                         if ((groupSprites == null) || (groupSprites.Sprites == null))
                         {

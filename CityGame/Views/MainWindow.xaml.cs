@@ -44,21 +44,21 @@ namespace CityGame
     /// </summary>
     public partial class MainWindow : Window
     {
-        private int terrainSize = 200;
+        private readonly int terrainSize = 200;
 
-        private CityGameEngine? cityGameEngine;
+        private readonly CityGameEngine? cityGameEngine;
 
-        private SpriteBusiness spriteBusiness = new SpriteBusiness();
+        private readonly SpriteBusiness spriteBusiness = new();
 
-        private DrawingVisual drawingVisual = new DrawingVisual();
+        private readonly DrawingVisual drawingVisual = new();
 
         public GroupDTO? selectedGroup;
 
-        private Image[,] previewImages = new Image[GameConsts.GroupSize, GameConsts.GroupSize];
+        private readonly Image[,] previewImages = new Image[GameConsts.GroupSize, GameConsts.GroupSize];
 
         private Button? saveDashboardButton = null;
 
-        private int zoom = 2;
+        private readonly int zoom = 2;
 
         public MainWindow()
         {
@@ -110,27 +110,23 @@ namespace CityGame
 
         private void CityGameEngine_TerrainRenderCompleted(object? sender, EventArgs e)
         {
-            using (DrawingContext drawingContext = drawingVisual.RenderOpen())
+            using DrawingContext drawingContext = drawingVisual.RenderOpen();
+            if (cityGameEngine != null)
             {
-                if (cityGameEngine != null)
-                {
-                    drawingContext.DrawImage(cityGameEngine.GetTerrainBitmap(), new Rect(0, 0, cityGameEngine.GetTerrainSize(), cityGameEngine.GetTerrainSize()));
-                    drawingContext.Close();
-                    TerrainImage.Source = new DrawingImage(drawingVisual.Drawing);
-                }
+                drawingContext.DrawImage(cityGameEngine.GetTerrainBitmap(), new Rect(0, 0, cityGameEngine.GetTerrainSize(), cityGameEngine.GetTerrainSize()));
+                drawingContext.Close();
+                TerrainImage.Source = new DrawingImage(drawingVisual.Drawing);
             }
         }
 
         private void CityGameEngine_MapRenderCompleted(object? sender, EventArgs e)
         {
-            using (DrawingContext drawingContext = drawingVisual.RenderOpen())
+            using DrawingContext drawingContext = drawingVisual.RenderOpen();
+            if (cityGameEngine != null)
             {
-                if (cityGameEngine != null)
-                {
-                    drawingContext.DrawImage(cityGameEngine.GetMapBitmap(), new Rect(0, 0, cityGameEngine.GetTerrainSize(), cityGameEngine.GetTerrainSize()));
-                    drawingContext.Close();
-                    MapImage.Source = new DrawingImage(drawingVisual.Drawing);
-                }
+                drawingContext.DrawImage(cityGameEngine.GetMapBitmap(), new Rect(0, 0, cityGameEngine.GetTerrainSize(), cityGameEngine.GetTerrainSize()));
+                drawingContext.Close();
+                MapImage.Source = new DrawingImage(drawingVisual.Drawing);
             }
         }
         private void ResourceExplorerButton_Click(object sender, RoutedEventArgs e)
@@ -237,7 +233,7 @@ namespace CityGame
                                     previewImages[px, py].Source = previewImages[px, py].Tag as ImageSource;
                                     break;
                                 default:
-                                    previewImages[px, py].Source = SpriteRepository.GetSprite(spriteBusiness.GetGroupByName(SpritesGroupEnum.select)?.Sprites?[0]?.Sprites?[0, 0]);
+                                    previewImages[px, py].Source = SpriteRepository.GetSprite(spriteBusiness.GetGroupByName(SpritesGroupEnum.select)?.Frames?[0]?.Sprites?[0, 0]);
                                     break;
                             }
                         }
@@ -299,7 +295,7 @@ namespace CityGame
                             previewImages[x, y].Tag = null;
                         }
                     }
-                    previewImages[0, 0].Source = SpriteRepository.GetSprite(selectedGroup?.Sprites?[0]?.Sprites?[4, 0]);
+                    previewImages[0, 0].Source = SpriteRepository.GetSprite(selectedGroup?.Frames?[0]?.Sprites?[4, 0]);
                     previewImages[0, 0].Tag = previewImages[0, 0].Source;
                 }
                 else
@@ -309,7 +305,7 @@ namespace CityGame
                     {
                         for (int y = 0; y < GameConsts.GroupSize; y++)
                         {
-                            previewImages[x, y].Source = SpriteRepository.GetSprite(selectedGroup?.Sprites?[0]?.Sprites?[x, y]);
+                            previewImages[x, y].Source = SpriteRepository.GetSprite(selectedGroup?.Frames?[0]?.Sprites?[x, y]);
                             previewImages[x, y].Tag = previewImages[x, y].Source;
                         }
                     }
@@ -319,8 +315,7 @@ namespace CityGame
 
         private void BuildButton_Click(object sender, RoutedEventArgs e)
         {
-            Button? button = sender as Button;
-            if (button != null)
+            if (sender is Button button)
             {
                 SelectGroup(spriteBusiness.GetGroupByName((string)button.Tag));
 
@@ -336,8 +331,7 @@ namespace CityGame
 
         private void BuildMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            MenuItem? menuItem = sender as MenuItem;
-            if (menuItem != null)
+            if (sender is MenuItem menuItem)
             {
                 SelectGroup(spriteBusiness.GetGroupByName((string)menuItem.Tag));
 

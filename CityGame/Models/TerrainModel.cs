@@ -78,10 +78,10 @@ namespace CityGame.Models
         public bool PutSprite(ushort x, ushort y, GroupDTO? group, byte animationFrame, int spriteX, int spriteY)
         {
 
-            if ((group == null) || (group?.Sprites.Count <= animationFrame) || (string.IsNullOrEmpty(group?.Name))
-                || (group.Sprites == null) || (group.Sprites == null) || (group.Sprites[animationFrame] == null)
-                || (group.Sprites[animationFrame].Sprites == null)
-                || (group.Sprites[animationFrame].Sprites?[spriteX, spriteY] == null)
+            if ((group == null) || (group?.Frames.Count <= animationFrame) || (string.IsNullOrEmpty(group?.Name))
+                || (group.Frames == null) || (group.Frames == null) || (group.Frames[animationFrame] == null)
+                || (group.Frames[animationFrame].Sprites == null)
+                || (group.Frames[animationFrame].Sprites?[spriteX, spriteY] == null)
                 || (x >= terrainSize) || (y >= terrainSize)
                 || (terrain == null)
                 || (SpriteRepository.ResourceInfo == null)
@@ -90,7 +90,7 @@ namespace CityGame.Models
                 return false;
             }
 
-            GroupSpritesDTO? sprites = group.Sprites[animationFrame];
+            GroupSpritesDTO? sprites = group.Frames[animationFrame];
 
             if (sprites == null)
             {
@@ -153,7 +153,7 @@ namespace CityGame.Models
                 return false;
             }
 
-            if (group?.Sprites.Count - 1 < animationFrame)
+            if (group?.Frames.Count - 1 < animationFrame)
             {
                 return false;
             }
@@ -168,9 +168,9 @@ namespace CityGame.Models
                 for (ushort sy = 0; sy < group?.Height; sy++)
                 {
 
-                    if (group?.Sprites?[animationFrame]?.Sprites?[sx, sy] != null)
+                    if (group?.Frames?[animationFrame]?.Sprites?[sx, sy] != null)
                     {
-                        //   terrain[x + sx, y + sy] = group?.Sprites[animationFrame].Sprites[sx, sy];
+                        //   terrain[x + sx, y + sy] = group?.Frames[animationFrame].Sprites[sx, sy];
                         PutSprite((ushort)(x + sx), (ushort)(y + sy), group, animationFrame, sx, sy);
                     }
                 }

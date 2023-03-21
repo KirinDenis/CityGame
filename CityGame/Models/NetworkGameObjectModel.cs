@@ -30,9 +30,9 @@ namespace CityGame.Models
 
                     FS[ox, oy] = false;
 
-                    if ((startingGroup.Sprites != null) && (startingGroup.Sprites[0] != null) && (startingGroup.Sprites[0].Sprites != null))
+                    if ((startingGroup.Frames != null) && (startingGroup.Frames[0] != null) && (startingGroup.Frames[0].Sprites != null))
                     {
-                        PositionDTO?[,]? positions = startingGroup.Sprites[0].Sprites;
+                        PositionDTO?[,]? positions = startingGroup.Frames[0].Sprites;
                         if (positions != null)
                         {
                             foreach (PositionDTO? position in positions)
@@ -57,13 +57,13 @@ namespace CityGame.Models
             //check previos sprite 
             GroupDTO? previosGroup = spriteBusiness.GetGroupBySpritePosition(previosSptite);
             GroupDTO? cross = spriteBusiness.GetGroupByName(SpritesGroupEnum.cross);
-            if ((previosGroup != null) && (cross != null) && (cross.Sprites != null) && (cross.Sprites[0] != null) && (cross.Sprites[0].Sprites != null))
+            if ((previosGroup != null) && (cross != null) && (cross.Frames != null) && (cross.Frames[0] != null) && (cross.Frames[0].Sprites != null))
             {
                 if ((spriteBusiness.GetObjectTypeByGrop(previosGroup) == ObjectType.network)
                     ||
                     (spriteBusiness.GetObjectTypeByGrop(previosGroup) == ObjectType.water))
                 {
-                    PositionDTO?[,]? positions = cross.Sprites[0].Sprites;
+                    PositionDTO?[,]? positions = cross.Frames[0].Sprites;
                     if (positions != null)
                     {
                         foreach (PositionDTO? position in positions)
@@ -82,15 +82,15 @@ namespace CityGame.Models
                             {
                                 if (previosGroup.Name.Equals(SpritesGroupEnum.rail))
                                 {
-                                    if ((previosGroup?.Sprites[0]?.Sprites?[3, 0]?.x == terrainModel?.terrain?[x, y]?.x)
+                                    if ((previosGroup?.Frames[0]?.Sprites?[3, 0]?.x == terrainModel?.terrain?[x, y]?.x)
                                         &&
-                                        (previosGroup?.Sprites[0]?.Sprites?[3, 0]?.y == terrainModel?.terrain?[x, y]?.y))
+                                        (previosGroup?.Frames[0]?.Sprites?[3, 0]?.y == terrainModel?.terrain?[x, y]?.y))
                                     {
-                                        spritePosition = new PositionDTO() { x = 3, y = 2 }; // startingGroup?.Sprites[0].Sprites[3, 2];
+                                        spritePosition = new PositionDTO() { x = 3, y = 2 }; // startingGroup?.Frames[0].Sprites[3, 2];
                                     }
                                     else
                                     {
-                                        //spritePosition = startingGroup?.Sprites[0].Sprites[4, 2];
+                                        //spritePosition = startingGroup?.Frames[0].Sprites[4, 2];
                                         spritePosition = new PositionDTO() { x = 4, y = 2 };
                                     }
                                     //terrainModel.PutSprite(x, y, terrainModel.terrain[x, y].x, terrainModel.terrain[x, y].y);
@@ -100,16 +100,16 @@ namespace CityGame.Models
                                 else
                                 if (previosGroup.Name.Equals(SpritesGroupEnum.road))
                                 {
-                                    if ((previosGroup?.Sprites[0]?.Sprites?[3, 0]?.x == terrainModel?.terrain?[x, y]?.x)
+                                    if ((previosGroup?.Frames[0]?.Sprites?[3, 0]?.x == terrainModel?.terrain?[x, y]?.x)
                                         &&
-                                        (previosGroup?.Sprites[0]?.Sprites?[3, 0]?.y == terrainModel?.terrain?[x, y]?.y))
+                                        (previosGroup?.Frames[0]?.Sprites?[3, 0]?.y == terrainModel?.terrain?[x, y]?.y))
                                     {
-                                        //spritePosition = startingGroup?.Sprites[0].Sprites[3, 1];
+                                        //spritePosition = startingGroup?.Frames[0].Sprites[3, 1];
                                         spritePosition = new PositionDTO() { x = 3, y = 1 };
                                     }
                                     else
                                     {
-                                        //spritePosition = startingGroup?.Sprites[0].Sprites[4, 1];
+                                        //spritePosition = startingGroup?.Frames[0].Sprites[4, 1];
                                         spritePosition = new PositionDTO() { x = 4, y = 1 };
                                     }
                                     //terrainModel.PutSprite(x, y, terrainModel.terrain[x, y].x, terrainModel.terrain[x, y].y);
@@ -120,16 +120,16 @@ namespace CityGame.Models
                                 else
                                 if (previosGroup.Name.Equals(SpritesGroupEnum.wire))
                                 {
-                                    if ((previosGroup?.Sprites[0]?.Sprites?[3, 0]?.x == terrainModel?.terrain?[x, y]?.x)
+                                    if ((previosGroup?.Frames[0]?.Sprites?[3, 0]?.x == terrainModel?.terrain?[x, y]?.x)
                                         &&
-                                        (previosGroup?.Sprites[0]?.Sprites?[3, 0]?.y == terrainModel?.terrain?[x, y]?.y))
+                                        (previosGroup?.Frames[0]?.Sprites?[3, 0]?.y == terrainModel?.terrain?[x, y]?.y))
                                     {
-                                        //spritePosition = startingGroup?.Sprites[0].Sprites[3, 3];
+                                        //spritePosition = startingGroup?.Frames[0].Sprites[3, 3];
                                         spritePosition = new PositionDTO() { x = 3, y = 3 };
                                     }
                                     else
                                     {
-                                        //spritePosition = startingGroup?.Sprites[0].Sprites[4, 3];
+                                        //spritePosition = startingGroup?.Frames[0].Sprites[4, 3];
                                         spritePosition = new PositionDTO() { x = 4, y = 3 };
                                     }
                                     //terrainModel.PutSprite(x, y, terrainModel.terrain[x, y].x, terrainModel.terrain[x, y].y);
@@ -140,9 +140,9 @@ namespace CityGame.Models
                                 else
                                 if (previosGroup.Name.Equals(SpritesGroupEnum.water))
                                 {
-                                    //spritePosition = startingGroup?.Sprites[0].Sprites[3, 4];
+                                    //spritePosition = startingGroup?.Frames[0].Sprites[3, 4];
                                     spritePosition = new PositionDTO() { x = 3, y = 4 };
-                                    // terrainModel.terrain[x, y] = startingGroup?.Sprites[0].Sprites[4, 4];
+                                    // terrainModel.terrain[x, y] = startingGroup?.Frames[0].Sprites[4, 4];
 
                                     //terrainModel.PutSprite(x, y, terrainModel.terrain[x, y].x, terrainModel.terrain[x, y].y);
                                     //terrainModel.PutSprite(x, y, startingGroup, 0, terrainModel.terrain[x, y].x, terrainModel.terrain[x, y].y);
@@ -154,7 +154,7 @@ namespace CityGame.Models
                     }
                 }
             }
-            //spritePosition = startingGroup?.Sprites[0].Sprites[4, 0];
+            //spritePosition = startingGroup?.Frames[0].Sprites[4, 0];
             spritePosition = new PositionDTO() { x = 4, y = 0 };
 
             int l = 0;
@@ -166,77 +166,77 @@ namespace CityGame.Models
             //Central cross of 4 roads
             if (FS[c, t] & FS[c, b] & FS[l, c] & FS[r, c])
             {
-                //spritePosition = startingGroup?.Sprites[0].Sprites[1, 1];
+                //spritePosition = startingGroup?.Frames[0].Sprites[1, 1];
                 spritePosition = new PositionDTO() { x = 1, y = 1 };
             }
             //Left Right Top cross of 3 roads  
             else
             if (FS[c, t] & FS[l, c] & FS[r, c])
             {
-                //spritePosition = startingGroup?.Sprites[0].Sprites[1, 2];
+                //spritePosition = startingGroup?.Frames[0].Sprites[1, 2];
                 spritePosition = new PositionDTO() { x = 1, y = 2 };
             }
             //Left Right Bottom cross of 3 roads 
             else
             if (FS[c, b] & FS[l, c] & FS[r, c])
             {
-                //spritePosition = startingGroup?.Sprites[0].Sprites[1, 0];
+                //spritePosition = startingGroup?.Frames[0].Sprites[1, 0];
                 spritePosition = new PositionDTO() { x = 1, y = 0 };
             }
             //Left Top Bottom cross of 3 roads 
             else
             if (FS[c, t] & FS[c, b] & FS[l, c])
             {
-                //spritePosition = startingGroup?.Sprites[0].Sprites[2, 1];
+                //spritePosition = startingGroup?.Frames[0].Sprites[2, 1];
                 spritePosition = new PositionDTO() { x = 2, y = 1 };
             }
             //Right Top Bottom cross of 3 roads 
             else
             if (FS[c, t] & FS[c, b] & FS[r, c])
             {
-                //spritePosition = startingGroup?.Sprites[0].Sprites[0, 1];
+                //spritePosition = startingGroup?.Frames[0].Sprites[0, 1];
                 spritePosition = new PositionDTO() { x = 0, y = 1 };
             }
             //Right Top turn of 2 roads 
             else
             if (FS[c, b] & FS[r, c])
             {
-                //spritePosition = startingGroup?.Sprites[0].Sprites[0, 0];
+                //spritePosition = startingGroup?.Frames[0].Sprites[0, 0];
                 spritePosition = new PositionDTO() { x = 0, y = 0 };
             }
             //Left Top turn of 2 roads 
             else
             if (FS[c, b] & FS[l, c])
             {
-                //spritePosition = startingGroup?.Sprites[0].Sprites[2, 0];
+                //spritePosition = startingGroup?.Frames[0].Sprites[2, 0];
                 spritePosition = new PositionDTO() { x = 2, y = 0 };
             }
             //Right Bottom turn of 2 roads 
             else
             if (FS[c, t] & FS[r, c])
             {
-                //spritePosition = startingGroup?.Sprites[0].Sprites[0, 2];
+                //spritePosition = startingGroup?.Frames[0].Sprites[0, 2];
                 spritePosition = new PositionDTO() { x = 0, y = 2 };
             }
             //Left Bottom turn of 2 roads 
             else
             if (FS[c, t] & FS[l, c])
             {
-                //spritePosition = startingGroup?.Sprites[0].Sprites[2, 2];
+                //spritePosition = startingGroup?.Frames[0].Sprites[2, 2];
                 spritePosition = new PositionDTO() { x = 2, y = 2 };
             }
             //Horisontal road
             else
             if (FS[r, c] | FS[l, c])
             {
-                //spritePosition = startingGroup?.Sprites[0].Sprites[3, 0];
+                //spritePosition = startingGroup?.Frames[0].Sprites[3, 0];
                 spritePosition = new PositionDTO() { x = 3, y = 0 };
             }
             //Vertical road
             else
             if (FS[c, t] | FS[c, b])
             {
-                //spritePosition = startingGroup?.Sprites[0].Sprites[4, 0];
+                //spritePosition = startingGroup?.Frames[0].Sprites[4, 0];
                 spritePosition = new PositionDTO() { x = 4, y = 0 };
             }
             //else default single road

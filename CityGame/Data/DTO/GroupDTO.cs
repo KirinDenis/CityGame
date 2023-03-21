@@ -19,7 +19,7 @@ namespace CityGame.Data.DTO
         public ushort CenterX { get; set; } = 1;
         public ushort CenterY { get; set; } = 1;
 
-        public List<GroupSpritesDTO> Sprites { get; set; } = new List<GroupSpritesDTO>();
+        public List<GroupSpritesDTO> Frames { get; set; } = new List<GroupSpritesDTO>();
 
     }
 }

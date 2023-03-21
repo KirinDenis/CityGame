@@ -67,7 +67,7 @@ namespace CityGame.Models
                             {
                                 for (ushort sy = 0; sy < gameObjectDTO?.Group?.Height; sy++)
                                 {
-                                    if (destroyGroup?.Sprites?[destroyStep]?.Sprites?[0, 0] != null)
+                                    if (destroyGroup?.Frames?[destroyStep]?.Sprites?[0, 0] != null)
                                     {
                                         if ((gameObjectDTO != null) && (destroyGroup != null) && (gameObjectDTO.positionDTO != null))
                                         {
@@ -97,9 +97,9 @@ namespace CityGame.Models
                 {
                     foreach (GameObjectDTO gameObject in gameObjects.ToArray())
                     {
-                        if (gameObject.Group?.Sprites.Count > 1)
+                        if (gameObject.Group?.Frames.Count > 1)
                         {
-                            if (gameObject.animationFrame >= gameObject.Group.Sprites.Count)
+                            if (gameObject.animationFrame >= gameObject.Group.Frames.Count)
                             {
                                 gameObject.animationFrame = 1;
                             }

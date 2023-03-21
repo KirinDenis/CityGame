@@ -227,7 +227,7 @@ namespace CityGame
                 }
 
                 //Group sprites with animation frames to TreeViewItem 
-                foreach (GroupSpritesDTO groupSprites in group.Sprites)
+                foreach (GroupSpritesDTO groupSprites in group.Frames)
                 {
                     //Frame tree item
                     TreeViewItem frameItem = new TreeViewItem();
@@ -303,9 +303,9 @@ namespace CityGame
 
         private void GroupSrite_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if ((selectedGroup != null) && (selectedGroup.Sprites != null)
-                && (selectedGroup.Sprites[AnimationFrameComboBox.SelectedIndex] != null)
-                && (selectedGroup.Sprites[AnimationFrameComboBox.SelectedIndex].Sprites != null)
+            if ((selectedGroup != null) && (selectedGroup.Frames != null)
+                && (selectedGroup.Frames[AnimationFrameComboBox.SelectedIndex] != null)
+                && (selectedGroup.Frames[AnimationFrameComboBox.SelectedIndex].Sprites != null)
                 )
 
             {
@@ -315,24 +315,24 @@ namespace CityGame
                 {
                     if (selectedPosition != null)
                     {
-                        if (selectedGroup.Sprites?.Count == 0)
+                        if (selectedGroup.Frames?.Count == 0)
                         {
                             AnimationFrameComboBox.Items.Add(1);
                             AnimationFrameComboBox.SelectedIndex = 0;
-                            selectedGroup.Sprites.Add(new GroupSpritesDTO());
+                            selectedGroup.Frames.Add(new GroupSpritesDTO());
                             spriteBusiness.SetGroups();
                         }
                         if (AnimationFrameComboBox.SelectedIndex != -1)
                         {
                             int index = AnimationFrameComboBox.SelectedIndex;
-                            if ((selectedGroup != null) && (selectedGroup?.Sprites != null)
-                                && (selectedGroup?.Sprites?[index] != null)
-                                && (selectedGroup?.Sprites?[index]?.Sprites != null)
-                                && (selectedGroup?.Sprites?[index]?.Sprites?[groupPosition.x, groupPosition.y] != null)
+                            if ((selectedGroup != null) && (selectedGroup?.Frames != null)
+                                && (selectedGroup?.Frames?[index] != null)
+                                && (selectedGroup?.Frames?[index]?.Sprites != null)
+                                && (selectedGroup?.Frames?[index]?.Sprites?[groupPosition.x, groupPosition.y] != null)
                                 )
                             {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-                                selectedGroup.Sprites[index].Sprites[groupPosition.x, groupPosition.y] = selectedPosition;
+                                selectedGroup.Frames[index].Sprites[groupPosition.x, groupPosition.y] = selectedPosition;
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
                             }
                         }
@@ -342,14 +342,14 @@ namespace CityGame
                 if (e.RightButton == MouseButtonState.Pressed)
                 {
                     int index = AnimationFrameComboBox.SelectedIndex;
-                    if ((selectedGroup != null) && (selectedGroup?.Sprites != null)
-                        && (selectedGroup?.Sprites?[index] != null)
-                        && (selectedGroup?.Sprites?[index]?.Sprites != null)
-                        && (selectedGroup?.Sprites?[index]?.Sprites?[groupPosition.x, groupPosition.y] != null)
+                    if ((selectedGroup != null) && (selectedGroup?.Frames != null)
+                        && (selectedGroup?.Frames?[index] != null)
+                        && (selectedGroup?.Frames?[index]?.Sprites != null)
+                        && (selectedGroup?.Frames?[index]?.Sprites?[groupPosition.x, groupPosition.y] != null)
                         )
                     {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-                        selectedGroup.Sprites[AnimationFrameComboBox.SelectedIndex].Sprites[groupPosition.x, groupPosition.y] = null;
+                        selectedGroup.Frames[AnimationFrameComboBox.SelectedIndex].Sprites[groupPosition.x, groupPosition.y] = null;
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
                     }
                 }
@@ -381,7 +381,7 @@ namespace CityGame
             }
             if (selectedGroup != null)
             {
-                if (animationFrameCount > selectedGroup.Sprites.Count - 1)
+                if (animationFrameCount > selectedGroup.Frames.Count - 1)
                 {
                     animationFrameCount = 0;
                 }
@@ -525,7 +525,7 @@ namespace CityGame
                 SolidColorBrush animatedBrush = new SolidColorBrush();
                 animatedBrush.Color = Color.FromArgb(255, 0, 255, 0);
 
-                foreach (GroupSpritesDTO groupSprites in selectedGroup.Sprites)
+                foreach (GroupSpritesDTO groupSprites in selectedGroup.Frames)
                 {
                     for (int x = 0; x < groupSprites?.Sprites?.GetLength(0); x++)
                     {
@@ -570,7 +570,7 @@ namespace CityGame
                 RefreshGridSizeSelector();
 
                 AnimationFrameComboBox.Items.Clear();
-                for (int i = 0; i < selectedGroup.Sprites.Count; i++)
+                for (int i = 0; i < selectedGroup.Frames.Count; i++)
                 {
                     AnimationFrameComboBox.Items.Add(i + 1);
                 }
@@ -670,11 +670,11 @@ namespace CityGame
         {
             if (selectedGroup != null)
             {
-                selectedGroup.Sprites.Add(new GroupSpritesDTO());
+                selectedGroup.Frames.Add(new GroupSpritesDTO());
                 spriteBusiness.SetGroups();
                 RefreshGroupsList();
                 GroupItem_Selected(SpriteGroupsTreeView.SelectedItem, null);
-                AnimationFrameComboBox.SelectedIndex = selectedGroup.Sprites.Count - 1;
+                AnimationFrameComboBox.SelectedIndex = selectedGroup.Frames.Count - 1;
             }
         }
 
@@ -682,7 +682,7 @@ namespace CityGame
         {
             if (selectedGroup != null)
             {
-                selectedGroup.Sprites.RemoveAt(AnimationFrameComboBox.SelectedIndex);
+                selectedGroup.Frames.RemoveAt(AnimationFrameComboBox.SelectedIndex);
                 spriteBusiness.SetGroups();
                 RefreshGroupsList();
                 GroupItem_Selected(SpriteGroupsTreeView.SelectedItem, null);
@@ -712,17 +712,17 @@ namespace CityGame
                         y = (ushort)(i / SpriteRepository.ResourceInfo.CountX)
                     };
 
-                    if (selectedGroup?.Sprites?.Count == 0)
+                    if (selectedGroup?.Frames?.Count == 0)
                     {
-                        selectedGroup.Sprites.Add(new GroupSpritesDTO());
+                        selectedGroup.Frames.Add(new GroupSpritesDTO());
                         AnimationFrameComboBox.Items.Add(1);
                         AnimationFrameComboBox.SelectedIndex = 0;
                     }
 
-                    if (selectedGroup?.Sprites?[AnimationFrameComboBox.SelectedIndex]?.Sprites?[gx, gy] != null)
+                    if (selectedGroup?.Frames?[AnimationFrameComboBox.SelectedIndex]?.Sprites?[gx, gy] != null)
                     {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-                        selectedGroup.Sprites[AnimationFrameComboBox.SelectedIndex].Sprites[gx, gy] = selPposition;
+                        selectedGroup.Frames[AnimationFrameComboBox.SelectedIndex].Sprites[gx, gy] = selPposition;
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
                     }
                     gx++;

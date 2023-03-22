@@ -345,8 +345,17 @@ namespace CityGame.Models
             forest.Add(spriteBusiness.GetSpritesByGroupName(SpritesGroupEnum.forest, 1));
             forest.Add(spriteBusiness.GetSpritesByGroupName(SpritesGroupEnum.forest, 2));
 
-            DiamondSquareFast diamondSquare = new DiamondSquareFast(terrainSize, roughness);
-            int[,] sourceTerraing = diamondSquare.getData();
+            // DiamondSquareFast diamondSquare = new DiamondSquareFast(terrainSize, roughness);
+            DiamondLands.DiamondSquare diamondSquare = new DiamondLands.DiamondSquare(terrainSize+1, 1568169676);
+            int a;
+            int b;
+            
+            
+            diamondSquare.Generate(out a, out b, 1000, false, false);
+            
+            int[,] sourceTerraing = diamondSquare.M;
+
+            waterLevel =  b / 100;
 
             for (int x = 0; x < terrainSize - 0; x++)
             {

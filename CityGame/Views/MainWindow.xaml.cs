@@ -44,7 +44,7 @@ namespace CityGame
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly int terrainSize = 200;
+        private readonly int terrainSize = 256;
 
         private readonly CityGameEngine? cityGameEngine;
 

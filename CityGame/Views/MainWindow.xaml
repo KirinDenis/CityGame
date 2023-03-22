@@ -72,7 +72,10 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock x:Name="FundsTextBlock" Grid.Column="0" Text="Funds: $20,000" VerticalAlignment="Center" Margin="5,0" Foreground="#FFA8A8A8"/>
+                <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="5,0" Orientation="Horizontal">
+                <TextBlock x:Name="FundsTextBlock" Text="Funds: $" Foreground="#FFA8A8A8"/>
+                <TextBlock x:Name="BudgetValueTextBlock" Text="" Foreground="#FFA8A8A8"/>
+                </StackPanel>
                 <TextBlock x:Name="MessageTextBlock" Grid.Column="1" Text="Build more residentals" VerticalAlignment="Center" Foreground="#FFA8A8A8"/>
                 <TextBlock x:Name="InfoTextBlock" Grid.Column="2" Text="" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0" Foreground="#FFA8A8A8"/>
             </Grid>

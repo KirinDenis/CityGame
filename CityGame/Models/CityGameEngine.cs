@@ -88,7 +88,7 @@ namespace CityGame.Models
             terrainModel.GenerateNewTerrain();
         }
 
-        public bool BuildObject(PositionDTO position, GroupDTO? group)
+        public virtual bool BuildObject(PositionDTO position, GroupDTO? group)
         {
             if (TestPosition(group, position).CanBuild)
             {

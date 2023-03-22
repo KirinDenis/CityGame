@@ -97,27 +97,6 @@ namespace CityGame.Models
                 {
                     foreach (GameObjectDTO gameObject in gameObjects.ToArray())
                     {
-                        if (gameObject.Group?.Frames.Count > 1)
-                        {
-                            if (gameObject.animationFrame >= gameObject.Group.Frames.Count)
-                            {
-                                gameObject.animationFrame = 1;
-                            }
-                            _ = Application.Current.Dispatcher.Invoke(() =>
-                            {
-                                if (!Canceled)
-                                {
-                                    if (gameObject.positionDTO != null)
-                                    {
-                                        terrainModel.BuildObject(gameObject.positionDTO.x, gameObject.positionDTO.y, gameObject.Group, gameObject.animationFrame);
-                                    }
-                                }
-
-                                return Task.CompletedTask;
-                            });
-                            gameObject.animationFrame++;
-
-                        }
                         LiveCycle(gameObject);
 
                     }
@@ -128,7 +107,27 @@ namespace CityGame.Models
 
         protected virtual void LiveCycle(GameObjectDTO gameObject)
         {
+            if (gameObject.Group?.Frames.Count > 1)
+            {
+                if (gameObject.animationFrame >= gameObject.Group.Frames.Count)
+                {
+                    gameObject.animationFrame = 1;
+                }
+                _ = Application.Current.Dispatcher.Invoke(() =>
+                {
+                    if (!Canceled)
+                    {
+                        if (gameObject.positionDTO != null)
+                        {
+                               terrainModel.BuildObject(gameObject.positionDTO.x, gameObject.positionDTO.y, gameObject.Group, gameObject.animationFrame);
+                        }
+                    }
 
+                    return Task.CompletedTask;
+                });
+                gameObject.animationFrame++;
+
+            }
         }
 
         public void Dispose()

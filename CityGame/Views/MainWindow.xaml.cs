@@ -25,6 +25,7 @@ GitHub: https://github.com/KirinDenis/CityGame
 
 --------------------------------------------------------------------------------------*/
 
+using CityGame.Business;
 using CityGame.Data.DTO;
 using CityGame.DTOs.Const;
 using CityGame.DTOs.Enum;
@@ -46,7 +47,7 @@ namespace CityGame
     {
         private readonly int terrainSize = 256;
 
-        private readonly CityGameEngine? cityGameEngine;
+        private readonly GameBusiness? gameBusiness;
 
         private readonly SpriteBusiness spriteBusiness = new();
 
@@ -69,11 +70,12 @@ namespace CityGame
                 return;
             }
 
-            cityGameEngine = new CityGameEngine("new city", terrainSize);
-            cityGameEngine.TerrainRenderCompleted += CityGameEngine_TerrainRenderCompleted;
-            cityGameEngine.MapRenderCompleted += CityGameEngine_MapRenderCompleted;
+            gameBusiness = new GameBusiness("new city", terrainSize);
+            gameBusiness.TerrainRenderCompleted += CityGameEngine_TerrainRenderCompleted;
+            gameBusiness.MapRenderCompleted += CityGameEngine_MapRenderCompleted;
+            gameBusiness.BudgetChanged += GameBusiness_BudgetChanged;
 
-            TerrainImage.Width = TerrainImage.Height = cityGameEngine.GetTerrainSize() * SpriteRepository.ResourceInfo.SpriteSize * zoom;
+            TerrainImage.Width = TerrainImage.Height = gameBusiness.GetTerrainSize() * SpriteRepository.ResourceInfo.SpriteSize * zoom;
 
             TerrainScroll.ScrollToVerticalOffset(TerrainImage.Width / 2.0f);
             TerrainScroll.ScrollToHorizontalOffset(TerrainImage.Height / 2.0f);
@@ -108,12 +110,17 @@ namespace CityGame
             AirPortImage.Source = SpriteRepository.GetDashboard(1, 6);
         }
 
+        private void GameBusiness_BudgetChanged(object? sender, EventArgs e)
+        {
+            BudgetValueTextBlock.Text = gameBusiness.budget.ToString();
+        }
+
         private void CityGameEngine_TerrainRenderCompleted(object? sender, EventArgs e)
         {
             using DrawingContext drawingContext = drawingVisual.RenderOpen();
-            if (cityGameEngine != null)
+            if (gameBusiness != null)
             {
-                drawingContext.DrawImage(cityGameEngine.GetTerrainBitmap(), new Rect(0, 0, cityGameEngine.GetTerrainSize(), cityGameEngine.GetTerrainSize()));
+                drawingContext.DrawImage(gameBusiness.GetTerrainBitmap(), new Rect(0, 0, gameBusiness.GetTerrainSize(), gameBusiness.GetTerrainSize()));
                 drawingContext.Close();
                 TerrainImage.Source = new DrawingImage(drawingVisual.Drawing);
             }
@@ -122,9 +129,9 @@ namespace CityGame
         private void CityGameEngine_MapRenderCompleted(object? sender, EventArgs e)
         {
             using DrawingContext drawingContext = drawingVisual.RenderOpen();
-            if (cityGameEngine != null)
+            if (gameBusiness != null)
             {
-                drawingContext.DrawImage(cityGameEngine.GetMapBitmap(), new Rect(0, 0, cityGameEngine.GetTerrainSize(), cityGameEngine.GetTerrainSize()));
+                drawingContext.DrawImage(gameBusiness.GetMapBitmap(), new Rect(0, 0, gameBusiness.GetTerrainSize(), gameBusiness.GetTerrainSize()));
                 drawingContext.Close();
                 MapImage.Source = new DrawingImage(drawingVisual.Drawing);
             }
@@ -136,7 +143,7 @@ namespace CityGame
 
         private void GenerateMapButton_Click(object sender, RoutedEventArgs e)
         {
-            cityGameEngine?.GenerateTerrain();
+            gameBusiness?.GenerateTerrain();
         }
 
         private void BenchmarkButton_Click(object sender, RoutedEventArgs e)
@@ -151,7 +158,7 @@ namespace CityGame
                     {
                         groupIndex = 0;
                     }
-                    cityGameEngine?.BuildObject(new PositionDTO() { x = x, y = y }, spriteBusiness.groups[groupIndex]);
+                    gameBusiness?.BuildObject(new PositionDTO() { x = x, y = y }, spriteBusiness.groups[groupIndex]);
                     count++;
                 }
             }
@@ -161,11 +168,11 @@ namespace CityGame
 
         private PositionDTO GetTerrainPosition(MouseEventArgs e)
         {
-            if (cityGameEngine == null)
+            if (gameBusiness == null)
             {
                 return new PositionDTO();
             }
-            double actualSpriteSizeInPixels = TerrainImage.ActualWidth / cityGameEngine.GetTerrainSize();
+            double actualSpriteSizeInPixels = TerrainImage.ActualWidth / gameBusiness.GetTerrainSize();
 
             return new PositionDTO()
             {
@@ -180,23 +187,23 @@ namespace CityGame
 
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                cityGameEngine?.BuildObject(p, selectedGroup);
+                gameBusiness?.BuildObject(p, selectedGroup);
             }
             else
             if (e.RightButton == MouseButtonState.Pressed)
             {
-                cityGameEngine?.DestroyObjectAtPosition(p);
+                gameBusiness?.DestroyObjectAtPosition(p);
             }
         }
 
         private void GameViewGrid_MouseMove(object sender, MouseEventArgs e)
         {
-            if (cityGameEngine == null)
+            if (gameBusiness == null)
             {
                 return;
             }
 
-            double actualSpriteSizeInPixels = TerrainImage.DesiredSize.Width / cityGameEngine.GetTerrainSize();
+            double actualSpriteSizeInPixels = TerrainImage.DesiredSize.Width / gameBusiness.GetTerrainSize();
 
             double x = e.GetPosition(TerrainGrid).X - (e.GetPosition(TerrainGrid).X % actualSpriteSizeInPixels);
             double y = e.GetPosition(TerrainGrid).Y - (e.GetPosition(TerrainGrid).Y % actualSpriteSizeInPixels);
@@ -209,7 +216,7 @@ namespace CityGame
 
                 PositionDTO position = GetTerrainPosition(e);
 
-                ObjectType[,]? newPositionMap = cityGameEngine?.TestPosition(selectedGroup, position)?.PositionArea;
+                ObjectType[,]? newPositionMap = gameBusiness?.TestPosition(selectedGroup, position)?.PositionArea;
 
                 for (int px = 0; px < GameConsts.GroupSize; px++)
                 {
@@ -241,7 +248,7 @@ namespace CityGame
                 }
                 if (e.LeftButton == MouseButtonState.Pressed)
                 {
-                    cityGameEngine?.BuildObject(position, selectedGroup);
+                    gameBusiness?.BuildObject(position, selectedGroup);
                 }
             }
             MoveMapSelector();
@@ -262,14 +269,14 @@ namespace CityGame
                 switch (e.Key)
                 {
                     case Key.R: new ResourceExplorerWindow().Show(); break;
-                    case Key.T: cityGameEngine?.GenerateTerrain(); break;
+                    case Key.T: gameBusiness?.GenerateTerrain(); break;
                 }
             }
 
             switch (e.Key)
             {
                 case Key.F2: new ResourceExplorerWindow().Show(); break;
-                case Key.F5: cityGameEngine?.GenerateTerrain(); break;
+                case Key.F5: gameBusiness?.GenerateTerrain(); break;
             }
         }
 

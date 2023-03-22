@@ -346,16 +346,25 @@ namespace CityGame.Models
             forest.Add(spriteBusiness.GetSpritesByGroupName(SpritesGroupEnum.forest, 2));
 
             // DiamondSquareFast diamondSquare = new DiamondSquareFast(terrainSize, roughness);
-            DiamondLands.DiamondSquare diamondSquare = new DiamondLands.DiamondSquare(terrainSize+1, 1568169676);
-            int a;
-            int b;
+
+            DateTime dt = TimeZoneInfo.ConvertTimeToUtc(DateTime.Now);
+
+            DateTime dt1970 = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+
+            TimeSpan tsInterval = dt.Subtract(dt1970);
+          
+            Random random = new Random(Convert.ToInt32(tsInterval.TotalSeconds));
+
+            DiamondLands.DiamondSquare diamondSquare = new DiamondLands.DiamondSquare(terrainSize+1, random.Next() + random.Next());
+            int from;
+            int to;
             
             
-            diamondSquare.Generate(out a, out b, 1000, false, false);
+            diamondSquare.Generate(out from, out to, 1000, true, true);
             
             int[,] sourceTerraing = diamondSquare.M;
 
-            waterLevel =  b / 100;
+            waterLevel = (int)(from / 4);
 
             for (int x = 0; x < terrainSize - 0; x++)
             {

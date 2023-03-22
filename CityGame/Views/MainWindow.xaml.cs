@@ -369,18 +369,38 @@ namespace CityGame
             Point mouse = Mouse.GetPosition(TerrainGrid);
             var zoom = 0.001;
             var scrollMove = 120 * zoom;
-            this.scale.ScaleX += e.Delta * zoom;
-            this.scale.ScaleY += e.Delta * zoom;
+            var scaleMax = 11.2;
+            var scaleMin = 0.28;
+            
             if (e.Delta > 0)
             {
+                scale.ScaleX += e.Delta * zoom;
+                scale.ScaleY += e.Delta * zoom;
                 TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset + mouse.X * scrollMove);
                 TerrainScroll.ScrollToVerticalOffset(TerrainScroll.VerticalOffset + mouse.Y * scrollMove);
+
+                if ((scale.ScaleX >= scaleMax) && (scale.ScaleX >= scaleMax))
+                    {
+                    scale.ScaleX = scaleMax;
+                    scale.ScaleY = scaleMax;
+                    TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset);
+                    TerrainScroll.ScrollToVerticalOffset(TerrainScroll.VerticalOffset);
+                }
             }
             if (e.Delta < 0)
             {
-
+                scale.ScaleX += e.Delta * zoom;
+                scale.ScaleY += e.Delta * zoom;
                 TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset - mouse.X * scrollMove);
                 TerrainScroll.ScrollToVerticalOffset(TerrainScroll.VerticalOffset - mouse.Y * scrollMove);
+
+                if ((scale.ScaleX < scaleMin) && (scale.ScaleY < scaleMin))
+                {
+                    scale.ScaleX = scaleMin;
+                    scale.ScaleY = scaleMin;
+                    TerrainScroll.ScrollToHorizontalOffset(TerrainScroll.HorizontalOffset);
+                    TerrainScroll.ScrollToVerticalOffset(TerrainScroll.VerticalOffset);
+                }
             }
 
         }

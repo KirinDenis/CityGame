@@ -230,6 +230,7 @@
             
 
                 <Image x:Name="MapImage"  RenderOptions.BitmapScalingMode="NearestNeighbor" PreviewMouseDown="MapImage_PreviewMouseDown" />
+                <Canvas x:Name="EcosystemCanvase" />
                 <Border x:Name="MapSelector" HorizontalAlignment="Left" VerticalAlignment="Top" BorderThickness="4,4,4,4" Width="20" Height="20" BorderBrush="#FFF30A0A" />
         </Grid>
         </Border>

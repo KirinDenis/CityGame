@@ -32,10 +32,12 @@ using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 using CityGame.Models;
 using System;
+
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace CityGame
 {
@@ -108,6 +110,35 @@ namespace CityGame
             FireDepartmentImage.Source = SpriteRepository.GetDashboard(1, 4);
             PowerplantImage.Source = SpriteRepository.GetDashboard(1, 5);
             AirPortImage.Source = SpriteRepository.GetDashboard(1, 6);
+
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(2000);
+            timer.Tick += Timer_Tick;
+            timer.Start();
+
+        }
+
+        private void Timer_Tick(object? sender, EventArgs e)
+        {
+            for (int x = 0; x < terrainSize; x++)
+            {
+                for (int y = 0; y < terrainSize; y++)
+                {
+                    if (gameBusiness.ecosystem[x, y].Population > 0)
+                    {
+                        System.Windows.Shapes.Rectangle r = new System.Windows.Shapes.Rectangle();
+                        r.Width = 1;
+                        r.Height = 1;
+                        Canvas.SetLeft(r, x);
+                        Canvas.SetTop(r, y);
+                        r.StrokeThickness = 2;
+                        r.Fill = new SolidColorBrush(Color.FromArgb(0xFF, gameBusiness.ecosystem[x, y].Population, gameBusiness.ecosystem[x, y].Population, gameBusiness.ecosystem[x, y].Population));
+                        r.Stroke = new SolidColorBrush(Color.FromArgb(0xFF, gameBusiness.ecosystem[x, y].Population, gameBusiness.ecosystem[x, y].Population, gameBusiness.ecosystem[x, y].Population));
+                        EcosystemCanvase.Children.Add(r);
+                    }
+                }
+            }
+
         }
 
         private void GameBusiness_BudgetChanged(object? sender, EventArgs e)

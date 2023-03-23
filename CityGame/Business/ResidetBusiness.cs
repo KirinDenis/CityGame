@@ -22,8 +22,12 @@ namespace CityGame.Business
 
         public override void LifeCycle(GameObjectBusinessDTO gameObjectBusinessDTO)
         {
-            gameObjectBusinessDTO.EcosystemItem.Polution++;
-            if (gameObjectBusinessDTO.EcosystemItem.Polution > 2 * gameObjectBusinessDTO.gameObjectModelDTO.level)
+            gameObjectBusinessDTO.EcosystemItem.Population++;
+            if (gameObjectBusinessDTO.EcosystemItem.Population > 255)
+            {
+                gameObjectBusinessDTO.EcosystemItem.Population = 0;
+            }    
+            if (gameObjectBusinessDTO.EcosystemItem.Population > 2 * gameObjectBusinessDTO.gameObjectModelDTO.level)
             {
                 gameObjectBusinessDTO.gameObjectModelDTO.level++;
 

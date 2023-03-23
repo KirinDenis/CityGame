@@ -41,7 +41,15 @@ namespace CityGame.Business
 
         public GameBusiness(string cityName, int size = 100) : base(cityName, size)
         {
-            ecosystem = new EcosystemItemDTO[size, size];            
+            ecosystem = new EcosystemItemDTO[size, size];       
+            for (int x=0; x< size; x++)
+            {
+                for (int y = 0; y < size; y++)
+                {
+                    ecosystem[x, y] = new EcosystemItemDTO();
+                }
+            }    
+
             gameObjects.Add(new ResidetBusiness(NewGameObjectModel(typeof(ResidentModel))));
 
             DispatcherTimer timer = new DispatcherTimer();
@@ -52,10 +60,57 @@ namespace CityGame.Business
 
         private void Timer_Tick(object? sender, EventArgs e)
         {
-            //foreach (GameObjectBusiness gameObjectBusiness in gameObjects)
-            //{
-              //  gameObjectBusiness.LifeCycle();
-            //}
+            
+            for (int x = 0; x < size; x++)
+            {
+                for (int y = 0; y < size; y++)
+                {
+                    ecosystem[x, y].Population = 0;
+                }
+            }
+
+            foreach (GameObjectBusiness gameObjectBusiness in gameObjects)
+            {
+              foreach (GameObjectBusinessDTO gameObjectBusinessDTO in gameObjectBusiness.gameObjectBusinessDTOs)
+                {
+
+                    ecosystem[gameObjectBusinessDTO.gameObjectModelDTO.positionDTO.x, gameObjectBusinessDTO.gameObjectModelDTO.positionDTO.y].Population = gameObjectBusinessDTO.EcosystemItem.Population;
+                }
+            }
+
+            for (int x = 2; x < size-2; x++)
+            {
+                for (int y = 2; y < size-2; y++)
+                {
+                    if (ecosystem[x, y].Population != 0)
+                    {
+                        if (ecosystem[x - 1, y].Population < ecosystem[x, y].Population)
+                        {
+                            ecosystem[x - 1, y].Population += (byte)(ecosystem[x, y].Population / 2);
+                        }
+                        if (ecosystem[x + 1, y].Population < ecosystem[x, y].Population)
+                        {
+                            ecosystem[x + 1, y].Population += (byte)(ecosystem[x, y].Population / 2);
+                        }
+
+                        if (ecosystem[x, y - 1].Population < ecosystem[x, y].Population)
+                        {
+                            ecosystem[x, y - 1].Population += (byte)(ecosystem[x, y].Population / 2);
+                        }
+                        if (ecosystem[x, y + 1].Population < ecosystem[x, y].Population)
+                        {
+                            ecosystem[x , y + 1].Population += (byte)(ecosystem[x, y].Population / 2);
+                        }
+
+                    }
+
+                    if (ecosystem[x, y].Population > 255)
+                    {
+                        ecosystem[x, y].Population = 255;
+                    }
+                }
+            }
+
         }
 
         public bool BuildObject(PositionDTO position, GroupDTO? group)

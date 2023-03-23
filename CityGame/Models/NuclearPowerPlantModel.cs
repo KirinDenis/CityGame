@@ -10,9 +10,9 @@ namespace CityGame.Models
         {
             startingGroup = spriteBusiness.GetGroupByName(SpritesGroupEnum.nuclearpowerplant);
         }
-        protected override void LiveCycle(GameObjectDTO gameObject)
+        protected override void LiveCycle(GameObjectModelDTO gameObjectModelDTO)
         {
-            base.LiveCycle(gameObject);
+            base.LiveCycle(gameObjectModelDTO);
         }
     }
 }

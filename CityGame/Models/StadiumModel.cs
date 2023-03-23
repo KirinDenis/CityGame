@@ -10,7 +10,7 @@ namespace CityGame.Models
         {
             startingGroup = spriteBusiness.GetGroupByName(SpritesGroupEnum.stadium);
         }
-        protected override void LiveCycle(GameObjectDTO gameObject)
+        protected override void LiveCycle(GameObjectModelDTO gameObjectModelDTO)
         {
 
         }

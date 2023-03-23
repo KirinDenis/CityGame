@@ -1,6 +1,6 @@
 ﻿namespace CityGame.Data.DTO
 {
-    public class GameObjectDTO
+    public class GameObjectModelDTO
     {
         public GroupDTO? Group { get; set; }
         public PositionDTO? positionDTO { get; set; }

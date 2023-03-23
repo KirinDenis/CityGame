@@ -249,7 +249,7 @@ namespace CityGame.Models
             return FS;
         }
 
-        public override bool Build(PositionDTO positionDTO)
+        public override GameObjectModelDTO Build(PositionDTO positionDTO)
         {
             ushort x = positionDTO.x;
             ushort y = positionDTO.y;
@@ -269,7 +269,12 @@ namespace CityGame.Models
                     }
                 }
             }
-            return true;
+            return new GameObjectModelDTO()
+            {
+                positionDTO = positionDTO,
+                Group = this.startingGroup
+            };
+
         }
     }
 }

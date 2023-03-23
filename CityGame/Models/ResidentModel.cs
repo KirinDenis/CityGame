@@ -1,22 +1,46 @@
 ﻿using CityGame.Data.DTO;
 using CityGame.DTOs.Enum;
 using CityGame.Graphics;
+using CityGame.Interfaces;
+using CityGame.Models.Interfaces;
 using System;
 using System.Windows;
 
 namespace CityGame.Models
 {
-    internal class ResidentModel : GameObjectModel
+    public class ResidentModel : GameObjectModel, IGameObjectModel
     {
-        private readonly Random random = new();
+        protected override string _GroupName { get; set; } = SpritesGroupEnum.resident0;
+        public override string GroupName => _GroupName;        
         public ResidentModel(SpriteBusiness spriteBusiness, TerrainModel terrainModel) : base(spriteBusiness, terrainModel)
-        {
-            startingGroup = spriteBusiness.GetGroupByName(SpritesGroupEnum.resident0);
-
+        {            
+            startingGroup = spriteBusiness.GetGroupByName(GroupName);
         }
-        protected override void LiveCycle(GameObjectDTO gameObject)
+        protected override void LiveCycle(GameObjectModelDTO gameObjectModelDTO)
         {
-            gameObject.timeLive++;
+            gameObjectModelDTO.timeLive++;
+
+            gameObjectModelDTO.Group = spriteBusiness.GetGroupByName(SpritesGroupEnum.residentBase + gameObjectModelDTO.level);
+            if (gameObjectModelDTO.Group == null)
+            {
+                gameObjectModelDTO.level = 0;
+                gameObjectModelDTO.Group = startingGroup;
+            }
+            gameObjectModelDTO.animationFrame = 0;
+
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (!Canceled)
+                {
+                    if ((gameObjectModelDTO != null) && (gameObjectModelDTO.Group != null) && (gameObjectModelDTO.positionDTO != null))
+                    {
+                        terrainModel.BuildObject(gameObjectModelDTO.positionDTO.x, gameObjectModelDTO.positionDTO.y, gameObjectModelDTO.Group, gameObjectModelDTO.animationFrame);
+                    }
+                }
+            });
+
+            /*
             if (gameObject.timeLive > random.Next(10))
             {
                 gameObject.timeLive = 0;
@@ -39,6 +63,7 @@ namespace CityGame.Models
                     }
                 });
             }
+            */
         }
     }
 }

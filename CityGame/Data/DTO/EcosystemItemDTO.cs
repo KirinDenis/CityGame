@@ -12,6 +12,6 @@ namespace CityGame.Data.DTO
         public byte Polution { get; set; }
         public byte Comercial { get; set; }
 
-        public byte Citizen { get; set; }
+        public byte Population { get; set; }
     }
 }

@@ -11,8 +11,9 @@ namespace CityGame.Models
         {
             startingGroup = spriteBusiness.GetGroupByName(SpritesGroupEnum.comercial0);
         }
-        protected override void LiveCycle(GameObjectDTO gameObject)
+        protected override void LiveCycle(GameObjectModelDTO gameObjectModelDTO)
         {
+            /*
             gameObject.timeLive++;
             if (gameObject.timeLive > 3)
             {
@@ -37,6 +38,7 @@ namespace CityGame.Models
                 });
 
             }
+            */
         }
     }
 }

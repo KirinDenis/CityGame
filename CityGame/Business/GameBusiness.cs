@@ -2,6 +2,7 @@
 using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 using CityGame.Models;
+using CityGame.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace CityGame.Business
 {
@@ -35,44 +37,53 @@ namespace CityGame.Business
 
         public EcosystemItemDTO[,] ecosystem;
 
+        List<GameObjectBusiness> gameObjects = new List<GameObjectBusiness>();
+
         public GameBusiness(string cityName, int size = 100) : base(cityName, size)
         {
-            ecosystem = new EcosystemItemDTO[size, size];
+            ecosystem = new EcosystemItemDTO[size, size];            
+            gameObjects.Add(new ResidetBusiness(NewGameObjectModel(typeof(ResidentModel))));
+
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(300);
+            timer.Tick += Timer_Tick;
+            timer.Start();
         }
 
-        public override bool BuildObject(PositionDTO position, GroupDTO? group)
+        private void Timer_Tick(object? sender, EventArgs e)
+        {
+            //foreach (GameObjectBusiness gameObjectBusiness in gameObjects)
+            //{
+              //  gameObjectBusiness.LifeCycle();
+            //}
+        }
+
+        public bool BuildObject(PositionDTO position, GroupDTO? group)
         {
             if ((group == null) || string.IsNullOrEmpty(group.Name))    
             {
                 return false;
             }
 
-            int objectPrice = -1;
-
-            switch (SpritesGroupEnum.GetObjectTypeByGroupName(group.Name))
+            foreach (GameObjectBusiness gameObjectBusiness in gameObjects)
             {
-                case ObjectType.network: objectPrice = 10; break;
-                case ObjectType.garden: objectPrice = 5; break;
-                case ObjectType.building:
-                    switch (group.Name)
+                //if ((gameObjectModel == null) || (gameObjectModel.startingGroup == null) || (string.IsNullOrEmpty(gameObjectModel.startingGroup.Name)))
+                //{
+                  //  continue;
+                //}
+
+                if (gameObjectBusiness.gameObjectModel.startingGroup.Name.Equals(group?.Name))
+                {
+                    if (base.TestPosition(gameObjectBusiness.gameObjectModel.startingGroup, position).CanBuild)
                     {
-                        case SpritesGroupEnum.firedepartment: objectPrice = 500; break;
-                        case SpritesGroupEnum.policedepartment: objectPrice = 500; break;
-                        case SpritesGroupEnum.coalpowerplant: objectPrice = 1500; break;
-                        default: objectPrice = 100; break;
+                        if (gameObjectBusiness.Build(position))
+                        {
+                            _budget -= gameObjectBusiness.cost;
+                            return true;
+                        }
                     }
-                    break;                
-            }
-
-            if ((objectPrice <= 0) || (objectPrice > budget))
-            {
-                return false;
-            }
-
-            if (base.BuildObject(position, group))
-            {
-                _budget -= objectPrice;
-                return true;
+                    return false;
+                }
             }
 
             return false;

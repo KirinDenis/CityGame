@@ -1,5 +1,6 @@
 ﻿using CityGame.Data.DTO;
 using CityGame.DTOs.Const;
+using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace CityGame.Models
         private SpriteBusiness spriteBusiness = new SpriteBusiness();
         private TerrainModel terrainModel;
 
-        private List<GameObjectModel> gameObjectModels = new List<GameObjectModel>();
+        //private List<GameObjectModel> gameObjectModels = new List<GameObjectModel>();
 
         public event EventHandler? TerrainRenderCompleted = null;
         public event EventHandler? MapRenderCompleted = null;
@@ -32,6 +33,7 @@ namespace CityGame.Models
             _cityName = cityName;
             _size = size;
             terrainModel = new TerrainModel(size);
+            /*
             gameObjectModels.Add(new RoadGameObjectModel(spriteBusiness, terrainModel));
             gameObjectModels.Add(new RailGameObjectModel(spriteBusiness, terrainModel));
             gameObjectModels.Add(new WireGameObjectModel(spriteBusiness, terrainModel));
@@ -46,11 +48,16 @@ namespace CityGame.Models
             gameObjectModels.Add(new NuclearPowerPlantModel(spriteBusiness, terrainModel));
             gameObjectModels.Add(new SeaPortModel(spriteBusiness, terrainModel));
             gameObjectModels.Add(new AirPortModel(spriteBusiness, terrainModel));
-
+            */
             DispatcherTimer timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(lifeCycleTime);
-            timer.Tick += Timer_Tick; ;
+            timer.Tick += Timer_Tick; 
             timer.Start();
+        }
+
+        public GameObjectModel NewGameObjectModel(Type gameObjectModelType)
+        {
+            return Activator.CreateInstance(gameObjectModelType, spriteBusiness, terrainModel) as GameObjectModel;
         }
 
         public int GetTerrainSize()
@@ -88,23 +95,12 @@ namespace CityGame.Models
             terrainModel.GenerateNewTerrain();
         }
 
-        public virtual bool BuildObject(PositionDTO position, GroupDTO? group)
+        public virtual bool BuildObject(PositionDTO position, GameObjectModel gameObjectModel)
         {
-            if (TestPosition(group, position).CanBuild)
+            if (TestPosition(gameObjectModel.startingGroup, position).CanBuild)
             {
-                foreach (GameObjectModel gameObjectModel in gameObjectModels)
-                {
-                    if ((gameObjectModel == null) || (gameObjectModel.startingGroup == null) || (string.IsNullOrEmpty(gameObjectModel.startingGroup.Name)))
-                    {
-                        continue;
-                    }
-
-                    if (gameObjectModel.startingGroup.Name.Equals(group?.Name))
-                    {
                         gameObjectModel.Build(position);
                         return true;
-                    }
-                }
             }
             return false;
         }
@@ -116,6 +112,7 @@ namespace CityGame.Models
 
         public bool DestroyObjectAtPosition(PositionDTO position)
         {
+            /*
             if ((gameObjectModels != null) && (position != null))
             {
                 GameObjectModel? gameObjectModel = gameObjectModels.Where(g => g.gameObjects.Where(o =>
@@ -136,6 +133,7 @@ namespace CityGame.Models
                     }
                 }
             }
+            */
             return false;
         }
 

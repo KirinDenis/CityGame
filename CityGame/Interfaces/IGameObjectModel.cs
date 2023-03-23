@@ -1,4 +1,5 @@
 ﻿using CityGame.Data.DTO;
+using CityGame.Interfaces;
 
 namespace CityGame.Models.Interfaces
 {
@@ -9,7 +10,7 @@ namespace CityGame.Models.Interfaces
         public bool[,]? Colisions { get; set; }
     }
 
-    internal interface IGameObjectModel
+    internal interface IGameObjectModel: IGameObject
     {
         public GroupDTO? startingGroup { get; set; }
     }

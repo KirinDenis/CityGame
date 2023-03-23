@@ -1,6 +1,7 @@
 ﻿using CityGame.Data.DTO;
 using CityGame.DTOs.Enum;
 using CityGame.Graphics;
+using CityGame.Interfaces;
 using CityGame.Models.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -18,9 +19,18 @@ namespace CityGame.Models
 
         protected bool Canceled = false;
 
-        public List<GameObjectDTO> gameObjects = new List<GameObjectDTO>();
+        public List<GameObjectModelDTO> gameObjectModelDTOs = new List<GameObjectModelDTO>();
 
         public GroupDTO? startingGroup { get; set; }
+
+        protected virtual string _GroupName { get; set; }
+
+        public virtual string GroupName { get { return _GroupName; } }
+
+        
+
+
+        //  protected virtual string _GroupName { get; set; }
 
         public GameObjectModel(SpriteBusiness spriteBusiness, TerrainModel terrainModel)
         {
@@ -29,29 +39,29 @@ namespace CityGame.Models
             Live();
         }
 
-        public virtual bool Build(PositionDTO positionDTO)
+        public virtual GameObjectModelDTO Build(PositionDTO positionDTO)
         {
             if (startingGroup == null)
             {
-                return false;
+                return null;
             }
 
-            GameObjectDTO gameObject = new GameObjectDTO()
+            GameObjectModelDTO gameObjectModelDTO = new GameObjectModelDTO()
             {
                 positionDTO = positionDTO,
                 Group = this.startingGroup
             };
             terrainModel.BuildObject(positionDTO.x, positionDTO.y, startingGroup, 0);
 
-            gameObjects.Add(gameObject);
+            gameObjectModelDTOs.Add(gameObjectModelDTO);
 
-            return true;
+            return gameObjectModelDTO;
         }
 
-        public void Destroy(GameObjectDTO gameObjectDTO)
+        public void Destroy(GameObjectModelDTO gameObjectModelDTO)
         {
 
-            gameObjects.Remove(gameObjectDTO);
+            gameObjectModelDTOs.Remove(gameObjectModelDTO);
             byte destroyStep = 0;
             GroupDTO? destroyGroup = spriteBusiness.GetGroupByName(SpritesGroupEnum.explosion);
             Task destroyTask = Task.Run(async delegate
@@ -63,22 +73,22 @@ namespace CityGame.Models
                     {
                         if (!Canceled)
                         {
-                            for (ushort sx = 0; sx < gameObjectDTO?.Group?.Width; sx++)
+                            for (ushort sx = 0; sx < gameObjectModelDTO?.Group?.Width; sx++)
                             {
-                                for (ushort sy = 0; sy < gameObjectDTO?.Group?.Height; sy++)
+                                for (ushort sy = 0; sy < gameObjectModelDTO?.Group?.Height; sy++)
                                 {
                                     if (destroyGroup?.Frames?[destroyStep]?.Sprites?[0, 0] != null)
                                     {
-                                        if ((gameObjectDTO != null) && (destroyGroup != null) && (gameObjectDTO.positionDTO != null))
+                                        if ((gameObjectModelDTO != null) && (destroyGroup != null) && (gameObjectModelDTO.positionDTO != null))
                                         {
-                                            terrainModel.PutSprite((ushort)(gameObjectDTO.positionDTO.x + sx), (ushort)(gameObjectDTO.positionDTO.y + sy), destroyGroup, destroyStep, 0, 0);
+                                            terrainModel.PutSprite((ushort)(gameObjectModelDTO.positionDTO.x + sx), (ushort)(gameObjectModelDTO.positionDTO.y + sy), destroyGroup, destroyStep, 0, 0);
                                         }
                                     }
                                 }
                             }
-                            if ((gameObjectDTO != null) && (destroyGroup != null) && (gameObjectDTO.positionDTO != null))
+                            if ((gameObjectModelDTO != null) && (destroyGroup != null) && (gameObjectModelDTO.positionDTO != null))
                             {
-                                terrainModel.BuildObject(gameObjectDTO.positionDTO.x, gameObjectDTO.positionDTO.y, destroyGroup, destroyStep);
+                                terrainModel.BuildObject(gameObjectModelDTO.positionDTO.x, gameObjectModelDTO.positionDTO.y, destroyGroup, destroyStep);
                             }
                         }
                     });
@@ -95,38 +105,36 @@ namespace CityGame.Models
             {
                 while (!Canceled)
                 {
-                    foreach (GameObjectDTO gameObject in gameObjects.ToArray())
+                    foreach (GameObjectModelDTO gameObjectModelDTO in gameObjectModelDTOs.ToArray())
                     {
-                        LiveCycle(gameObject);
-
+                        LiveCycle(gameObjectModelDTO);
                     }
                     await Task.Delay(300);
                 }
             });
         }
 
-        protected virtual void LiveCycle(GameObjectDTO gameObject)
+        protected virtual void LiveCycle(GameObjectModelDTO gameObjectModelDTO)
         {
-            if (gameObject.Group?.Frames.Count > 1)
+            if (gameObjectModelDTO.Group?.Frames.Count > 1)
             {
-                if (gameObject.animationFrame >= gameObject.Group.Frames.Count)
+                if (gameObjectModelDTO.animationFrame >= gameObjectModelDTO.Group.Frames.Count)
                 {
-                    gameObject.animationFrame = 1;
+                    gameObjectModelDTO.animationFrame = 1;
                 }
                 _ = Application.Current.Dispatcher.Invoke(() =>
                 {
                     if (!Canceled)
                     {
-                        if (gameObject.positionDTO != null)
+                        if (gameObjectModelDTO.positionDTO != null)
                         {
-                               terrainModel.BuildObject(gameObject.positionDTO.x, gameObject.positionDTO.y, gameObject.Group, gameObject.animationFrame);
+                               terrainModel.BuildObject(gameObjectModelDTO.positionDTO.x, gameObjectModelDTO.positionDTO.y, gameObjectModelDTO.Group, gameObjectModelDTO.animationFrame);
                         }
                     }
 
                     return Task.CompletedTask;
                 });
-                gameObject.animationFrame++;
-
+                gameObjectModelDTO.animationFrame++;
             }
         }
 

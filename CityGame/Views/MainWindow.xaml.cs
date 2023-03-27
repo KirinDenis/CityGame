@@ -31,8 +31,9 @@ using CityGame.DTOs.Const;
 using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 using CityGame.Models;
+using Newtonsoft.Json.Linq;
 using System;
-
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -112,32 +113,52 @@ namespace CityGame
             AirPortImage.Source = SpriteRepository.GetDashboard(1, 6);
 
             DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(2000);
+            timer.Interval = TimeSpan.FromMilliseconds(10000);
             timer.Tick += Timer_Tick;
+            
             timer.Start();
 
         }
 
         private void Timer_Tick(object? sender, EventArgs e)
         {
-            for (int x = 0; x < terrainSize; x++)
+            EcosystemCanvase.Children.Clear();
+
+            Dispatcher dispatcher = Application.Current.Dispatcher;
+
+            // Запустить метод таймера с низким приоритетом в главном потоке
+            dispatcher.Invoke(() =>
             {
-                for (int y = 0; y < terrainSize; y++)
+                Thread.CurrentThread.Priority = ThreadPriority.Lowest;
+                for (int x = 0; x < terrainSize; x++)
                 {
-                    if (gameBusiness.ecosystem[x, y].Population > 0)
+                    for (int y = 0; y < terrainSize; y++)
                     {
-                        System.Windows.Shapes.Rectangle r = new System.Windows.Shapes.Rectangle();
-                        r.Width = 1;
-                        r.Height = 1;
-                        Canvas.SetLeft(r, x);
-                        Canvas.SetTop(r, y);
-                        r.StrokeThickness = 2;
-                        r.Fill = new SolidColorBrush(Color.FromArgb(0xFF, gameBusiness.ecosystem[x, y].Population, gameBusiness.ecosystem[x, y].Population, gameBusiness.ecosystem[x, y].Population));
-                        r.Stroke = new SolidColorBrush(Color.FromArgb(0xFF, gameBusiness.ecosystem[x, y].Population, gameBusiness.ecosystem[x, y].Population, gameBusiness.ecosystem[x, y].Population));
-                        EcosystemCanvase.Children.Add(r);
+                        if (gameBusiness.ecosystem[x, y].Population > 0)
+                        {
+                            double fraction = (double)gameBusiness.ecosystem[x, y].Population / 255;
+
+                            // Создать градиентный цвет от голубого до ярко-красного
+                            Color color = Color.FromArgb(
+                                gameBusiness.ecosystem[x, y].Population,
+                                (byte)(255 * fraction),           // Красный канал
+                                0,
+                                (byte)(255 * (1 - fraction))     // Синий канал
+                                
+                            );
+                            System.Windows.Shapes.Rectangle r = new System.Windows.Shapes.Rectangle();
+                            r.Width = 1;
+                            r.Height = 1;
+                            Canvas.SetLeft(r, x);
+                            Canvas.SetTop(r, y);
+                            r.StrokeThickness = 2;
+                            r.Fill = new SolidColorBrush(color);
+                            r.Stroke = new SolidColorBrush(color);
+                            EcosystemCanvase.Children.Add(r);
+                        }
                     }
                 }
-            }
+            });
 
         }
 

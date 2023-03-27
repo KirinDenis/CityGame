@@ -22,7 +22,7 @@ namespace CityGame.Business
 
         public override void LifeCycle(GameObjectBusinessDTO gameObjectBusinessDTO)
         {
-            gameObjectBusinessDTO.EcosystemItem.Population++;
+            gameObjectBusinessDTO.EcosystemItem.Population+=10;
             if (gameObjectBusinessDTO.EcosystemItem.Population > 255)
             {
                 gameObjectBusinessDTO.EcosystemItem.Population = 0;

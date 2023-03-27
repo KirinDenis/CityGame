@@ -49,6 +49,11 @@ namespace CityGame.Models
             GameObjectModelDTO gameObjectModelDTO = new GameObjectModelDTO()
             {
                 positionDTO = positionDTO,
+                centerPosition = new PositionDTO()
+                {
+                    x = (ushort)(positionDTO.x + this.startingGroup.CenterX),
+                    y = (ushort)(positionDTO.y + this.startingGroup.CenterY),
+                },
                 Group = this.startingGroup
             };
             terrainModel.BuildObject(positionDTO.x, positionDTO.y, startingGroup, 0);

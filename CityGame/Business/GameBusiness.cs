@@ -1,15 +1,10 @@
 ﻿using CityGame.Data.DTO;
-using CityGame.DTOs.Enum;
-using CityGame.Graphics;
 using CityGame.Models;
-using CityGame.Models.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Media;
+using System.Threading;
+using System.Windows;
+using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 
 namespace CityGame.Business
@@ -28,9 +23,10 @@ namespace CityGame.Business
                 BudgetChanged?.Invoke(this, new EventArgs());
             }
         }
-        public long budget {
-            get 
-            { 
+        public long budget
+        {
+            get
+            {
                 return _budget;
             }
         }
@@ -41,81 +37,123 @@ namespace CityGame.Business
 
         public GameBusiness(string cityName, int size = 100) : base(cityName, size)
         {
-            ecosystem = new EcosystemItemDTO[size, size];       
-            for (int x=0; x< size; x++)
+            ecosystem = new EcosystemItemDTO[size, size];
+            for (int x = 0; x < size; x++)
             {
                 for (int y = 0; y < size; y++)
                 {
                     ecosystem[x, y] = new EcosystemItemDTO();
                 }
-            }    
+            }
 
             gameObjects.Add(new ResidetBusiness(NewGameObjectModel(typeof(ResidentModel))));
 
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(300);
-            timer.Tick += Timer_Tick;
-            timer.Start();
+            //DispatcherTimer timer = new DispatcherTimer();
+            //timer.Interval = TimeSpan.FromMilliseconds(300);
+            //timer.Tick += Timer_Tick;
+            //timer.Start();
+            Timer_Tick(null, null);
         }
+
+        public void FillCircle(EcosystemItemDTO[,] _ecosystem, int centerX, int centerY, int radius, int weight)
+        {
+            for (int y = centerY - radius; y <= centerY + radius; y++)
+            {
+                for (int x = centerX - radius; x <= centerX + radius; x++)
+                {
+                    if (Math.Sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY)) <= radius)
+                    {
+                        double dist = Math.Sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY));
+                        int currentWeight = (int)Math.Max(0, weight - dist);
+
+                        if ((x >= 0) && (x < size) && (y >= 0) && (y < size))
+                        {
+                            _ecosystem[x, y].Population += (byte)currentWeight;
+                        }
+                    }
+                }
+            }
+        }
+
 
         private void Timer_Tick(object? sender, EventArgs e)
         {
-            
-            for (int x = 0; x < size; x++)
+            Thread thread = new Thread(() =>
             {
-                for (int y = 0; y < size; y++)
-                {
-                    ecosystem[x, y].Population = 0;
-                }
-            }
+                Thread.CurrentThread.Priority = ThreadPriority.Lowest;
 
-            foreach (GameObjectBusiness gameObjectBusiness in gameObjects)
-            {
-              foreach (GameObjectBusinessDTO gameObjectBusinessDTO in gameObjectBusiness.gameObjectBusinessDTOs)
+                while (true)
                 {
 
-                    ecosystem[gameObjectBusinessDTO.gameObjectModelDTO.positionDTO.x, gameObjectBusinessDTO.gameObjectModelDTO.positionDTO.y].Population = gameObjectBusinessDTO.EcosystemItem.Population;
-                }
-            }
 
-            for (int x = 2; x < size-2; x++)
-            {
-                for (int y = 2; y < size-2; y++)
-                {
-                    if (ecosystem[x, y].Population != 0)
+                    EcosystemItemDTO[,] _ecosystem = new EcosystemItemDTO[ecosystem.GetLength(0), ecosystem.GetLength(1)];
+
+                    for (int x = 0; x < size; x++)
                     {
-                        if (ecosystem[x - 1, y].Population < ecosystem[x, y].Population)
+                        for (int y = 0; y < size; y++)
                         {
-                            ecosystem[x - 1, y].Population += (byte)(ecosystem[x, y].Population / 2);
+                            _ecosystem[x, y] = new EcosystemItemDTO();
+                            ecosystem[x, y].Population = 0;
                         }
-                        if (ecosystem[x + 1, y].Population < ecosystem[x, y].Population)
-                        {
-                            ecosystem[x + 1, y].Population += (byte)(ecosystem[x, y].Population / 2);
-                        }
-
-                        if (ecosystem[x, y - 1].Population < ecosystem[x, y].Population)
-                        {
-                            ecosystem[x, y - 1].Population += (byte)(ecosystem[x, y].Population / 2);
-                        }
-                        if (ecosystem[x, y + 1].Population < ecosystem[x, y].Population)
-                        {
-                            ecosystem[x , y + 1].Population += (byte)(ecosystem[x, y].Population / 2);
-                        }
-
                     }
 
-                    if (ecosystem[x, y].Population > 255)
-                    {
-                        ecosystem[x, y].Population = 255;
-                    }
-                }
-            }
 
+
+                    foreach (GameObjectBusiness gameObjectBusiness in gameObjects)
+                    {
+                        foreach (GameObjectBusinessDTO gameObjectBusinessDTO in gameObjectBusiness.gameObjectBusinessDTOs)
+                        {
+
+                            ecosystem[gameObjectBusinessDTO.gameObjectModelDTO.centerPosition.x, gameObjectBusinessDTO.gameObjectModelDTO.centerPosition.y].Population = gameObjectBusinessDTO.EcosystemItem.Population;
+                        }
+                    }
+
+                    for (int centerX = 2; centerX < size - 2; centerX++)
+                    {
+                        for (int centerY = 2; centerY < size - 2; centerY++)
+                        {
+                            if (ecosystem[centerX, centerY].Population > 0)
+                            {
+                                //  _ecosystem[x, y] = ecosystem[x, y];
+                                //FillCircle(_ecosystem, x, y, 3 * 3, ecosystem[x, y].Population / 10);
+
+                                int radius = 3 * 3;
+
+                                for (int y = centerY - radius; y <= centerY + radius; y++)
+                                {
+                                    for (int x = centerX - radius; x <= centerX + radius; x++)
+                                    {
+                                        if (Math.Sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY)) <= radius)
+                                        {
+                                            double dist = Math.Sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY));
+                                            int currentWeight = (int)Math.Max(0, ecosystem[centerX, centerY].Population - dist);
+
+                                            if ((x >= 0) && (x < size) && (y >= 0) && (y < size))
+                                            {
+                                                _ecosystem[x, y].Population += (byte)currentWeight;
+                                            }
+                                        }
+                                    }
+                                }
+
+
+                                //if (_ecosystem[x, y].Population > 255)
+                                // {
+                                //     _ecosystem[x, y].Population = 255;
+                                //  }
+                            }
+                        }
+                    }
+                    ecosystem = _ecosystem;
+                    Thread.Sleep(1000);
+                }
+            });
+            thread.Start();
         }
 
         public bool BuildObject(PositionDTO position, GroupDTO? group)
         {
-            if ((group == null) || string.IsNullOrEmpty(group.Name))    
+            if ((group == null) || string.IsNullOrEmpty(group.Name))
             {
                 return false;
             }
@@ -124,7 +162,7 @@ namespace CityGame.Business
             {
                 //if ((gameObjectModel == null) || (gameObjectModel.startingGroup == null) || (string.IsNullOrEmpty(gameObjectModel.startingGroup.Name)))
                 //{
-                  //  continue;
+                //  continue;
                 //}
 
                 if (gameObjectBusiness.gameObjectModel.startingGroup.Name.Equals(group?.Name))

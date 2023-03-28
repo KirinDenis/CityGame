@@ -140,9 +140,9 @@ namespace CityGame
 
                             // Создать градиентный цвет от голубого до ярко-красного
                             Color color = Color.FromArgb(
-                                gameBusiness.ecosystem[x, y].Population,
+                               240,
                                 (byte)(255 * fraction),           // Красный канал
-                                0,
+                                (byte)(255 * (1 - fraction) / 1.5),
                                 (byte)(255 * (1 - fraction))     // Синий канал
                                 
                             );

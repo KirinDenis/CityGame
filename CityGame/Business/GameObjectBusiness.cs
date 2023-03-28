@@ -11,6 +11,7 @@ namespace CityGame.Business
 {
     public class GameObjectBusiness: IGameObject
     {
+        protected GameBusiness gameBusiness;
         public GameObjectModel gameObjectModel { get; set; }
 
         //public EcosystemItemDTO ecosystem = new EcosystemItemDTO();
@@ -21,14 +22,16 @@ namespace CityGame.Business
 
         public virtual string GroupName { get { return _GroupName; } }
 
-        public int cost { get; set; }
 
         protected Task? liveTask = null;
 
         protected bool Canceled = false;
 
-        public GameObjectBusiness(GameObjectModel gameObjectModel)
+        public GameObjectBusinessDTO defaultGameObjectBusinessDTO = new GameObjectBusinessDTO();
+
+        public GameObjectBusiness(GameBusiness gameBusiness, GameObjectModel gameObjectModel)
         {
+            this.gameBusiness = gameBusiness;   
             this.gameObjectModel = gameObjectModel;
             Live();
         }
@@ -39,6 +42,8 @@ namespace CityGame.Business
             if (gameObjectModelDTO != null)
             {
                 GameObjectBusinessDTO gameObjectBusinessDTO = new GameObjectBusinessDTO();
+                gameObjectBusinessDTO.cost = defaultGameObjectBusinessDTO.cost;
+                gameObjectBusinessDTO.electrified = defaultGameObjectBusinessDTO.electrified;
                 gameObjectBusinessDTO.gameObjectModelDTO = gameObjectModelDTO;
                 gameObjectBusinessDTOs.Add(gameObjectBusinessDTO);
                 return true;

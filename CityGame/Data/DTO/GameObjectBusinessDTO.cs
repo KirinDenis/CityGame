@@ -11,6 +11,10 @@ namespace CityGame.Data.DTO
     {
         public EcosystemItemDTO EcosystemItem { get; set; } = new EcosystemItemDTO();
 
-        public GameObjectModelDTO gameObjectModelDTO { get; set; }
+        public int cost { get; set; }
+        public bool electrified { get; set; } = false;
+
+
+    public GameObjectModelDTO gameObjectModelDTO { get; set; }
     }
 }

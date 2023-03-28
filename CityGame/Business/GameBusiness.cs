@@ -46,7 +46,8 @@ namespace CityGame.Business
                 }
             }
 
-            gameObjects.Add(new ResidetBusiness(NewGameObjectModel(typeof(ResidentModel))));
+            gameObjects.Add(new ResidetBusiness(this, NewGameObjectModel(typeof(ResidentModel))));
+            gameObjects.Add(new CoalPowerPlantBusiness(this, NewGameObjectModel(typeof(CoalPowerPlantModel))));
 
             //DispatcherTimer timer = new DispatcherTimer();
             //timer.Interval = TimeSpan.FromMilliseconds(300);
@@ -66,7 +67,7 @@ namespace CityGame.Business
                         double dist = Math.Sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY));
                         int currentWeight = (int)Math.Max(0, weight - dist);
 
-                        if ((x >= 0) && (x < size) && (y >= 0) && (y < size))
+                        if ((x >= 0) && (x < size) && (y >= 0) && (y < size) && (_ecosystem[x, y].Population + (byte)currentWeight < 255))
                         {
                             _ecosystem[x, y].Population += (byte)currentWeight;
                         }
@@ -126,9 +127,9 @@ namespace CityGame.Business
                                         if (Math.Sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY)) <= radius)
                                         {
                                             double dist = Math.Sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY));
-                                            int currentWeight = (int)Math.Max(0, ecosystem[centerX, centerY].Population - dist);
+                                            int currentWeight = (int)Math.Max(0, ecosystem[centerX, centerY].Population / 10 - dist);
 
-                                            if ((x >= 0) && (x < size) && (y >= 0) && (y < size))
+                                            if ((x >= 0) && (x < size) && (y >= 0) && (y < size) && (_ecosystem[x, y].Population + (byte)currentWeight < 255))
                                             {
                                                 _ecosystem[x, y].Population += (byte)currentWeight;
                                             }
@@ -171,7 +172,7 @@ namespace CityGame.Business
                     {
                         if (gameObjectBusiness.Build(position))
                         {
-                            _budget -= gameObjectBusiness.cost;
+                            _budget -= gameObjectBusiness.defaultGameObjectBusinessDTO.cost;
                             return true;
                         }
                     }
@@ -181,5 +182,35 @@ namespace CityGame.Business
 
             return false;
         }
+
+        public List<GameObjectBusinessDTO> GetNeighbours(GameObjectBusinessDTO selectedGameObjectBusinessDTO)
+        {
+            List<GameObjectBusinessDTO> list = new List<GameObjectBusinessDTO>();
+
+            GameObjectModelDTO selectedModel = selectedGameObjectBusinessDTO.gameObjectModelDTO;
+
+            foreach (GameObjectBusiness gameObjectBusiness in gameObjects)
+            {
+                foreach (GameObjectBusinessDTO gameObjectBusinessDTO in gameObjectBusiness.gameObjectBusinessDTOs)
+                {
+                    if (gameObjectBusinessDTO != selectedGameObjectBusinessDTO)
+                    {
+                        GameObjectModelDTO currentModel = gameObjectBusinessDTO.gameObjectModelDTO;
+
+                        if (((currentModel.positionDTO.x >= selectedModel.positionDTO.x - currentModel.Group.Width)
+                          &&
+                            (currentModel.positionDTO.x <= selectedModel.positionDTO.x + currentModel.Group.Width))
+                            &&
+                            ((currentModel.positionDTO.y >= selectedModel.positionDTO.y - currentModel.Group.Height)
+                          &&
+                            (currentModel.positionDTO.y <= selectedModel.positionDTO.y + currentModel.Group.Height)))
+                        {
+                            list.Add(gameObjectBusinessDTO);
+                        }
+                    }
+                }
+            }
+            return list;
+        }       
     }
 }

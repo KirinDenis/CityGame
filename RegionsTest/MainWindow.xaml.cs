@@ -16,9 +16,9 @@ namespace RegionsTest
         public MainWindow()
         {
             InitializeComponent();
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 3; i++)
             {
-                e[random.Next(255), random.Next(255)] = random.Next(255);
+                e[random.Next(55), random.Next(55)] = random.Next(10);
             }
 
             int[,] _e = new int[256, 256];
@@ -43,18 +43,17 @@ namespace RegionsTest
                         double fraction = (double)_e[x, y] / 255;
                         Color color = Color.FromArgb(
                         240,
-                        (byte)(255 * fraction),           // Красный канал
+                        (byte)(255 * fraction),           
                         (byte)(255 * (1 - fraction) / 1.5),
-                        (byte)(255 * (1 - fraction))     // Синий канал
-
+                        (byte)(255 * (1 - fraction))     
                     );
 
                         System.Windows.Shapes.Rectangle r = new System.Windows.Shapes.Rectangle();
-                        r.Width = 3;
-                        r.Height = 3;
-                        Canvas.SetLeft(r, x * 3);
-                        Canvas.SetTop(r, y * 3);
-                        r.StrokeThickness = 3;
+                        r.Width = 8;
+                        r.Height = 8;
+                        Canvas.SetLeft(r, x * 8);
+                        Canvas.SetTop(r, y * 8);
+                        r.StrokeThickness = 8;
                         r.Fill = new SolidColorBrush(color);
                         r.Stroke = new SolidColorBrush(color);
                         Canvas.Children.Add(r);

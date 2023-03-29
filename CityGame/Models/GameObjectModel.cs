@@ -150,7 +150,14 @@ namespace CityGame.Models
             {
                 if (gameObjectModelDTO.positionDTO != null)
                 {
-                    terrainModel.BuildObject(gameObjectModelDTO.centerPosition.x, gameObjectModelDTO.centerPosition.y, electricGroup, 0);
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        if (!Canceled)
+                        {
+
+                            terrainModel.BuildObject(gameObjectModelDTO.centerPosition.x, gameObjectModelDTO.centerPosition.y, electricGroup, 0);
+                        }
+                    });
                 }
             }
         }

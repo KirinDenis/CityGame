@@ -23,6 +23,8 @@ namespace CityGame.Models
 
         public GroupDTO? startingGroup { get; set; }
 
+        public GroupDTO? electricGroup { get; set; }
+
         protected virtual string _GroupName { get; set; }
 
         public virtual string GroupName { get { return _GroupName; } }
@@ -36,6 +38,7 @@ namespace CityGame.Models
         {
             this.spriteBusiness = spriteBusiness;
             this.terrainModel = terrainModel;
+            electricGroup = spriteBusiness.GetGroupByName(SpritesGroupEnum.electrified);
             Live();
         }
 
@@ -121,6 +124,7 @@ namespace CityGame.Models
 
         protected virtual void LiveCycle(GameObjectModelDTO gameObjectModelDTO)
         {
+            /*
             if (gameObjectModelDTO.Group?.Frames.Count > 1)
             {
                 if (gameObjectModelDTO.animationFrame >= gameObjectModelDTO.Group.Frames.Count)
@@ -140,6 +144,14 @@ namespace CityGame.Models
                     return Task.CompletedTask;
                 });
                 gameObjectModelDTO.animationFrame++;
+            }
+            */
+            if (!gameObjectModelDTO.electrified)
+            {
+                if (gameObjectModelDTO.positionDTO != null)
+                {
+                    terrainModel.BuildObject(gameObjectModelDTO.centerPosition.x, gameObjectModelDTO.centerPosition.y, electricGroup, 0);
+                }
             }
         }
 

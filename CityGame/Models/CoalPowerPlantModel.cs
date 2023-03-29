@@ -12,7 +12,7 @@ namespace CityGame.Models
         }
         protected override void LiveCycle(GameObjectModelDTO gameObjectModelDTO)
         {
-
+            base.LiveCycle(gameObjectModelDTO);
         }
     }
 }

@@ -62,7 +62,6 @@
         public const string comercial19 = "comercial19";
         public const string comercial20 = "comercial20";
 
-
         public const string industrialBase = "industrial";
         public const string industrial0 = "industrial0";
         public const string industrial1 = "industrial1";
@@ -102,6 +101,7 @@
         public const string strange7 = "strange7";
         public const string select = "select";
         public const string coast = "coast";
+        public const string electrified = "electrified";
 
         public static readonly string[] groups = { terrain, water , forest, road, rail, wire, cross,
             resident0,
@@ -184,7 +184,8 @@
             strange6,
             strange7,
             select,
-            coast
+            coast,
+            electrified
         };
 
         /*

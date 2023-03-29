@@ -328,7 +328,7 @@ namespace CityGame
                             if ((selectedGroup != null) && (selectedGroup?.Frames != null)
                                 && (selectedGroup?.Frames?[index] != null)
                                 && (selectedGroup?.Frames?[index]?.Sprites != null)
-                                && (selectedGroup?.Frames?[index]?.Sprites?[groupPosition.x, groupPosition.y] != null)
+                                //&& (selectedGroup?.Frames?[index]?.Sprites?[groupPosition.x, groupPosition.y] != null)
                                 )
                             {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
@@ -570,6 +570,12 @@ namespace CityGame
                 RefreshGridSizeSelector();
 
                 AnimationFrameComboBox.Items.Clear();
+
+                if (selectedGroup.Frames.Count == 0)
+                {
+                    selectedGroup.Frames = new List<GroupSpritesDTO> { new GroupSpritesDTO() };
+                }    
+
                 for (int i = 0; i < selectedGroup.Frames.Count; i++)
                 {
                     AnimationFrameComboBox.Items.Add(i + 1);

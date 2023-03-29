@@ -40,6 +40,8 @@ namespace CityGame.Models
                 }
             });
 
+            base.LiveCycle(gameObjectModelDTO);
+
             /*
             if (gameObject.timeLive > random.Next(10))
             {

@@ -1,11 +1,4 @@
-﻿using CityGame.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CityGame.Data.DTO
+﻿namespace CityGame.Data.DTO
 {
     public class GameObjectBusinessDTO
     {
@@ -14,7 +7,10 @@ namespace CityGame.Data.DTO
         public int cost { get; set; }
         public bool electrified { get; set; } = false;
 
+        public int powerSource { get; set; } = 0;
 
-    public GameObjectModelDTO gameObjectModelDTO { get; set; }
+        public int powerTarget { get; set; } = 0;
+
+        public GameObjectModelDTO gameObjectModelDTO { get; set; }
     }
 }

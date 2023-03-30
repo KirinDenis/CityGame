@@ -27,7 +27,9 @@ namespace CityGame.Business
 
         protected bool Canceled = false;
 
-        public GameObjectBusinessDTO defaultGameObjectBusinessDTO = new GameObjectBusinessDTO();
+        public int cost { get; set; } = 0;
+
+        //public GameObjectBusinessDTO defaultGameObjectBusinessDTO = new GameObjectBusinessDTO();
 
         public GameObjectBusiness(GameBusiness gameBusiness, GameObjectModel gameObjectModel)
         {
@@ -36,20 +38,32 @@ namespace CityGame.Business
             Live();
         }
 
-        public virtual bool Build(PositionDTO positionDTO)
+        public bool Build(PositionDTO positionDTO)
         {
             GameObjectModelDTO gameObjectModelDTO = gameObjectModel.Build(positionDTO);
             if (gameObjectModelDTO != null)
             {
                 GameObjectBusinessDTO gameObjectBusinessDTO = new GameObjectBusinessDTO();
-                gameObjectBusinessDTO.cost = defaultGameObjectBusinessDTO.cost;
-                gameObjectBusinessDTO.electrified = defaultGameObjectBusinessDTO.electrified;
+         //       gameObjectBusinessDTO.cost = defaultGameObjectBusinessDTO.cost;
+         //       gameObjectBusinessDTO.electrified = defaultGameObjectBusinessDTO.electrified;
                 gameObjectBusinessDTO.gameObjectModelDTO = gameObjectModelDTO;
+
+                gameObjectBusinessDTO = BuildDeligate(gameObjectBusinessDTO);
+
+
                 gameObjectBusinessDTOs.Add(gameObjectBusinessDTO);
+
+                
+
                 return true;
             }
 
             return false;
+        }
+
+        public virtual GameObjectBusinessDTO BuildDeligate(GameObjectBusinessDTO gameObjectBusinessDTO)
+        {
+            return gameObjectBusinessDTO;
         }
 
 

@@ -40,7 +40,7 @@ namespace CityGame.Models
                 }
             });
 
-            base.LiveCycle(gameObjectModelDTO);
+            base.DrawElectrified(gameObjectModelDTO);
 
             /*
             if (gameObject.timeLive > random.Next(10))

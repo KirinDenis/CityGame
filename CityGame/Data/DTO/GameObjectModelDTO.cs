@@ -12,6 +12,7 @@
 
         public uint timeLive = 0;
 
+        
         public bool electrified { get; set; } = false;
 
     }

@@ -17,8 +17,16 @@ namespace CityGame.Business
         public ResidetBusiness(GameBusiness gameBusiness, GameObjectModel gameObjectModel) : base(gameBusiness, gameObjectModel)
         {
             this.gameObjectModel = gameObjectModel;
-            defaultGameObjectBusinessDTO.cost = 100;
+            cost = 100;
         }
+
+        public override GameObjectBusinessDTO BuildDeligate(GameObjectBusinessDTO gameObjectBusinessDTO)
+        {            
+            gameObjectBusinessDTO.powerTarget = 0;
+
+            return gameObjectBusinessDTO;
+        }
+
 
         public override void LifeCycle(GameObjectBusinessDTO gameObjectBusinessDTO)
         {
@@ -73,7 +81,7 @@ namespace CityGame.Business
                 gameObjectBusinessDTO.gameObjectModelDTO.level = 3;
             }
 
-
+            gameObjectBusinessDTO.powerTarget = gameObjectBusinessDTO.EcosystemItem.Population * 5;
 
 
             /*

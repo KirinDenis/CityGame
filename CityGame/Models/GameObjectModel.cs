@@ -1,7 +1,6 @@
 ﻿using CityGame.Data.DTO;
 using CityGame.DTOs.Enum;
 using CityGame.Graphics;
-using CityGame.Interfaces;
 using CityGame.Models.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -25,11 +24,13 @@ namespace CityGame.Models
 
         public GroupDTO? electricGroup { get; set; }
 
+        public DateTime electricBlink { get; set; } = DateTime.Now;
+
         protected virtual string _GroupName { get; set; }
 
         public virtual string GroupName { get { return _GroupName; } }
 
-        
+
 
 
         //  protected virtual string _GroupName { get; set; }
@@ -64,6 +65,80 @@ namespace CityGame.Models
             gameObjectModelDTOs.Add(gameObjectModelDTO);
 
             return gameObjectModelDTO;
+        }
+
+        private void Live()
+        {
+
+            liveTask = Task.Run(async delegate
+            {
+                while (!Canceled)
+                {
+                    foreach (GameObjectModelDTO gameObjectModelDTO in gameObjectModelDTOs.ToArray())
+                    {
+                        LiveCycle(gameObjectModelDTO);
+
+                    }
+
+                    if ((DateTime.Now - electricBlink).TotalMilliseconds > 1000)
+                    {
+                        electricBlink = DateTime.Now;
+                    }
+                    await Task.Delay(300);
+                }
+            });
+        }
+
+        protected virtual void LiveCycle(GameObjectModelDTO gameObjectModelDTO)
+        {
+
+            if (gameObjectModelDTO.Group?.Frames.Count > 1)
+            {
+                if (gameObjectModelDTO.animationFrame >= gameObjectModelDTO.Group.Frames.Count)
+                {
+                    gameObjectModelDTO.animationFrame = 1;
+                }
+                _ = Application.Current.Dispatcher.Invoke(() =>
+                {
+                    if (!Canceled)
+                    {
+                        if (gameObjectModelDTO.positionDTO != null)
+                        {
+                            terrainModel.BuildObject(gameObjectModelDTO.positionDTO.x, gameObjectModelDTO.positionDTO.y, gameObjectModelDTO.Group, gameObjectModelDTO.animationFrame);
+                        }
+                    }
+
+                    return Task.CompletedTask;
+                });
+                gameObjectModelDTO.animationFrame++;
+            }
+
+
+        }
+
+        public void DrawElectrified(GameObjectModelDTO gameObjectModelDTO)
+        {
+            if ((DateTime.Now - electricBlink).TotalMilliseconds > 1000)
+            {
+
+                if (!gameObjectModelDTO.electrified)
+                {
+                    if (gameObjectModelDTO.positionDTO != null)
+                    {
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            if (!Canceled)
+                            {
+
+                                terrainModel.BuildObject(gameObjectModelDTO.centerPosition.x, gameObjectModelDTO.centerPosition.y, electricGroup, 0);
+
+                            }
+
+                        });
+                    }
+                }
+            }
+
         }
 
         public void Destroy(GameObjectModelDTO gameObjectModelDTO)
@@ -106,61 +181,7 @@ namespace CityGame.Models
 
         }
 
-        private void Live()
-        {
 
-            liveTask = Task.Run(async delegate
-            {
-                while (!Canceled)
-                {
-                    foreach (GameObjectModelDTO gameObjectModelDTO in gameObjectModelDTOs.ToArray())
-                    {
-                        LiveCycle(gameObjectModelDTO);
-                    }
-                    await Task.Delay(300);
-                }
-            });
-        }
-
-        protected virtual void LiveCycle(GameObjectModelDTO gameObjectModelDTO)
-        {
-            /*
-            if (gameObjectModelDTO.Group?.Frames.Count > 1)
-            {
-                if (gameObjectModelDTO.animationFrame >= gameObjectModelDTO.Group.Frames.Count)
-                {
-                    gameObjectModelDTO.animationFrame = 1;
-                }
-                _ = Application.Current.Dispatcher.Invoke(() =>
-                {
-                    if (!Canceled)
-                    {
-                        if (gameObjectModelDTO.positionDTO != null)
-                        {
-                               terrainModel.BuildObject(gameObjectModelDTO.positionDTO.x, gameObjectModelDTO.positionDTO.y, gameObjectModelDTO.Group, gameObjectModelDTO.animationFrame);
-                        }
-                    }
-
-                    return Task.CompletedTask;
-                });
-                gameObjectModelDTO.animationFrame++;
-            }
-            */
-            if (!gameObjectModelDTO.electrified)
-            {
-                if (gameObjectModelDTO.positionDTO != null)
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        if (!Canceled)
-                        {
-
-                            terrainModel.BuildObject(gameObjectModelDTO.centerPosition.x, gameObjectModelDTO.centerPosition.y, electricGroup, 0);
-                        }
-                    });
-                }
-            }
-        }
 
         public void Dispose()
         {

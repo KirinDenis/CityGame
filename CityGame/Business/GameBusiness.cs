@@ -172,7 +172,7 @@ namespace CityGame.Business
                     {
                         if (gameObjectBusiness.Build(position))
                         {
-                            _budget -= gameObjectBusiness.defaultGameObjectBusinessDTO.cost;
+                            _budget -= gameObjectBusiness.cost;
                             return true;
                         }
                     }
@@ -197,13 +197,13 @@ namespace CityGame.Business
                     {
                         GameObjectModelDTO currentModel = gameObjectBusinessDTO.gameObjectModelDTO;
 
-                        if (((currentModel.positionDTO.x >= selectedModel.positionDTO.x - currentModel.Group.Width)
+                        if (((currentModel.positionDTO.x >= selectedModel.positionDTO.x - selectedModel.Group.Width)
                           &&
-                            (currentModel.positionDTO.x <= selectedModel.positionDTO.x + currentModel.Group.Width))
+                            (currentModel.positionDTO.x <= selectedModel.positionDTO.x + selectedModel.Group.Width))
                             &&
-                            ((currentModel.positionDTO.y >= selectedModel.positionDTO.y - currentModel.Group.Height)
+                            ((currentModel.positionDTO.y >= selectedModel.positionDTO.y - selectedModel.Group.Height)
                           &&
-                            (currentModel.positionDTO.y <= selectedModel.positionDTO.y + currentModel.Group.Height)))
+                            (currentModel.positionDTO.y <= selectedModel.positionDTO.y + selectedModel.Group.Height)))
                         {
                             list.Add(gameObjectBusinessDTO);
                         }

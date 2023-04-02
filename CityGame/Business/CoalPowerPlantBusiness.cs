@@ -25,50 +25,22 @@ namespace CityGame.Business
             return gameObjectBusinessDTO;
         }
 
-        private int PowerNeighbours(GameObjectBusinessDTO coalPowerPlantBusinessDTO, GameObjectBusinessDTO selectedObject, int powerConsume)
+        private List<GameObjectBusinessDTO> FindAllPowerNeighbours(List<GameObjectBusinessDTO> currentList, GameObjectBusinessDTO selectedObject)
         {
+            if (currentList == null)
+            {
+                currentList = new List<GameObjectBusinessDTO>();
+            }
             List<GameObjectBusinessDTO> gameObjects = gameBusiness.GetNeighbours(selectedObject);
             foreach (GameObjectBusinessDTO gameObject in gameObjects)
             {
-                if (gameObject.powerSource == 0) //the target object is not power plant 
+                if (currentList.IndexOf(gameObject) == -1)
                 {
-
-                    if ((gameObject.powerPlantId == 0) || (gameObject.powerPlantId == coalPowerPlantBusinessDTO.powerPlantId))
-                    {
-                        if (gameObject.powerPlantSession != coalPowerPlantBusinessDTO.powerPlantSession)
-                        {
-                            if (gameObject.powerSource == 0) //the target object is not power plant 
-                            {
-                                gameObject.powerPlantSession = coalPowerPlantBusinessDTO.powerPlantSession;
-                                if (powerConsume + gameObject.powerTarget < coalPowerPlantBusinessDTO.powerSource)
-                                {
-                                    gameObject.electrified = true;
-                                    gameObject.powerPlantId = coalPowerPlantBusinessDTO.powerPlantId;
-                                }
-                                else
-                                {
-                                    gameObject.electrified = false;
-                                    gameObject.powerPlantId = 0;
-                                }
-
-                                powerConsume += gameObject.powerTarget;
-                                gameObject.gameObjectModelDTO.electrified = gameObject.electrified;
-                                powerConsume = PowerNeighbours(coalPowerPlantBusinessDTO, gameObject, powerConsume);
-                            }
-                        }
-                        
-                    }
+                    currentList.Add(gameObject);
+                    currentList = FindAllPowerNeighbours(currentList, gameObject);
                 }
-                else
-                {
-                    if (gameObject.powerPlantId != coalPowerPlantBusinessDTO.powerPlantId) //it is not current power plant
-                    {
-                       // powerConsume = PowerNeighbours(coalPowerPlantBusinessDTO, gameObject, powerConsume);
-                    }
-                }
-                
             }
-            return powerConsume;
+            return currentList;
         }
 
 
@@ -76,47 +48,48 @@ namespace CityGame.Business
         public override void LifeCycle(GameObjectBusinessDTO gameObjectBusinessDTO)
         {
 
-            gameObjectBusinessDTO.powerPlantSession++;
-            int powerConsume = PowerNeighbours(gameObjectBusinessDTO, gameObjectBusinessDTO, 0);
+            int powerConsume = 0;
 
-            if (powerConsume > gameObjectBusinessDTO.powerSource)
-            {
-                gameObjectBusinessDTO.electrified = false;
-            }
-            else
-            {
-                gameObjectBusinessDTO.electrified = true;
-            }
-            gameObjectBusinessDTO.gameObjectModelDTO.electrified = gameObjectBusinessDTO.electrified;
+            List<GameObjectBusinessDTO> currentList = FindAllPowerNeighbours(null, gameObjectBusinessDTO);
 
-            /*
-                List<GameObjectBusinessDTO> gameObjects = gameBusiness.GetNeighbours(gameObjectBusinessDTO);
-                foreach(GameObjectBusinessDTO  gameObject in gameObjects)
+            foreach (GameObjectBusinessDTO gameObject in currentList)
+            {
+
+                if (gameObject.powerSource == 0) //the target object is not power plant 
                 {
-                    if (gameObject.powerSource == 0)
+
+                    if ((gameObject.powerPlantId == 0) || (gameObject.powerPlantId == gameObjectBusinessDTO.powerPlantId))
                     {
-                        if (powerConsume + gameObject.powerTarget < gameObjectBusinessDTO.powerSource)
-                        {                        
-                            gameObject.electrified = true;
+                        powerConsume += gameObject.powerTarget;
+                        if (powerConsume <= gameObjectBusinessDTO.powerSource)
+                        {
+                            gameObject.electrified = gameObject.gameObjectModelDTO.electrified = true;
+                            gameObject.powerPlantId = gameObjectBusinessDTO.powerPlantId;                            
                         }
                         else
                         {
-                            gameObject.electrified = false;
+                            gameObject.electrified = gameObject.gameObjectModelDTO.electrified = false;
+                            gameObject.powerPlantId = 0;
+                            break;
                         }
-                        powerConsume += gameObject.powerTarget;
-                        gameObject.gameObjectModelDTO.electrified = gameObject.electrified;                    
+                     
                     }
-                }    
-                if (powerConsume > gameObjectBusinessDTO.powerSource)
-                {
-                    gameObjectBusinessDTO.electrified = false;
                 }
-                else 
-                {
-                    gameObjectBusinessDTO.electrified = true;
-                }
-                gameObjectBusinessDTO.gameObjectModelDTO.electrified = gameObjectBusinessDTO.electrified;
-            */
+
+            }
+
+
+            gameObjectBusinessDTO.powerTarget = powerConsume;
+            if (gameObjectBusinessDTO.powerTarget <= gameObjectBusinessDTO.powerSource)
+            {
+                gameObjectBusinessDTO.electrified = gameObjectBusinessDTO.gameObjectModelDTO.electrified = true;
+            }
+            else
+            {
+                gameObjectBusinessDTO.electrified = gameObjectBusinessDTO.gameObjectModelDTO.electrified = false;
+            }
+
+
         }
     }
 }

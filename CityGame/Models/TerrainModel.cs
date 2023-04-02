@@ -247,15 +247,17 @@ namespace CityGame.Models
                 {
                     string? name = spriteBusiness.GetGroupBySpritePosition(terrain[position.x, position.y])?.Name;
                     if (!string.IsNullOrEmpty(name))
-                    {
+                    {                        
                         result.PositionArea[0, 0] = SpritesGroupEnum.GetObjectTypeByGroupName(name);
-                        if ((result.PositionArea[0, 0] != ObjectType.terrain)
+                        if (((result.PositionArea[0, 0] != ObjectType.terrain)
                             &&
                             (result.PositionArea[0, 0] != ObjectType.forest)
                             &&
                             (result.PositionArea[0, 0] != ObjectType.water)
                             &&
                             (result.PositionArea[0, 0] != ObjectType.network))
+                            ||
+                            (name.Equals(group.Name)))
                         {
                             result.CanBuild = false;
                         }

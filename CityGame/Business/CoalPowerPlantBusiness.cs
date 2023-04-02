@@ -75,9 +75,7 @@ namespace CityGame.Business
                      
                     }
                 }
-
             }
-
 
             gameObjectBusinessDTO.powerTarget = powerConsume;
             if (gameObjectBusinessDTO.powerTarget <= gameObjectBusinessDTO.powerSource)

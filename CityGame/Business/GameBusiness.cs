@@ -46,6 +46,7 @@ namespace CityGame.Business
                 }
             }
 
+            gameObjects.Add(new WireBusiness(this, NewGameObjectModel(typeof(WireGameObjectModel))));
             gameObjects.Add(new ResidetBusiness(this, NewGameObjectModel(typeof(ResidentModel))));
             gameObjects.Add(new CoalPowerPlantBusiness(this, NewGameObjectModel(typeof(CoalPowerPlantModel))));
 
@@ -100,9 +101,9 @@ namespace CityGame.Business
 
 
 
-                    foreach (GameObjectBusiness gameObjectBusiness in gameObjects)
+                    foreach (GameObjectBusiness gameObjectBusiness in gameObjects.ToArray())
                     {
-                        foreach (GameObjectBusinessDTO gameObjectBusinessDTO in gameObjectBusiness.gameObjectBusinessDTOs)
+                        foreach (GameObjectBusinessDTO gameObjectBusinessDTO in gameObjectBusiness.gameObjectBusinessDTOs.ToArray())
                         {
 
                             ecosystem[gameObjectBusinessDTO.gameObjectModelDTO.centerPosition.x, gameObjectBusinessDTO.gameObjectModelDTO.centerPosition.y].Population = gameObjectBusinessDTO.EcosystemItem.Population;
@@ -189,9 +190,9 @@ namespace CityGame.Business
 
             GameObjectModelDTO selectedModel = selectedGameObjectBusinessDTO.gameObjectModelDTO;
 
-            foreach (GameObjectBusiness gameObjectBusiness in gameObjects)
+            foreach (GameObjectBusiness gameObjectBusiness in gameObjects.ToArray())
             {
-                foreach (GameObjectBusinessDTO gameObjectBusinessDTO in gameObjectBusiness.gameObjectBusinessDTOs)
+                foreach (GameObjectBusinessDTO gameObjectBusinessDTO in gameObjectBusiness.gameObjectBusinessDTOs.ToArray())
                 {
                     if (gameObjectBusinessDTO != selectedGameObjectBusinessDTO)
                     {

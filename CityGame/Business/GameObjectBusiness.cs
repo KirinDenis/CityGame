@@ -74,11 +74,20 @@ namespace CityGame.Business
             {
                 while (!Canceled)
                 {
-                    foreach (GameObjectBusinessDTO gameObjectBusinessDTO in gameObjectBusinessDTOs)
+                    try
                     {
-                        LifeCycle(gameObjectBusinessDTO);
+
+                        foreach (GameObjectBusinessDTO gameObjectBusinessDTO in gameObjectBusinessDTOs.ToArray())
+                    {
+                            LifeCycle(gameObjectBusinessDTO);
                     }
                     await Task.Delay(300);
+                    }
+                    catch (Exception e)
+                    {
+                        await Task.Delay(100);
+                    }
+
                 }
             });
         }

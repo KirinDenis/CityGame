@@ -5,7 +5,11 @@
         public GroupDTO? Group { get; set; }
         public PositionDTO? positionDTO { get; set; }
 
-        public PositionDTO? centerPosition { get; set; }
+        public PositionDTO? centerPosition { get; set; } = new PositionDTO()
+        {
+            x = 0,
+            y = 0
+        };
         public byte animationFrame { get; set; } = 1;
 
         public byte level = 0;

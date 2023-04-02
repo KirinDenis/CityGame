@@ -130,6 +130,7 @@ namespace CityGame
             dispatcher.Invoke(() =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.Lowest;
+                EcosystemCanvase.Width = EcosystemCanvase.Height = terrainSize;
                 for (int x = 0; x < terrainSize; x++)
                 {
                     for (int y = 0; y < terrainSize; y++)

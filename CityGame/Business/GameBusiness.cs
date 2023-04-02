@@ -2,10 +2,8 @@
 using CityGame.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
-using System.Windows;
-using System.Windows.Media.Media3D;
-using System.Windows.Threading;
 
 namespace CityGame.Business
 {
@@ -35,6 +33,8 @@ namespace CityGame.Business
 
         List<GameObjectBusiness> gameObjects = new List<GameObjectBusiness>();
 
+        private CoalPowerPlantBusiness coalPowerPlantBusiness;
+
         public GameBusiness(string cityName, int size = 100) : base(cityName, size)
         {
             ecosystem = new EcosystemItemDTO[size, size];
@@ -48,7 +48,8 @@ namespace CityGame.Business
 
             gameObjects.Add(new WireBusiness(this, NewGameObjectModel(typeof(WireGameObjectModel))));
             gameObjects.Add(new ResidetBusiness(this, NewGameObjectModel(typeof(ResidentModel))));
-            gameObjects.Add(new CoalPowerPlantBusiness(this, NewGameObjectModel(typeof(CoalPowerPlantModel))));
+            coalPowerPlantBusiness = new CoalPowerPlantBusiness(this, NewGameObjectModel(typeof(CoalPowerPlantModel))); //need for build and destroy objects
+            gameObjects.Add(coalPowerPlantBusiness);
 
             //DispatcherTimer timer = new DispatcherTimer();
             //timer.Interval = TimeSpan.FromMilliseconds(300);
@@ -212,6 +213,98 @@ namespace CityGame.Business
                 }
             }
             return list;
-        }       
+        }
+
+
+        public GameObjectBusiness? GetGameObjectBusiness(PositionDTO position)
+        {
+            if (position == null)
+            {
+                return null;
+            }
+
+            foreach (GameObjectBusiness gameObjectBusiness in gameObjects.ToArray())
+            {
+
+
+                GameObjectBusinessDTO? gameObjectBusinessDTO = gameObjectBusiness.gameObjectBusinessDTOs.Where(o =>
+                     o.gameObjectModelDTO.positionDTO != null
+                     &&
+                     o.gameObjectModelDTO.Group != null
+                     &&
+                     (o.gameObjectModelDTO.positionDTO.x <= position?.x && o.gameObjectModelDTO.positionDTO.y <= position.y
+                     &&
+                     o.gameObjectModelDTO.positionDTO.x + o.gameObjectModelDTO.Group.Width >= position.x
+                     &&
+                     o.gameObjectModelDTO.positionDTO.y + o.gameObjectModelDTO.Group.Height >= position.y
+                     )).FirstOrDefault();
+
+                if (gameObjectBusinessDTO != null)
+                {
+                    return gameObjectBusiness;
+                }
+            }
+            return null;
+        }
+
+        public GameObjectBusinessDTO? GetGameObjectBusinessDTO(PositionDTO position)
+        {
+            if (position == null)
+            {
+                return null;
+            }
+
+            foreach (GameObjectBusiness gameObjectBusiness in gameObjects.ToArray())
+            {
+
+
+                GameObjectBusinessDTO? gameObjectBusinessDTO = gameObjectBusiness.gameObjectBusinessDTOs.Where(o =>
+                     o.gameObjectModelDTO.positionDTO != null
+                     &&
+                     o.gameObjectModelDTO.Group != null
+                     &&
+                     (o.gameObjectModelDTO.positionDTO.x <= position?.x && o.gameObjectModelDTO.positionDTO.y <= position.y
+                     &&
+                     o.gameObjectModelDTO.positionDTO.x + o.gameObjectModelDTO.Group.Width >= position.x
+                     &&
+                     o.gameObjectModelDTO.positionDTO.y + o.gameObjectModelDTO.Group.Height >= position.y
+                     )).FirstOrDefault();
+
+                if (gameObjectBusinessDTO != null)
+                {
+                    return gameObjectBusinessDTO;
+                }
+            }
+            return null;
+        }
+
+        
+        public bool DestroyObjectAtPosition(PositionDTO position)
+        {
+
+            if (position != null)
+            {
+                GameObjectBusiness? gameObjectBusiness = GetGameObjectBusiness(position);
+                GameObjectBusinessDTO? gameObjectBusinessDTO = GetGameObjectBusinessDTO(position);
+
+                if ((gameObjectBusiness != null) && (gameObjectBusinessDTO != null))
+                {
+                    if ((gameObjectBusiness.GetType() != typeof(CoalPowerPlantBusiness)) && (gameObjectBusinessDTO.powerPlantId != 0))
+                    {
+                        GameObjectBusinessDTO? connectedCoalPowerPlant =
+                            coalPowerPlantBusiness.gameObjectBusinessDTOs.Where(c => c.powerPlantId == gameObjectBusinessDTO.powerPlantId).FirstOrDefault();
+                        if (connectedCoalPowerPlant != null)
+                        {
+                            coalPowerPlantBusiness.PowerTargetDestroy(connectedCoalPowerPlant);
+                        }
+                    }
+                    gameObjectBusiness.Destroy(gameObjectBusinessDTO);
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
+
 }

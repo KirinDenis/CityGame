@@ -2,6 +2,7 @@
 {
     public class GameObjectBusinessDTO
     {
+        
         public EcosystemItemDTO EcosystemItem { get; set; } = new EcosystemItemDTO();
         
         public bool electrified { get; set; } = false;

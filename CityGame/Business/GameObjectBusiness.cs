@@ -66,6 +66,13 @@ namespace CityGame.Business
             return gameObjectBusinessDTO;
         }
 
+        public virtual void Destroy(GameObjectBusinessDTO gameObjectBusinessDTO)
+        {
+            gameObjectModel.Destroy(gameObjectBusinessDTO.gameObjectModelDTO);
+            gameObjectBusinessDTOs.Remove(gameObjectBusinessDTO);
+        }
+
+
 
         private void Live()
         {

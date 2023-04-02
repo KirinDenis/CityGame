@@ -110,32 +110,6 @@ namespace CityGame.Models
             return this.terrainModel.TestPosition(group, position);
         }
 
-        public bool DestroyObjectAtPosition(PositionDTO position)
-        {
-            /*
-            if ((gameObjectModels != null) && (position != null))
-            {
-                GameObjectModel? gameObjectModel = gameObjectModels.Where(g => g.gameObjects.Where(o =>
-                 o.positionDTO != null && o.Group != null && (o.positionDTO.x <= position?.x && o.positionDTO.y <= position.y &&
-                 o.positionDTO.x + o.Group.Width >= position.x && o.positionDTO.y + o.Group.Height >= position.y
-                 )).Any()).FirstOrDefault();
-
-                if (gameObjectModel != null)
-                {
-                    GameObjectDTO? gameObjectDTO = gameObjectModel.gameObjects.FirstOrDefault(o =>
-                                 o.positionDTO != null && o.Group != null && (
-                                 o.positionDTO.x <= position.x && o.positionDTO.y <= position.y &&
-                                 o.positionDTO.x + o.Group.Width >= position.x && o.positionDTO.y + o.Group.Height >= position.y));
-                    if (gameObjectDTO != null)
-                    {
-                        gameObjectModel.Destroy(gameObjectDTO);
-                        return true;
-                    }
-                }
-            }
-            */
-            return false;
-        }
 
         private void Timer_Tick(object? sender, EventArgs e)
         {

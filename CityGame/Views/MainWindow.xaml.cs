@@ -203,15 +203,16 @@ namespace CityGame
         {
             int groupIndex = 0;
             int count = 0;
-            for (ushort x = 3; x < terrainSize - GameConsts.GroupSize; x += 3, groupIndex++)
+            
+            for (ushort x = 3; x < terrainSize - GameConsts.GroupSize; x += 4, groupIndex++)
             {
-                for (ushort y = 3; y < terrainSize - GameConsts.GroupSize; y += 3, groupIndex++)
+                for (ushort y = 3; y < terrainSize - GameConsts.GroupSize; y += 4, groupIndex++)
                 {
-                    if (groupIndex >= spriteBusiness.groups.Count - 1)
+                    if (count >= gameBusiness.gameObjects.Count-1)
                     {
-                        groupIndex = 0;
+                        count = 0;
                     }
-                    gameBusiness?.BuildObject(new PositionDTO() { x = x, y = y }, spriteBusiness.groups[groupIndex]);
+                    gameBusiness?.BuildObject(new PositionDTO() { x = x, y = y }, gameBusiness.gameObjects[count].gameObjectModel.startingGroup);
                     count++;
                 }
             }

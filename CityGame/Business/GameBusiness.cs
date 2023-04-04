@@ -31,7 +31,7 @@ namespace CityGame.Business
 
         public EcosystemItemDTO[,] ecosystem;
 
-        List<GameObjectBusiness> gameObjects = new List<GameObjectBusiness>();
+        public List<GameObjectBusiness> gameObjects = new List<GameObjectBusiness>();
 
         private CoalPowerPlantBusiness coalPowerPlantBusiness;
 
@@ -46,10 +46,12 @@ namespace CityGame.Business
                 }
             }
 
-            gameObjects.Add(new WireBusiness(this, NewGameObjectModel(typeof(WireGameObjectModel))));
+
             gameObjects.Add(new ResidetBusiness(this, NewGameObjectModel(typeof(ResidentModel))));
             coalPowerPlantBusiness = new CoalPowerPlantBusiness(this, NewGameObjectModel(typeof(CoalPowerPlantModel))); //need for build and destroy objects
             gameObjects.Add(coalPowerPlantBusiness);
+            gameObjects.Add(new WireBusiness(this, NewGameObjectModel(typeof(WireGameObjectModel))));
+
 
             //DispatcherTimer timer = new DispatcherTimer();
             //timer.Interval = TimeSpan.FromMilliseconds(300);
@@ -198,16 +200,61 @@ namespace CityGame.Business
                     if (gameObjectBusinessDTO != selectedGameObjectBusinessDTO)
                     {
                         GameObjectModelDTO currentModel = gameObjectBusinessDTO.gameObjectModelDTO;
+                        bool xOverlap = currentModel.positionDTO.x <= selectedModel.positionDTO.x + selectedModel.Group.Width
+                            && selectedModel.positionDTO.x <= currentModel.positionDTO.x + currentModel.Group.Width;
 
-                        if (((currentModel.positionDTO.x >= selectedModel.positionDTO.x - selectedModel.Group.Width)
-                          &&
-                            (currentModel.positionDTO.x <= selectedModel.positionDTO.x + selectedModel.Group.Width))
-                            &&
-                            ((currentModel.positionDTO.y >= selectedModel.positionDTO.y - selectedModel.Group.Height)
-                          &&
-                            (currentModel.positionDTO.y <= selectedModel.positionDTO.y + selectedModel.Group.Height)))
+                        bool yOverlap = currentModel.positionDTO.y <= selectedModel.positionDTO.y + selectedModel.Group.Height
+                            && selectedModel.positionDTO.y <= currentModel.positionDTO.y + currentModel.Group.Height;
+
+                        if (xOverlap && yOverlap)
                         {
-                            list.Add(gameObjectBusinessDTO);
+
+                            /*
+                            if (((currentModel.positionDTO.x >= selectedModel.positionDTO.x - selectedModel.Group.Width)
+                              &&
+                                (currentModel.positionDTO.x <= selectedModel.positionDTO.x + selectedModel.Group.Width)
+                                &&
+                                (currentModel.positionDTO.y >= selectedModel.positionDTO.y - selectedModel.Group.Height)
+                              &&
+                                (currentModel.positionDTO.y <= selectedModel.positionDTO.y + selectedModel.Group.Height))
+                                ||
+                              ((currentModel.positionDTO.x + currentModel.Group.Width <= selectedModel.positionDTO.x)
+                              &&
+                                (currentModel.positionDTO.x <= selectedModel.positionDTO.x + selectedModel.Group.Width)
+                                &&
+                                (currentModel.positionDTO.y >= selectedModel.positionDTO.y - selectedModel.Group.Height)
+                              &&
+                                (currentModel.positionDTO.y <= selectedModel.positionDTO.y + selectedModel.Group.Height)))
+                            */
+
+                            if ((currentModel.positionDTO.x + currentModel.Group.Width == selectedModel.positionDTO.x || selectedModel.positionDTO.x + selectedModel.Group.Width == currentModel.positionDTO.x) &&
+                                (currentModel.positionDTO.y >= selectedModel.positionDTO.y && currentModel.positionDTO.y <= selectedModel.positionDTO.y + selectedModel.Group.Height ||
+                                selectedModel.positionDTO.y >= currentModel.positionDTO.y && selectedModel.positionDTO.y <= currentModel.positionDTO.y + currentModel.Group.Height))
+                            {
+                                list.Add(gameObjectBusinessDTO);
+                            }
+                            if ((currentModel.positionDTO.y + currentModel.Group.Height == selectedModel.positionDTO.y || selectedModel.positionDTO.y + selectedModel.Group.Height == currentModel.positionDTO.y) &&
+                                (currentModel.positionDTO.x >= selectedModel.positionDTO.x && currentModel.positionDTO.x <= selectedModel.positionDTO.x + selectedModel.Group.Width ||
+                                selectedModel.positionDTO.x >= currentModel.positionDTO.x && selectedModel.positionDTO.x <= currentModel.positionDTO.x + currentModel.Group.Width))
+                            {
+                                list.Add(gameObjectBusinessDTO);
+                            }
+
+                            /*
+                            if ((Math.Abs(currentModel.positionDTO.x - selectedModel.positionDTO.x + selectedModel.Group.Width) == currentModel.Group.Width 
+                                || 
+                                Math.Abs(currentModel.positionDTO.x + currentModel.Group.Width - selectedModel.positionDTO.x) == currentModel.Group.Width) 
+                                ||
+                                (Math.Abs(currentModel.positionDTO.y - selectedModel.positionDTO.y + selectedModel.Group.Height) == currentModel.Group.Height
+                                ||
+                                Math.Abs(currentModel.positionDTO.y + currentModel.Group.Height - selectedModel.positionDTO.y) == currentModel.Group.Height))                             {
+                                {
+                                    list.Add(gameObjectBusinessDTO);
+                                }
+                            }
+                            */
+                                
+
                         }
                     }
                 }

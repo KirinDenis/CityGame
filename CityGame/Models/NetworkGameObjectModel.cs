@@ -13,6 +13,7 @@ namespace CityGame.Models
         public bool[,] BuildNetworkItem(ushort x, ushort y, bool current = false)
         {
             bool[,] FS = new bool[3, 3]; //FS means friendly sprites, the sprites of selected network item type
+            bool[,] FB = new bool[3, 3]; //FB meand building sprites near selected network position
             if ((spriteBusiness == null) || (startingGroup == null))
             {
                 return FS;
@@ -45,6 +46,15 @@ namespace CityGame.Models
                                         break;
                                     }
                                 }
+                            }
+                        }
+                        //near buildings
+                        GroupDTO? group = spriteBusiness.GetGroupBySpritePosition(terrainModel.terrain?[tx, ty]);
+                        if (group != null)
+                        {
+                            if (spriteBusiness.GetObjectTypeByGrop(group) == ObjectType.building)                            
+                            {
+                                FB[ox, oy] = true; 
                             }
                         }
                     }
@@ -163,6 +173,16 @@ namespace CityGame.Models
             int t = 0;
             int b = 2;
 
+            bool[,] StoredFS = new bool[3,3];
+            for(int sx = 0; sx < 3; sx++)
+            {
+                for (int sy = 0; sy < 3; sy++)
+                {
+                    StoredFS[sx, sy] = FS[sx, sy];
+                    FS[sx, sy] = FS[sx, sy] | FB[sx, sy];
+                }
+            }
+
             //Central cross of 4 roads
             if (FS[c, t] & FS[c, b] & FS[l, c] & FS[r, c])
             {
@@ -246,7 +266,7 @@ namespace CityGame.Models
             //terrainModel.PutSprite(x, y, startingGroup, 0, terrainModel.terrain[x, y].x, terrainModel.terrain[x, y].y);
             terrainModel.PutSprite(x, y, startingGroup, spritePosition);
 
-            return FS;
+            return StoredFS;
         }
 
         public override GameObjectModelDTO Build(PositionDTO positionDTO)

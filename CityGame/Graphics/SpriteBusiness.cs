@@ -172,6 +172,10 @@ namespace CityGame.Graphics
                     return ObjectType.garden;
                 case SpritesGroupEnum.water:
                     return ObjectType.water;
+                case SpritesGroupEnum.terrain:
+                    return ObjectType.terrain;
+                case SpritesGroupEnum.forest:
+                    return ObjectType.forest;
                 default:
                     return ObjectType.building;
             }

@@ -200,32 +200,14 @@ namespace CityGame.Business
                     if (gameObjectBusinessDTO != selectedGameObjectBusinessDTO)
                     {
                         GameObjectModelDTO currentModel = gameObjectBusinessDTO.gameObjectModelDTO;
-                        bool xOverlap = currentModel.positionDTO.x <= selectedModel.positionDTO.x + selectedModel.Group.Width
-                            && selectedModel.positionDTO.x <= currentModel.positionDTO.x + currentModel.Group.Width;
+                        bool xOverlap = currentModel.positionDTO.x + currentModel.Group.Width == selectedModel.positionDTO.x || selectedModel.positionDTO.x + selectedModel.Group.Width == currentModel.positionDTO.x;
 
-                        bool yOverlap = currentModel.positionDTO.y <= selectedModel.positionDTO.y + selectedModel.Group.Height
-                            && selectedModel.positionDTO.y <= currentModel.positionDTO.y + currentModel.Group.Height;
+                        bool yOverlap = currentModel.positionDTO.y + currentModel.Group.Height == selectedModel.positionDTO.y || selectedModel.positionDTO.y + selectedModel.Group.Height == currentModel.positionDTO.y;
 
-                        if (xOverlap && yOverlap)
+
+                        if (!(xOverlap && yOverlap))
                         {
 
-                            /*
-                            if (((currentModel.positionDTO.x >= selectedModel.positionDTO.x - selectedModel.Group.Width)
-                              &&
-                                (currentModel.positionDTO.x <= selectedModel.positionDTO.x + selectedModel.Group.Width)
-                                &&
-                                (currentModel.positionDTO.y >= selectedModel.positionDTO.y - selectedModel.Group.Height)
-                              &&
-                                (currentModel.positionDTO.y <= selectedModel.positionDTO.y + selectedModel.Group.Height))
-                                ||
-                              ((currentModel.positionDTO.x + currentModel.Group.Width <= selectedModel.positionDTO.x)
-                              &&
-                                (currentModel.positionDTO.x <= selectedModel.positionDTO.x + selectedModel.Group.Width)
-                                &&
-                                (currentModel.positionDTO.y >= selectedModel.positionDTO.y - selectedModel.Group.Height)
-                              &&
-                                (currentModel.positionDTO.y <= selectedModel.positionDTO.y + selectedModel.Group.Height)))
-                            */
 
                             if ((currentModel.positionDTO.x + currentModel.Group.Width == selectedModel.positionDTO.x || selectedModel.positionDTO.x + selectedModel.Group.Width == currentModel.positionDTO.x) &&
                                 (currentModel.positionDTO.y >= selectedModel.positionDTO.y && currentModel.positionDTO.y <= selectedModel.positionDTO.y + selectedModel.Group.Height ||

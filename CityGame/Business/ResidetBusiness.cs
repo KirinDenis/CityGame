@@ -13,6 +13,8 @@ namespace CityGame.Business
 {
     public class ResidetBusiness : GameObjectBusiness
     {
+        //TEMP
+        private Random random = new Random();   
         
         public ResidetBusiness(GameBusiness gameBusiness, GameObjectModel gameObjectModel) : base(gameBusiness, gameObjectModel)
         {
@@ -82,6 +84,27 @@ namespace CityGame.Business
             }
 
             gameObjectBusinessDTO.powerTarget = gameObjectBusinessDTO.EcosystemItem.Population * 5;
+
+            for (int bx = 0; bx < 3; bx++)
+            {
+                for (int by = 0; by < 3; by++)
+                {
+                    if (random.Next(100) > 15)
+                    {
+                        gameObjectBusinessDTO.gameObjectModelDTO.basicHouses[bx, by] = new PositionDTO()
+                        {
+                            x = (ushort)random.Next(3),
+                            y = (ushort)random.Next(4),
+                        };
+                    }
+                    else
+                    {
+                        gameObjectBusinessDTO.gameObjectModelDTO.basicHouses[bx, by] = null;
+                    }
+                }
+            };
+
+            gameObjectBusinessDTO.gameObjectModelDTO.residentMode = ResidentMode.basic;
 
 
             /*

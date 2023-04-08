@@ -8,64 +8,101 @@ using System.Windows;
 
 namespace CityGame.Models
 {
+    public enum ResidentMode
+    {
+        zero, 
+        basic,
+        standart, 
+        hospital,
+        church
+    };
+
     public class ResidentModel : GameObjectModel, IGameObjectModel
     {
         protected override string _GroupName { get; set; } = SpritesGroupEnum.resident0;
-        public override string GroupName => _GroupName;        
+        public override string GroupName => _GroupName;
+       
+        public const string zeroLevelGroupName = SpritesGroupEnum.residentBase + "0";
+        public const string basicLevelGroupName = SpritesGroupEnum.residentBase + "19";
+        public const string hospitalGroupName = SpritesGroupEnum.residentBase + "17";
+        public const string churchGroupName = SpritesGroupEnum.residentBase + "18";
+
+
         public ResidentModel(SpriteBusiness spriteBusiness, TerrainModel terrainModel) : base(spriteBusiness, terrainModel)
         {            
-            startingGroup = spriteBusiness.GetGroupByName(GroupName);
+            startingGroup = spriteBusiness.GetGroupByName(GroupName);            
         }
         protected override void LiveCycle(GameObjectModelDTO gameObjectModelDTO)
         {
             gameObjectModelDTO.timeLive++;
 
-            gameObjectModelDTO.Group = spriteBusiness.GetGroupByName(SpritesGroupEnum.residentBase + gameObjectModelDTO.level);
+            switch (gameObjectModelDTO.residentMode)
+            {
+                case ResidentMode.zero: gameObjectModelDTO.Group = startingGroup; break;
+                case ResidentMode.basic: gameObjectModelDTO.Group = spriteBusiness.GetGroupByName(basicLevelGroupName); break;
+                case ResidentMode.hospital: gameObjectModelDTO.Group = spriteBusiness.GetGroupByName(hospitalGroupName); break;
+                case ResidentMode.church: gameObjectModelDTO.Group = spriteBusiness.GetGroupByName(churchGroupName); break;
+                default:
+                    gameObjectModelDTO.Group = spriteBusiness.GetGroupByName(SpritesGroupEnum.residentBase + gameObjectModelDTO.level); break;
+            }
+            
             if (gameObjectModelDTO.Group == null)
             {
                 gameObjectModelDTO.level = 0;
                 gameObjectModelDTO.Group = startingGroup;
             }
-            gameObjectModelDTO.animationFrame = 0;
 
-
-            Application.Current.Dispatcher.Invoke(() =>
+            if (gameObjectModelDTO.residentMode != ResidentMode.basic)
             {
-                if (!Canceled)
-                {
-                    if ((gameObjectModelDTO != null) && (gameObjectModelDTO.Group != null) && (gameObjectModelDTO.positionDTO != null))
-                    {
-                        terrainModel.BuildObject(gameObjectModelDTO.positionDTO.x, gameObjectModelDTO.positionDTO.y, gameObjectModelDTO.Group, gameObjectModelDTO.animationFrame);
-                    }
-                }
-            });
-
-            base.DrawElectrified(gameObjectModelDTO);
-
-            /*
-            if (gameObject.timeLive > random.Next(10))
-            {
-                gameObject.timeLive = 0;
-                gameObject.level++;
-                gameObject.Group = spriteBusiness.GetGroupByName(SpritesGroupEnum.residentBase + gameObject.level);
-                if (gameObject.Group == null)
-                {
-                    gameObject.level = 0;
-                    gameObject.Group = startingGroup;
-                }
-                gameObject.animationFrame = 0;
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     if (!Canceled)
                     {
-                        if ((gameObject != null) && (gameObject.Group != null) && (gameObject.positionDTO != null))
+                        if ((gameObjectModelDTO != null) && (gameObjectModelDTO.Group != null) && (gameObjectModelDTO.positionDTO != null))
                         {
-                            terrainModel.BuildObject(gameObject.positionDTO.x, gameObject.positionDTO.y, gameObject.Group, gameObject.animationFrame);
+                            terrainModel.BuildObject(gameObjectModelDTO.positionDTO.x, gameObjectModelDTO.positionDTO.y, gameObjectModelDTO.Group, gameObjectModelDTO.animationFrame);
                         }
                     }
                 });
             }
-            */
+            else
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    if (!Canceled)
+                    {
+                        if ((gameObjectModelDTO != null) && (gameObjectModelDTO.Group != null) && (gameObjectModelDTO.positionDTO != null))
+                        {
+                            for(int bx=0; bx<3; bx++)
+                            {
+                                for (int by = 0; by < 3; by++)
+                                {
+                                    if (gameObjectModelDTO.basicHouses[bx, by] != null)
+                                    {
+                                        terrainModel.PutSprite(
+                                            (ushort)(gameObjectModelDTO.positionDTO.x + bx),
+                                            (ushort)(gameObjectModelDTO.positionDTO.y + by),
+                                            gameObjectModelDTO.Group,
+                                            gameObjectModelDTO.basicHouses[bx, by]);
+                                    }
+                                    else 
+                                    {
+                                        terrainModel.PutSprite(
+                                            (ushort)(gameObjectModelDTO.positionDTO.x + bx),
+                                            (ushort)(gameObjectModelDTO.positionDTO.y + by),
+                                            startingGroup,
+                                            0,
+                                            bx,
+                                            by);
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }               
+            base.DrawElectrified(gameObjectModelDTO);
         }
     }
 }

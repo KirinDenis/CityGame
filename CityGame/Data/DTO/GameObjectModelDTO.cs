@@ -1,4 +1,6 @@
-﻿namespace CityGame.Data.DTO
+﻿using CityGame.Models;
+
+namespace CityGame.Data.DTO
 {
     public class GameObjectModelDTO
     {
@@ -16,7 +18,9 @@
 
         public uint timeLive = 0;
 
-        
+        public ResidentMode residentMode { get; set; } = ResidentMode.zero;
+        public PositionDTO[,] basicHouses = new PositionDTO[3, 3];
+
         public bool electrified { get; set; } = false;
 
     }

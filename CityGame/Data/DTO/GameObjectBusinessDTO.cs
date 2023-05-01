@@ -2,7 +2,7 @@
 {
     public class GameObjectBusinessDTO
     {
-        
+        public long lastDay = 0;
         public EcosystemItemDTO EcosystemItem { get; set; } = new EcosystemItemDTO();
         
         public bool electrified { get; set; } = false;

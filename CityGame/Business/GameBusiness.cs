@@ -35,6 +35,8 @@ namespace CityGame.Business
 
         private CoalPowerPlantBusiness coalPowerPlantBusiness;
 
+        public long gameDay = 0;
+
         public GameBusiness(string cityName, int size = 100) : base(cityName, size)
         {
             ecosystem = new EcosystemItemDTO[size, size];
@@ -80,6 +82,19 @@ namespace CityGame.Business
             }
         }
 
+        private DateTime DaysToDate(double days)
+        {
+            // Дата 1 января 1900 года
+            DateTime baseDate = new DateTime(1900, 1, 1, 0, 0, 0);
+
+            // Добавляем указанное количество часов
+            TimeSpan time = TimeSpan.FromDays(days);
+
+            // Возвращаем дату и время в формате DateTime
+            return baseDate + time;
+        }
+
+
 
         private void Timer_Tick(object? sender, EventArgs e)
         {
@@ -89,7 +104,7 @@ namespace CityGame.Business
 
                 while (true)
                 {
-
+                    gameDay++;
 
                     EcosystemItemDTO[,] _ecosystem = new EcosystemItemDTO[ecosystem.GetLength(0), ecosystem.GetLength(1)];
 

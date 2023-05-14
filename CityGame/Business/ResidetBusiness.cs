@@ -1,6 +1,7 @@
 ﻿using CityGame.Data.DTO;
 using CityGame.Models;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace CityGame.Business
@@ -49,8 +50,8 @@ namespace CityGame.Business
         {
 
 
-            /*
-             List<GameObjectBusinessDTO> GetNeighbours = gameBusiness.GetNeighbours(gameObjectBusinessDTO);
+            
+            List<GameObjectBusinessDTO> GetNeighbours = gameBusiness.GetNeighbours(gameObjectBusinessDTO);
             gameObjectBusinessDTO.electrified = false;
             foreach (GameObjectBusinessDTO currentGameObjectBusinessDTO in GetNeighbours)
             {
@@ -60,7 +61,7 @@ namespace CityGame.Business
                     break;
                 }
             }
-            */
+            
 
             if (gameBusiness.gameDay > gameObjectBusinessDTO.lastDay)
             {
@@ -134,63 +135,74 @@ namespace CityGame.Business
                     Debug.WriteLine("class 3 : " + currentResidentSections[3]);
                     Debug.WriteLine("class 4 : " + currentResidentSections[4]);
 
+                    byte[] prevResidentSections = GetBasicHousesState(gameObjectBusinessDTO.gameObjectModelDTO.basicHouses);
 
-
-                    /*
-                    currentResidentSections[1] = class1FromCount + class1ToCount;
-
-                    int class2FromCount = 9 - (int)((gameObjectBusinessDTO.EcosystemItem.Population - 25 - (100 / 4 * 1)) / 25.0 * 9.0);
-                    class2FromCount = (class2FromCount < 0) || (class2FromCount > 8) ? 0 : class2FromCount;
-
-                    int class2ToCount = (int)((gameObjectBusinessDTO.EcosystemItem.Population - (100 / 4 * 1)) / 25.0 * 9.0);
-                    class2ToCount = (class2ToCount < 0) || (class2ToCount > 9) ? 0 : class2ToCount;
-
-                    currentResidentSections[2] = class2FromCount + class2ToCount;
-
-
-                    int class3Count = (int)((gameObjectBusinessDTO.EcosystemItem.Population - (100 / 4 * 2)) / 25.0 * 9.0);
-                    class3Count = (class3Count < 0) || (class3Count > 9) ? 0 : class3Count;
-
-                    int class4Count = (int)((gameObjectBusinessDTO.EcosystemItem.Population - (100 / 4 * 3)) / 25.0 * 9.0);
-                    class4Count = (class4Count < 0) || (class4Count > 9) ? 0 : class4Count;
-                    */
-
-                    //Debug.WriteLine("class 1 from:" + class1FromCount);
-                    //Debug.WriteLine("class 1 to:" + class1ToCount);
-
-                    //Debug.WriteLine("class 2 from:" + class2FromCount);
-                    //Debug.WriteLine("class 2 to:" + class2ToCount);
-
-                    Debug.WriteLine("class 1 : " + currentResidentSections[1]);
-                    Debug.WriteLine("class 2 : " + currentResidentSections[2]);
-
-
-                    int houseCount = 0;
-
-                    /*
-                    for (int bx = 0; bx < 3; bx++)
+                    for (int i = 0; i < 5; i++)
                     {
-                        for (int by = 0; by < 3; by++)
+                        if (currentResidentSections[i] > 0)
                         {
-                            houseCount++;
-                            if ((gameObjectBusinessDTO.gameObjectModelDTO.basicHouses[bx, by] == null)
-                                ||
-                                (gameObjectBusinessDTO.gameObjectModelDTO.basicHouses[bx, by].y != currentHouseCost))
+                            for (int bx = 0; bx < 3; bx++)
                             {
-                                gameObjectBusinessDTO.gameObjectModelDTO.basicHouses[bx, by] = new PositionDTO()
+                                for (int by = 0; by < 3; by++)
                                 {
-                                    x = (ushort)random.Next(3),
-                                    y = (ushort)currentHouseCost,
-                                };
+                                    if ((gameObjectBusinessDTO.gameObjectModelDTO.basicHouses[bx, by] == null)
+                                        ||
+                                        (gameObjectBusinessDTO.gameObjectModelDTO.basicHouses[bx, by].y != i - 1))
+                                    {
+                                        if (i > 0)
+                                        {
+                                            gameObjectBusinessDTO.gameObjectModelDTO.basicHouses[bx, by] = new PositionDTO()
+                                            {
+                                                x = (ushort)random.Next(3),
+                                                y = (ushort)(i - 1)
+                                            };
+                                        }
+                                        else
+                                        {
+                                            gameObjectBusinessDTO.gameObjectModelDTO.basicHouses[bx, by] = null;
+                                        }
+                                        currentResidentSections[i]--;
+                                    }
+                                    if (currentResidentSections[i] <= 0)
+                                    {
+                                        break;
+                                    }
+                                }
+                                if (currentResidentSections[i] <= 0)
+                                {
+                                    break;
+                                }
                             }
-                            if ((currentHouseCost ==0) && (houseCount >= gameObjectBusinessDTO.EcosystemItem.Population))
-                            {
-                                break;
-                            }    
                         }
                     }
-                    */
-                }
+
+
+                            //int houseCount = 0;
+
+                            /*
+                            for (int bx = 0; bx < 3; bx++)
+                            {
+                                for (int by = 0; by < 3; by++)
+                                {
+                                    houseCount++;
+                                    if ((gameObjectBusinessDTO.gameObjectModelDTO.basicHouses[bx, by] == null)
+                                        ||
+                                        (gameObjectBusinessDTO.gameObjectModelDTO.basicHouses[bx, by].y != currentHouseCost))
+                                    {
+                                        gameObjectBusinessDTO.gameObjectModelDTO.basicHouses[bx, by] = new PositionDTO()
+                                        {
+                                            x = (ushort)random.Next(3),
+                                            y = (ushort)currentHouseCost,
+                                        };
+                                    }
+                                    if ((currentHouseCost ==0) && (houseCount >= gameObjectBusinessDTO.EcosystemItem.Population))
+                                    {
+                                        break;
+                                    }    
+                                }
+                            }
+                            */
+                        }
                 else
                 {
                 //    gameObjectBusinessDTO.gameObjectModelDTO.basicHouses[bx, by] = null;

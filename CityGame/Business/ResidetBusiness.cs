@@ -45,6 +45,99 @@ namespace CityGame.Business
             return result;
         }
 
+        private void DeleteRandomBasicHouse(int houseClass, PositionDTO[,] basicHouses)
+        {
+            int tryCount = 0;
+            int x;
+            int y;
+
+            while (tryCount < 9)
+            {
+                x = random.Next(3);
+                y = random.Next(3);
+
+                if (basicHouses[x, y] != null)
+                {
+                    if (houseClass == 0)
+                    {
+                            basicHouses[x, y] = null;
+                            return;
+                    }
+                    else
+                    {
+                        if (basicHouses[x, y].y == houseClass-1)
+                        {
+                            basicHouses[x, y] = null;
+                            return;
+                        }
+                    }
+                }
+                tryCount++;
+            }
+
+            for (x = 0; x < 3; x++)
+            {
+                for (y = 0; y < 3; y++)
+                {
+                    if (basicHouses[x, y] != null)
+                    {
+                        if (houseClass == 0)
+                        {
+                            basicHouses[x, y] = null;
+                            return;
+                        }
+                        else
+                        {
+                            if (basicHouses[x, y].y == houseClass - 1)
+                            {
+                                basicHouses[x, y] = null;
+                                return;
+                            }
+                        }
+                    }
+                }
+            }           
+        }
+
+        public void BuildRandomBasicHouse(int houseClass, PositionDTO[,] basicHouses)
+        {
+            int tryCount = 0;
+            int x;
+            int y;
+
+            while (tryCount < 9)
+            {
+                x = random.Next(3);
+                y = random.Next(3);
+                if (basicHouses[x, y] == null)
+                {
+                    basicHouses[x, y] = new PositionDTO()
+                    {
+                        x = (ushort)random.Next(3),
+                        y = (ushort)(houseClass - 1)
+                    };
+                    return;
+                }
+                tryCount++;
+            }
+
+            for (x = 0; x < 3; x++)
+            {
+                for (y = 0; y < 3; y++)
+                {
+                    if (basicHouses[x, y] == null)
+                    {
+                        basicHouses[x, y] = new PositionDTO()
+                        {
+                            x = (ushort)random.Next(3),
+                            y = (ushort)(houseClass - 1)
+                        };
+                    }
+                }
+            }
+        }
+
+
 
         public override void LifeCycle(GameObjectBusinessDTO gameObjectBusinessDTO)
         {
@@ -137,6 +230,30 @@ namespace CityGame.Business
 
                     byte[] prevResidentSections = GetBasicHousesState(gameObjectBusinessDTO.gameObjectModelDTO.basicHouses);
 
+                    for (int i = 1; i < 5; i++)
+                    {
+                        if (prevResidentSections[i] > currentResidentSections[i])
+                        {
+                            for (int j = 0; j < prevResidentSections[i] - currentResidentSections[i]; j++)
+                            {
+                                DeleteRandomBasicHouse(i, gameObjectBusinessDTO.gameObjectModelDTO.basicHouses);
+                            }
+                        }
+                    }
+
+                    for (int i = 1; i < 5; i++)
+                    {
+                        if (prevResidentSections[i] < currentResidentSections[i])
+                        {
+                            for (int j = 0; j < currentResidentSections[i] - prevResidentSections[i]; j++)
+                            {
+                                BuildRandomBasicHouse(i, gameObjectBusinessDTO.gameObjectModelDTO.basicHouses);
+                            }
+                        }
+                    }
+
+
+/*
                     for (int i = 0; i < 5; i++)
                     {
                         if (currentResidentSections[i] > 0)
@@ -175,6 +292,7 @@ namespace CityGame.Business
                             }
                         }
                     }
+*/
 
 
                             //int houseCount = 0;

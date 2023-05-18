@@ -278,9 +278,9 @@ namespace CityGame.Business
                      &&
                      (o.gameObjectModelDTO.positionDTO.x <= position?.x && o.gameObjectModelDTO.positionDTO.y <= position.y
                      &&
-                     o.gameObjectModelDTO.positionDTO.x + o.gameObjectModelDTO.Group.Width >= position.x
+                     o.gameObjectModelDTO.positionDTO.x + o.gameObjectModelDTO.Group.Width - 1 >= position.x
                      &&
-                     o.gameObjectModelDTO.positionDTO.y + o.gameObjectModelDTO.Group.Height >= position.y
+                     o.gameObjectModelDTO.positionDTO.y + o.gameObjectModelDTO.Group.Height - 1>= position.y
                      )).FirstOrDefault();
 
                 if (gameObjectBusinessDTO != null)
@@ -309,9 +309,9 @@ namespace CityGame.Business
                      &&
                      (o.gameObjectModelDTO.positionDTO.x <= position?.x && o.gameObjectModelDTO.positionDTO.y <= position.y
                      &&
-                     o.gameObjectModelDTO.positionDTO.x + o.gameObjectModelDTO.Group.Width >= position.x
+                     o.gameObjectModelDTO.positionDTO.x + o.gameObjectModelDTO.Group.Width - 1>= position.x
                      &&
-                     o.gameObjectModelDTO.positionDTO.y + o.gameObjectModelDTO.Group.Height >= position.y
+                     o.gameObjectModelDTO.positionDTO.y + o.gameObjectModelDTO.Group.Height - 1 >= position.y
                      )).FirstOrDefault();
 
                 if (gameObjectBusinessDTO != null)

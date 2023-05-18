@@ -9,6 +9,13 @@ using System.Windows;
 
 namespace CityGame.Models
 {
+    class DestroyAnimation
+    {
+        public byte step = 0;
+
+        public byte time = 0;   
+    }
+
     public class GameObjectModel : BaseModel, IGameObjectModel, IDisposable
     {
         protected SpriteBusiness spriteBusiness;
@@ -145,38 +152,73 @@ namespace CityGame.Models
         {
 
             gameObjectModelDTOs.Remove(gameObjectModelDTO);
-            byte destroyStep = 0;
+            
             GroupDTO? destroyGroup = spriteBusiness.GetGroupByName(SpritesGroupEnum.explosion);
             Task destroyTask = Task.Run(async delegate
             {
-                while (destroyStep < 7)
+                Random random = new Random();
+                DestroyAnimation[,] destroyAnimations = new DestroyAnimation[(int)gameObjectModelDTO?.Group?.Width, (int)gameObjectModelDTO?.Group?.Height];
+                for (ushort sx = 0; sx < gameObjectModelDTO?.Group?.Width; sx++)
                 {
-                    destroyStep++;
+                    for (ushort sy = 0; sy < gameObjectModelDTO?.Group?.Height; sy++)
+                    {
+                        destroyAnimations[sx, sy] = new DestroyAnimation();
+                        destroyAnimations[sx, sy].time = (byte)random.Next(4);
+                    }
+                }
+
+                while (true)
+                {
+                    int doneCount = 0;
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         if (!Canceled)
                         {
+                            
                             for (ushort sx = 0; sx < gameObjectModelDTO?.Group?.Width; sx++)
                             {
                                 for (ushort sy = 0; sy < gameObjectModelDTO?.Group?.Height; sy++)
                                 {
-                                    if (destroyGroup?.Frames?[destroyStep]?.Sprites?[0, 0] != null)
+                                    if (destroyAnimations[sx, sy].time > 0)
                                     {
-                                        if ((gameObjectModelDTO != null) && (destroyGroup != null) && (gameObjectModelDTO.positionDTO != null))
+                                        destroyAnimations[sx, sy].time--;
+                                        continue;
+                                    }
+                                    destroyAnimations[sx, sy].time = (byte)random.Next(4);
+
+                                    if (destroyAnimations[sx, sy].step < 7)
+                                    {
+                                        destroyAnimations[sx, sy].step++;
+                                        if (destroyGroup?.Frames?[destroyAnimations[sx, sy].step]?.Sprites?[0, 0] != null)
                                         {
-                                            terrainModel.PutSprite((ushort)(gameObjectModelDTO.positionDTO.x + sx), (ushort)(gameObjectModelDTO.positionDTO.y + sy), destroyGroup, destroyStep, 0, 0);
+                                            if ((gameObjectModelDTO != null) && (destroyGroup != null) && (gameObjectModelDTO.positionDTO != null))
+                                            {
+                                                terrainModel.PutSprite((ushort)(gameObjectModelDTO.positionDTO.x + sx), (ushort)(gameObjectModelDTO.positionDTO.y + sy), destroyGroup, destroyAnimations[sx, sy].step, 0, 0);
+
+                                            }
                                         }
+                                    }
+                                    else
+                                    {
+                                        doneCount++;
                                     }
                                 }
                             }
+
                             if ((gameObjectModelDTO != null) && (destroyGroup != null) && (gameObjectModelDTO.positionDTO != null))
                             {
-                                terrainModel.BuildObject(gameObjectModelDTO.positionDTO.x, gameObjectModelDTO.positionDTO.y, destroyGroup, destroyStep);
+                                terrainModel.BuildObject(gameObjectModelDTO.positionDTO.x, gameObjectModelDTO.positionDTO.y, destroyGroup, 0);
                             }
                         }
+
                     });
-                    await Task.Delay(300);
+                    if (doneCount >= gameObjectModelDTO?.Group?.Width + gameObjectModelDTO?.Group?.Height)
+                    {
+                        break;
+                    }
+                    await Task.Delay(50);
                 }
+                
             });
 
         }

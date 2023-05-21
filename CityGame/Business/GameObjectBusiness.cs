@@ -3,13 +3,11 @@ using CityGame.Interfaces;
 using CityGame.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CityGame.Business
 {
-    public class GameObjectBusiness: IGameObject
+    public class GameObjectBusiness : IGameObject
     {
         protected GameBusiness gameBusiness;
         public GameObjectModel gameObjectModel { get; set; }
@@ -33,7 +31,7 @@ namespace CityGame.Business
 
         public GameObjectBusiness(GameBusiness gameBusiness, GameObjectModel gameObjectModel)
         {
-            this.gameBusiness = gameBusiness;   
+            this.gameBusiness = gameBusiness;
             this.gameObjectModel = gameObjectModel;
             Live();
         }
@@ -44,8 +42,8 @@ namespace CityGame.Business
             if (gameObjectModelDTO != null)
             {
                 GameObjectBusinessDTO gameObjectBusinessDTO = new GameObjectBusinessDTO();
-         //       gameObjectBusinessDTO.cost = defaultGameObjectBusinessDTO.cost;
-         //       gameObjectBusinessDTO.electrified = defaultGameObjectBusinessDTO.electrified;
+                //       gameObjectBusinessDTO.cost = defaultGameObjectBusinessDTO.cost;
+                //       gameObjectBusinessDTO.electrified = defaultGameObjectBusinessDTO.electrified;
                 gameObjectBusinessDTO.gameObjectModelDTO = gameObjectModelDTO;
 
                 gameObjectBusinessDTO = BuildDeligate(gameObjectBusinessDTO);
@@ -53,7 +51,7 @@ namespace CityGame.Business
 
                 gameObjectBusinessDTOs.Add(gameObjectBusinessDTO);
 
-                
+
 
                 return true;
             }
@@ -73,7 +71,7 @@ namespace CityGame.Business
         }
 
 
-
+        [STAThread]
         private void Live()
         {
 
@@ -85,10 +83,21 @@ namespace CityGame.Business
                     {
 
                         foreach (GameObjectBusinessDTO gameObjectBusinessDTO in gameObjectBusinessDTOs.ToArray())
-                    {
+                        {
                             LifeCycle(gameObjectBusinessDTO);
-                    }
-                    await Task.Delay(300);
+
+                            gameBusiness.OnDebugMessage(new DebugMessageDTO()
+                            {
+                                Position = gameObjectBusinessDTO?.gameObjectModelDTO?.positionDTO,
+                                Message = "Day: " + gameObjectBusinessDTO?.lastDay + "\n" +
+                                          "Ppl: " + gameObjectBusinessDTO?.EcosystemItem.Population + "\n" +
+                                          "Els: " + gameObjectBusinessDTO?.electrified + "\n" +
+                                          "PwrT: " + gameObjectBusinessDTO?.powerTarget + "\n" +
+                                          "PwrS: " + gameObjectBusinessDTO?.powerSource + "\n"
+                            }); ;
+
+                        }
+                        await Task.Delay(300);
                     }
                     catch (Exception e)
                     {

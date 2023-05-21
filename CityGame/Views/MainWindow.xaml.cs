@@ -33,6 +33,7 @@ using CityGame.Graphics;
 using CityGame.Models;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -64,6 +65,8 @@ namespace CityGame
 
         private readonly int zoom = 2;
 
+        private Dictionary<PositionDTO, TextBlock> debugTextBlocks = new Dictionary<PositionDTO, TextBlock>();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -76,6 +79,7 @@ namespace CityGame
             gameBusiness = new GameBusiness("new city", terrainSize);
             gameBusiness.TerrainRenderCompleted += CityGameEngine_TerrainRenderCompleted;
             gameBusiness.MapRenderCompleted += CityGameEngine_MapRenderCompleted;
+            gameBusiness.DebugMessage += GameBusiness_DebugMessage;
             gameBusiness.BudgetChanged += GameBusiness_BudgetChanged;
 
             TerrainImage.Width = TerrainImage.Height = gameBusiness.GetTerrainSize() * SpriteRepository.ResourceInfo.SpriteSize * zoom;
@@ -111,6 +115,7 @@ namespace CityGame
             FireDepartmentImage.Source = SpriteRepository.GetDashboard(1, 4);
             PowerplantImage.Source = SpriteRepository.GetDashboard(1, 5);
             AirPortImage.Source = SpriteRepository.GetDashboard(1, 6);
+            
 
             DispatcherTimer timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(10000);
@@ -118,6 +123,35 @@ namespace CityGame
             
             timer.Start();
 
+        }
+
+        [STAThread]
+        private void GameBusiness_DebugMessage(object? sender, DebugMessageDTO e)
+        {
+            if (e.Position != null)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+
+                    TextBlock textBlock = debugTextBlocks.GetValueOrDefault(e.Position);
+                    if (textBlock == null)
+                    {
+                        double actualSpriteSizeInPixels = TerrainImage.DesiredSize.Width / gameBusiness.GetTerrainSize();
+                        textBlock = new TextBlock();
+                        textBlock.HorizontalAlignment = HorizontalAlignment.Left;
+                        textBlock.VerticalAlignment = VerticalAlignment.Top;
+                        textBlock.Margin = new Thickness(e.Position.x * actualSpriteSizeInPixels, e.Position.y * actualSpriteSizeInPixels, 0, 0);
+                        textBlock.SetValue(Panel.ZIndexProperty, 0xFFFF);
+
+                        textBlock.Foreground = Brushes.White;
+                        textBlock.Background = Brushes.Navy;
+
+                        TerrainGrid.Children.Add(textBlock);
+                        debugTextBlocks.Add(e.Position, textBlock);
+                    }
+                    textBlock.Text = e.Message;
+               });
+            }
         }
 
         private void Timer_Tick(object? sender, EventArgs e)
@@ -184,9 +218,9 @@ namespace CityGame
             using DrawingContext drawingContext = drawingVisual.RenderOpen();
             if (gameBusiness != null)
             {
-                drawingContext.DrawImage(gameBusiness.GetMapBitmap(), new Rect(0, 0, gameBusiness.GetTerrainSize(), gameBusiness.GetTerrainSize()));
-                drawingContext.Close();
-                MapImage.Source = new DrawingImage(drawingVisual.Drawing);
+               drawingContext.DrawImage(gameBusiness.GetMapBitmap(), new Rect(0, 0, gameBusiness.GetTerrainSize(), gameBusiness.GetTerrainSize()));
+               drawingContext.Close();
+               MapImage.Source = new DrawingImage(drawingVisual.Drawing);
             }
         }
         private void ResourceExplorerButton_Click(object sender, RoutedEventArgs e)

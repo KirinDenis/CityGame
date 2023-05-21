@@ -29,6 +29,8 @@ namespace CityGame.Business
             }
         }
 
+        public event EventHandler<DebugMessageDTO> DebugMessage;
+
         public EcosystemItemDTO[,] ecosystem;
 
         public List<GameObjectBusiness> gameObjects = new List<GameObjectBusiness>();
@@ -348,6 +350,11 @@ namespace CityGame.Business
             }
 
             return false;
+        }
+
+        public void OnDebugMessage(DebugMessageDTO debugMessageDTO)
+        {
+            DebugMessage?.Invoke(this, debugMessageDTO);
         }
     }
 

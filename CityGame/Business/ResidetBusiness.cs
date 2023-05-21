@@ -144,27 +144,30 @@ namespace CityGame.Business
 
 
             
+            gameObjectBusinessDTO.gameObjectModelDTO.electrified = gameObjectBusinessDTO.electrified = false;            
             List<GameObjectBusinessDTO> GetNeighbours = gameBusiness.GetNeighbours(gameObjectBusinessDTO);
-            gameObjectBusinessDTO.electrified = false;
+
+            
             foreach (GameObjectBusinessDTO currentGameObjectBusinessDTO in GetNeighbours)
             {
                 if (currentGameObjectBusinessDTO.electrified)
                 {
-                    gameObjectBusinessDTO.electrified = true;
+                    gameObjectBusinessDTO.gameObjectModelDTO.electrified = gameObjectBusinessDTO.electrified = true;
+                    gameObjectBusinessDTO.gameObjectModelDTO.electrified = gameObjectBusinessDTO.electrified = true;
                     break;
                 }
             }
             
+            
 
             if (gameBusiness.gameDay > gameObjectBusinessDTO.lastDay)
             {
-
                 //temp
                 if (gameObjectBusinessDTO.electrified)
                 {
                     if (gameObjectBusinessDTO.EcosystemItem.Population < 100)
                     {
-                        gameObjectBusinessDTO.EcosystemItem.Population += (byte)(gameBusiness.gameDay - gameObjectBusinessDTO.lastDay);
+                    //    gameObjectBusinessDTO.EcosystemItem.Population += (byte)(gameObjectBusinessDTO.lastDay);
                         gameObjectBusinessDTO.EcosystemItem.Population += 2;
                     }
                 }
@@ -172,7 +175,7 @@ namespace CityGame.Business
                 {
                     if (gameObjectBusinessDTO.EcosystemItem.Population > 0)
                     {
-                        gameObjectBusinessDTO.EcosystemItem.Population -= (byte)((gameBusiness.gameDay - gameObjectBusinessDTO.lastDay) * 2);
+                        gameObjectBusinessDTO.EcosystemItem.Population -= 4;
                     }
 
                     if (gameObjectBusinessDTO.EcosystemItem.Population < 0)
@@ -327,7 +330,7 @@ namespace CityGame.Business
                 }
 
 
-                gameObjectBusinessDTO.lastDay = gameBusiness.gameDay;
+                gameObjectBusinessDTO.lastDay++;
 
             }
 

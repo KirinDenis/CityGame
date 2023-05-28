@@ -125,10 +125,10 @@ namespace CityGame
 
         }
 
-        [STAThread]
+        
         private void GameBusiness_DebugMessage(object? sender, DebugMessageDTO e)
         {
-            if (e.Position != null)
+            if ((e.Position != null) && (!gameBusiness.paused))
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
@@ -463,6 +463,11 @@ namespace CityGame
         private void TerrainScroll_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             MoveMapSelector();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            gameBusiness.paused = true;
         }
     }
 }

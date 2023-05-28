@@ -39,6 +39,8 @@ namespace CityGame.Business
 
         public long gameDay = 0;
 
+        public bool paused = false;
+
         public GameBusiness(string cityName, int size = 100) : base(cityName, size)
         {
             ecosystem = new EcosystemItemDTO[size, size];
@@ -104,7 +106,7 @@ namespace CityGame.Business
             {
                 Thread.CurrentThread.Priority = ThreadPriority.Lowest;
 
-                while (true)
+                while ((true) && (!paused))
                 {
                     gameDay++;
 

@@ -52,7 +52,7 @@ namespace CityGame.Models
                 gameObjectModelDTO.Group = startingGroup;
             }
 
-            if (gameObjectModelDTO.residentMode != ResidentMode.basic)
+            if ((gameObjectModelDTO.residentMode != ResidentMode.basic) && (this != null))
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {

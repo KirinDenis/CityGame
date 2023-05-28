@@ -77,7 +77,7 @@ namespace CityGame.Business
 
             liveTask = Task.Run(async delegate
             {
-                while (!Canceled)
+                while (!gameBusiness.paused)
                 {
                     try
                     {
@@ -105,6 +105,7 @@ namespace CityGame.Business
                     }
 
                 }
+                gameObjectModel.Canceled = gameBusiness.paused;
             });
         }
 

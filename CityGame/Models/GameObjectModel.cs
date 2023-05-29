@@ -98,54 +98,53 @@ namespace CityGame.Models
 
         protected virtual void LiveCycle(GameObjectModelDTO gameObjectModelDTO)
         {
-
-            if (gameObjectModelDTO.Group?.Frames.Count > 1)
+            if (Application.Current != null)
             {
-                if (gameObjectModelDTO.animationFrame >= gameObjectModelDTO.Group.Frames.Count)
+                if (gameObjectModelDTO.Group?.Frames.Count > 1)
                 {
-                    gameObjectModelDTO.animationFrame = 1;
-                }
-                _ = Application.Current.Dispatcher.Invoke(() =>
-                {
-                    if (!Canceled)
+                    if (gameObjectModelDTO.animationFrame >= gameObjectModelDTO.Group.Frames.Count)
                     {
-                        if (gameObjectModelDTO.positionDTO != null)
-                        {
-                            terrainModel.BuildObject(gameObjectModelDTO.positionDTO.x, gameObjectModelDTO.positionDTO.y, gameObjectModelDTO.Group, gameObjectModelDTO.animationFrame);
-                        }
+                        gameObjectModelDTO.animationFrame = 1;
                     }
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        if (!Canceled)
+                        {
+                            if (gameObjectModelDTO.positionDTO != null)
+                            {
+                                terrainModel.BuildObject(gameObjectModelDTO.positionDTO.x, gameObjectModelDTO.positionDTO.y, gameObjectModelDTO.Group, gameObjectModelDTO.animationFrame);
+                            }
+                        }
 
-                    return Task.CompletedTask;
-                });
-                gameObjectModelDTO.animationFrame++;
+                        return Task.CompletedTask;
+                    });
+                    gameObjectModelDTO.animationFrame++;
+                }
             }
-
-
         }
 
         public void DrawElectrified(GameObjectModelDTO gameObjectModelDTO)
         {
-            if ((DateTime.Now - electricBlink).TotalMilliseconds > 1000)
+            if (Application.Current != null)
             {
-
-                if (!gameObjectModelDTO.electrified)
+                if ((DateTime.Now - electricBlink).TotalMilliseconds > 1000)
                 {
-                    if (gameObjectModelDTO.positionDTO != null)
+
+                    if (!gameObjectModelDTO.electrified)
                     {
-                        Application.Current.Dispatcher.Invoke(() =>
+                        if (gameObjectModelDTO.positionDTO != null)
                         {
-                            if (!Canceled)
+                            Application.Current.Dispatcher.Invoke(() =>
                             {
-
-                                terrainModel.BuildObject(gameObjectModelDTO.centerPosition.x, gameObjectModelDTO.centerPosition.y, electricGroup, 0);
-
-                            }
-
-                        });
+                                if (!Canceled)
+                                {
+                                    terrainModel.BuildObject(gameObjectModelDTO.centerPosition.x, gameObjectModelDTO.centerPosition.y, electricGroup, 0);
+                                }
+                            });
+                        }
                     }
                 }
             }
-
         }
 
         public void Destroy(GameObjectModelDTO gameObjectModelDTO)
@@ -170,74 +169,78 @@ namespace CityGame.Models
                 while (true)
                 {
                     int doneCount = 0;
-                    Application.Current.Dispatcher.Invoke(() =>
+                    if (Application.Current != null)
                     {
-                        if (!Canceled)
+                        Application.Current.Dispatcher.Invoke(() =>
                         {
+                            if (!Canceled)
+                            {
 
+                                for (ushort sx = 0; sx < gameObjectModelDTO?.Group?.Width; sx++)
+                                {
+                                    for (ushort sy = 0; sy < gameObjectModelDTO?.Group?.Height; sy++)
+                                    {
+                                        if (destroyAnimations[sx, sy].time > 0)
+                                        {
+                                            destroyAnimations[sx, sy].time--;
+                                            continue;
+                                        }
+                                        destroyAnimations[sx, sy].time = (byte)random.Next(4);
+
+                                        if (destroyAnimations[sx, sy].step < 7)
+                                        {
+                                            destroyAnimations[sx, sy].step++;
+                                            if (destroyGroup?.Frames?[destroyAnimations[sx, sy].step]?.Sprites?[0, 0] != null)
+                                            {
+                                                if ((gameObjectModelDTO != null) && (destroyGroup != null) && (gameObjectModelDTO.positionDTO != null))
+                                                {
+                                                    terrainModel.PutSprite((ushort)(gameObjectModelDTO.positionDTO.x + sx), (ushort)(gameObjectModelDTO.positionDTO.y + sy), destroyGroup, destroyAnimations[sx, sy].step, 0, 0);
+
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            doneCount++;
+                                        }
+                                    }
+                                }
+
+                                //if ((gameObjectModelDTO != null) && (destroyGroup != null) && (gameObjectModelDTO.positionDTO != null))
+                                //{
+                                //  terrainModel.BuildObject(gameObjectModelDTO.positionDTO.x, gameObjectModelDTO.positionDTO.y, destroyGroup, 0);
+                                // }
+                            }
+                        });
+
+                        if (doneCount >= gameObjectModelDTO?.Group?.Width + gameObjectModelDTO?.Group?.Height)
+                        {
                             for (ushort sx = 0; sx < gameObjectModelDTO?.Group?.Width; sx++)
                             {
                                 for (ushort sy = 0; sy < gameObjectModelDTO?.Group?.Height; sy++)
                                 {
-                                    if (destroyAnimations[sx, sy].time > 0)
+                                    if ((gameObjectModelDTO != null) && (destroyGroup != null) && (gameObjectModelDTO.positionDTO != null))
                                     {
-                                        destroyAnimations[sx, sy].time--;
-                                        continue;
-                                    }
-                                    destroyAnimations[sx, sy].time = (byte)random.Next(4);
-
-                                    if (destroyAnimations[sx, sy].step < 7)
-                                    {
-                                        destroyAnimations[sx, sy].step++;
-                                        if (destroyGroup?.Frames?[destroyAnimations[sx, sy].step]?.Sprites?[0, 0] != null)
+                                        Application.Current.Dispatcher.Invoke(() =>
                                         {
-                                            if ((gameObjectModelDTO != null) && (destroyGroup != null) && (gameObjectModelDTO.positionDTO != null))
-                                            {
-                                                terrainModel.PutSprite((ushort)(gameObjectModelDTO.positionDTO.x + sx), (ushort)(gameObjectModelDTO.positionDTO.y + sy), destroyGroup, destroyAnimations[sx, sy].step, 0, 0);
+                                            terrainModel.PutSprite((ushort)(gameObjectModelDTO.positionDTO.x + sx), (ushort)(gameObjectModelDTO.positionDTO.y + sy), destroyGroup, 7, random.Next(3), random.Next(3));
+                                        });
 
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        doneCount++;
                                     }
                                 }
                             }
-
-                            //if ((gameObjectModelDTO != null) && (destroyGroup != null) && (gameObjectModelDTO.positionDTO != null))
-                           //{
-                              //  terrainModel.BuildObject(gameObjectModelDTO.positionDTO.x, gameObjectModelDTO.positionDTO.y, destroyGroup, 0);
-                           // }
+                            break;
                         }
-                    });
 
-                    if (doneCount >= gameObjectModelDTO?.Group?.Width + gameObjectModelDTO?.Group?.Height)
+                        await Task.Delay(40);
+                    }
+                    else
                     {
-                        for (ushort sx = 0; sx < gameObjectModelDTO?.Group?.Width; sx++)
-                        {
-                            for (ushort sy = 0; sy < gameObjectModelDTO?.Group?.Height; sy++)
-                            {
-                                if ((gameObjectModelDTO != null) && (destroyGroup != null) && (gameObjectModelDTO.positionDTO != null))
-                                {
-                                    Application.Current.Dispatcher.Invoke(() =>
-                                    {
-                                        terrainModel.PutSprite((ushort)(gameObjectModelDTO.positionDTO.x + sx), (ushort)(gameObjectModelDTO.positionDTO.y + sy), destroyGroup, 7, random.Next(3), random.Next(3));
-                                    });
-
-                                }
-                            }
-                        }
                         break;
                     }
-                    
-                    await Task.Delay(40);
                 }
-
             });
-
         }
-
 
 
         public void Dispose()

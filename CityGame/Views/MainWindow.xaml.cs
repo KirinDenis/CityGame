@@ -128,7 +128,7 @@ namespace CityGame
         
         private void GameBusiness_DebugMessage(object? sender, DebugMessageDTO e)
         {
-            if ((e.Position != null) && (!gameBusiness.paused))
+            if ((e.Position != null) && (Application.Current != null))
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
@@ -158,43 +158,45 @@ namespace CityGame
         {
             EcosystemCanvase.Children.Clear();
 
-            Dispatcher dispatcher = Application.Current.Dispatcher;
-
-            // Запустить метод таймера с низким приоритетом в главном потоке
-            dispatcher.Invoke(() =>
+            if (Application.Current != null)
             {
-                Thread.CurrentThread.Priority = ThreadPriority.Lowest;
-                EcosystemCanvase.Width = EcosystemCanvase.Height = terrainSize;
-                for (int x = 0; x < terrainSize; x++)
-                {
-                    for (int y = 0; y < terrainSize; y++)
-                    {
-                        if (gameBusiness.ecosystem[x, y].Population > 0)
-                        {
-                            double fraction = (double)gameBusiness.ecosystem[x, y].Population / 255;
+                Dispatcher dispatcher = Application.Current.Dispatcher;
 
-                            // Создать градиентный цвет от голубого до ярко-красного
-                            Color color = Color.FromArgb(
-                               240,
-                                (byte)(255 * fraction),           // Красный канал
-                                (byte)(255 * (1 - fraction) / 1.5),
-                                (byte)(255 * (1 - fraction))     // Синий канал
-                                
-                            );
-                            System.Windows.Shapes.Rectangle r = new System.Windows.Shapes.Rectangle();
-                            r.Width = 1;
-                            r.Height = 1;
-                            Canvas.SetLeft(r, x);
-                            Canvas.SetTop(r, y);
-                            r.StrokeThickness = 2;
-                            r.Fill = new SolidColorBrush(color);
-                            r.Stroke = new SolidColorBrush(color);
-                            EcosystemCanvase.Children.Add(r);
+                // Запустить метод таймера с низким приоритетом в главном потоке
+                dispatcher.Invoke(() =>
+                {
+                    Thread.CurrentThread.Priority = ThreadPriority.Lowest;
+                    EcosystemCanvase.Width = EcosystemCanvase.Height = terrainSize;
+                    for (int x = 0; x < terrainSize; x++)
+                    {
+                        for (int y = 0; y < terrainSize; y++)
+                        {
+                            if (gameBusiness.ecosystem[x, y].Population > 0)
+                            {
+                                double fraction = (double)gameBusiness.ecosystem[x, y].Population / 255;
+
+                                // Создать градиентный цвет от голубого до ярко-красного
+                                Color color = Color.FromArgb(
+                                   240,
+                                    (byte)(255 * fraction),           // Красный канал
+                                    (byte)(255 * (1 - fraction) / 1.5),
+                                    (byte)(255 * (1 - fraction))     // Синий канал
+
+                                );
+                                System.Windows.Shapes.Rectangle r = new System.Windows.Shapes.Rectangle();
+                                r.Width = 1;
+                                r.Height = 1;
+                                Canvas.SetLeft(r, x);
+                                Canvas.SetTop(r, y);
+                                r.StrokeThickness = 2;
+                                r.Fill = new SolidColorBrush(color);
+                                r.Stroke = new SolidColorBrush(color);
+                                EcosystemCanvase.Children.Add(r);
+                            }
                         }
                     }
-                }
-            });
-
+                });
+            }        
         }
 
         private void GameBusiness_BudgetChanged(object? sender, EventArgs e)

@@ -92,6 +92,7 @@ namespace CityGame.Business
                                 Message = "Day: " + gameObjectBusinessDTO?.lastDay + "\n" +
                                           "Ppl: " + gameObjectBusinessDTO?.EcosystemItem.Population + "\n" +
                                           "Els: " + gameObjectBusinessDTO?.electrified + "\n" +
+                                          "PId: " + gameObjectBusinessDTO?.powerPlantId + "\n" +
                                           "PwrT: " + gameObjectBusinessDTO?.powerTarget + "\n" +
                                           "PwrS: " + gameObjectBusinessDTO?.powerSource + "\n"
                             }); ;

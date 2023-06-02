@@ -30,8 +30,6 @@ using CityGame.Data.DTO;
 using CityGame.DTOs.Const;
 using CityGame.DTOs.Enum;
 using CityGame.Graphics;
-using CityGame.Models;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -66,6 +64,8 @@ namespace CityGame
         private readonly int zoom = 2;
 
         private Dictionary<PositionDTO, TextBlock> debugTextBlocks = new Dictionary<PositionDTO, TextBlock>();
+
+        private bool DebugInfo = false;
 
         public MainWindow()
         {
@@ -115,42 +115,44 @@ namespace CityGame
             FireDepartmentImage.Source = SpriteRepository.GetDashboard(1, 4);
             PowerplantImage.Source = SpriteRepository.GetDashboard(1, 5);
             AirPortImage.Source = SpriteRepository.GetDashboard(1, 6);
-            
 
             DispatcherTimer timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(10000);
             timer.Tick += Timer_Tick;
-            
-            timer.Start();
 
+            timer.Start();
         }
 
-        
         private void GameBusiness_DebugMessage(object? sender, DebugMessageDTO e)
         {
-            if ((e.Position != null) && (Application.Current != null))
+            if (DebugInfo)
             {
-                Application.Current.Dispatcher.Invoke(() =>
+                if ((e.Position != null) && (Application.Current != null))
                 {
-
-                    TextBlock textBlock = debugTextBlocks.GetValueOrDefault(e.Position);
-                    if (textBlock == null)
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
-                        double actualSpriteSizeInPixels = TerrainImage.DesiredSize.Width / gameBusiness.GetTerrainSize();
-                        textBlock = new TextBlock();
-                        textBlock.HorizontalAlignment = HorizontalAlignment.Left;
-                        textBlock.VerticalAlignment = VerticalAlignment.Top;
-                        textBlock.Margin = new Thickness(e.Position.x * actualSpriteSizeInPixels, e.Position.y * actualSpriteSizeInPixels, 0, 0);
-                        textBlock.SetValue(Panel.ZIndexProperty, 0xFFFF);
 
-                        textBlock.Foreground = Brushes.White;
-                        textBlock.Background = Brushes.Navy;
+                        TextBlock textBlock = debugTextBlocks.GetValueOrDefault(e.Position);
+                        if (textBlock == null)
+                        {
+                            double actualSpriteSizeInPixels = TerrainImage.DesiredSize.Width / gameBusiness.GetTerrainSize();
+                            textBlock = new TextBlock();
+                            textBlock.HorizontalAlignment = HorizontalAlignment.Left;
+                            textBlock.VerticalAlignment = VerticalAlignment.Top;
+                            textBlock.Margin = new Thickness(e.Position.x * actualSpriteSizeInPixels, e.Position.y * actualSpriteSizeInPixels, 0, 0);
+                            textBlock.SetValue(Panel.ZIndexProperty, 0xFFFF);
+                            textBlock.FontSize = 12;
 
-                        TerrainGrid.Children.Add(textBlock);
-                        debugTextBlocks.Add(e.Position, textBlock);
-                    }
-                    textBlock.Text = e.Message;
-               });
+                            textBlock.Foreground = Brushes.White;
+                            textBlock.Background = Brushes.Navy;
+                            textBlock.OpacityMask = new SolidColorBrush(Colors.LightGreen) { Opacity = 0.8 };
+
+                            TerrainGrid.Children.Add(textBlock);
+                            debugTextBlocks.Add(e.Position, textBlock);
+                        }
+                        textBlock.Text = e.Message;
+                    });
+                }
             }
         }
 
@@ -196,7 +198,7 @@ namespace CityGame
                         }
                     }
                 });
-            }        
+            }
         }
 
         private void GameBusiness_BudgetChanged(object? sender, EventArgs e)
@@ -220,9 +222,9 @@ namespace CityGame
             using DrawingContext drawingContext = drawingVisual.RenderOpen();
             if (gameBusiness != null)
             {
-               drawingContext.DrawImage(gameBusiness.GetMapBitmap(), new Rect(0, 0, gameBusiness.GetTerrainSize(), gameBusiness.GetTerrainSize()));
-               drawingContext.Close();
-               MapImage.Source = new DrawingImage(drawingVisual.Drawing);
+                drawingContext.DrawImage(gameBusiness.GetMapBitmap(), new Rect(0, 0, gameBusiness.GetTerrainSize(), gameBusiness.GetTerrainSize()));
+                drawingContext.Close();
+                MapImage.Source = new DrawingImage(drawingVisual.Drawing);
             }
         }
         private void ResourceExplorerButton_Click(object sender, RoutedEventArgs e)
@@ -239,12 +241,12 @@ namespace CityGame
         {
             int groupIndex = 0;
             int count = 0;
-            
+
             for (ushort x = 3; x < terrainSize - GameConsts.GroupSize; x += 4, groupIndex++)
             {
                 for (ushort y = 3; y < terrainSize - GameConsts.GroupSize; y += 4, groupIndex++)
                 {
-                    if (count >= gameBusiness.gameObjects.Count-1)
+                    if (count >= gameBusiness.gameObjects.Count - 1)
                     {
                         count = 0;
                     }
@@ -470,6 +472,25 @@ namespace CityGame
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             gameBusiness.paused = true;
+        }
+
+        private void MenuItem_Click_2(object sender, RoutedEventArgs e)
+        {
+            DebugInfo = !DebugInfo;
+
+            (sender as MenuItem).IsChecked = DebugInfo;
+
+            foreach (var debugItem in debugTextBlocks)
+            {
+                if (DebugInfo)
+                {
+                    (debugItem.Value as TextBlock).Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    (debugItem.Value as TextBlock).Visibility = Visibility.Hidden;
+                }
+            }
         }
     }
 }

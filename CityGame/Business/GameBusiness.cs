@@ -37,6 +37,8 @@ namespace CityGame.Business
 
         private CoalPowerPlantBusiness coalPowerPlantBusiness;
 
+        private NuclearPowerPlantBusiness nuclearPowerPlantBusiness;
+
         public long gameDay = 0;
 
         public bool paused = false;
@@ -52,11 +54,30 @@ namespace CityGame.Business
                 }
             }
 
+            gameObjects.Add(new GardenBusiness(this, NewGameObjectModel(typeof(GardenModel))));
+
+            gameObjects.Add(new WireBusiness(this, NewGameObjectModel(typeof(WireGameObjectModel))));
+            gameObjects.Add(new RoadBusiness(this, NewGameObjectModel(typeof(RoadGameObjectModel))));
+            gameObjects.Add(new RailBusiness(this, NewGameObjectModel(typeof(RailGameObjectModel))));
 
             gameObjects.Add(new ResidetBusiness(this, NewGameObjectModel(typeof(ResidentModel))));
+            gameObjects.Add(new ComercialBusiness(this, NewGameObjectModel(typeof(ComercialModel))));
+            gameObjects.Add(new IndustrialBusiness(this, NewGameObjectModel(typeof(IndustrialModel))));
+
+            gameObjects.Add(new PoliceDepartmentBusiness(this, NewGameObjectModel(typeof(PoliceDepartmentModel))));
+            gameObjects.Add(new FireDepartmentBusiness(this, NewGameObjectModel(typeof(FireDepartmentModel))));
+
+            gameObjects.Add(new StadiumBusiness(this, NewGameObjectModel(typeof(StadiumModel))));
+
             coalPowerPlantBusiness = new CoalPowerPlantBusiness(this, NewGameObjectModel(typeof(CoalPowerPlantModel))); //need for build and destroy objects
             gameObjects.Add(coalPowerPlantBusiness);
-            gameObjects.Add(new WireBusiness(this, NewGameObjectModel(typeof(WireGameObjectModel))));
+
+            nuclearPowerPlantBusiness = new NuclearPowerPlantBusiness(this, NewGameObjectModel(typeof(NuclearPowerPlantModel))); //need for build and destroy objects
+            gameObjects.Add(nuclearPowerPlantBusiness);
+
+            gameObjects.Add(new SeaPortBusiness(this, NewGameObjectModel(typeof(SeaPortModel))));
+
+            gameObjects.Add(new AirPortBusiness(this, NewGameObjectModel(typeof(AirPortModel))));
 
 
             //DispatcherTimer timer = new DispatcherTimer();
@@ -169,7 +190,7 @@ namespace CityGame.Business
                         }
                     }
                     ecosystem = _ecosystem;
-                    Thread.Sleep(1000);
+                    Thread.Sleep(100);
                 }
             });
             thread.Start();
@@ -345,6 +366,15 @@ namespace CityGame.Business
                         {
                             coalPowerPlantBusiness.PowerTargetDestroy(connectedCoalPowerPlant);
                         }
+
+                        //TEMP
+                        GameObjectBusinessDTO? connectedNuclearPowerPlant =
+                            nuclearPowerPlantBusiness.gameObjectBusinessDTOs.Where(c => c.powerPlantId == gameObjectBusinessDTO.powerPlantId).FirstOrDefault();
+                        if (connectedNuclearPowerPlant != null)
+                        {
+                            nuclearPowerPlantBusiness.PowerTargetDestroy(connectedNuclearPowerPlant);
+                        }
+
                     }
                     gameObjectBusiness.Destroy(gameObjectBusinessDTO);
                     return true;

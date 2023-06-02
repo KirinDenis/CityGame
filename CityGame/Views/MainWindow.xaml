@@ -178,6 +178,7 @@
                     <MenuItem Header="Resource explorer"   Command="{Binding MenuCommand}" Click="ResourceExplorerButton_Click"/>
                     <MenuItem Header="Generate map"   Command="{Binding MenuCommand}" Click="GenerateMapButton_Click"/>
                     <MenuItem Header="Benchmark"   Command="{Binding MenuCommand}" Click="BenchmarkButton_Click"/>
+                    <MenuItem Header="Debug info"   Command="{Binding MenuCommand}" Click="MenuItem_Click_2"/>
                 </MenuItem>
                 <Separator />
                 <MenuItem Header="Exit"   Command="{Binding MenuCommand}" Click="MenuItem_Click_1" />

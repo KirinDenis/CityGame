@@ -144,7 +144,7 @@ namespace CityGame.Business
 
 
             
-            gameObjectBusinessDTO.gameObjectModelDTO.electrified = gameObjectBusinessDTO.electrified = false;            
+          //  gameObjectBusinessDTO.gameObjectModelDTO.electrified = gameObjectBusinessDTO.electrified = false;            
             List<GameObjectBusinessDTO> GetNeighbours = gameBusiness.GetNeighbours(gameObjectBusinessDTO);
 
             
@@ -152,13 +152,13 @@ namespace CityGame.Business
             {
                 if (currentGameObjectBusinessDTO.electrified)
                 {
-                    gameObjectBusinessDTO.gameObjectModelDTO.electrified = gameObjectBusinessDTO.electrified = true;
-                    gameObjectBusinessDTO.gameObjectModelDTO.electrified = gameObjectBusinessDTO.electrified = true;
+           //         gameObjectBusinessDTO.gameObjectModelDTO.electrified = gameObjectBusinessDTO.electrified = true;
+           //         gameObjectBusinessDTO.gameObjectModelDTO.electrified = gameObjectBusinessDTO.electrified = true;
                     break;
                 }
             }
-            
-            
+
+
 
             if (gameBusiness.gameDay > gameObjectBusinessDTO.lastDay)
             {
@@ -167,7 +167,7 @@ namespace CityGame.Business
                 {
                     if (gameObjectBusinessDTO.EcosystemItem.Population < 100)
                     {
-                    //    gameObjectBusinessDTO.EcosystemItem.Population += (byte)(gameObjectBusinessDTO.lastDay);
+                        //    gameObjectBusinessDTO.EcosystemItem.Population += (byte)(gameObjectBusinessDTO.lastDay);
                         gameObjectBusinessDTO.EcosystemItem.Population += 2;
                     }
                 }
@@ -215,7 +215,7 @@ namespace CityGame.Business
                     for (int currentClass = 1; currentClass < 5; currentClass++)
                     {
 
-                        int classFromCount = 9 - (int)((gameObjectBusinessDTO.EcosystemItem.Population - 25 - (100 / 4 * (currentClass-1))) / 25.0 * 9.0);
+                        int classFromCount = 9 - (int)((gameObjectBusinessDTO.EcosystemItem.Population - 25 - (100 / 4 * (currentClass - 1))) / 25.0 * 9.0);
                         classFromCount = (classFromCount < 0) || (classFromCount > 8) ? 0 : classFromCount;
 
                         int classToCount = (int)((gameObjectBusinessDTO.EcosystemItem.Population - (100 / 4 * (currentClass - 1))) / 25.0 * 9.0);
@@ -225,11 +225,13 @@ namespace CityGame.Business
                         currentResidentSections[0] -= currentResidentSections[currentClass];
                     }
 
+                    /*
                     Debug.WriteLine("class 0 : " + currentResidentSections[0]);
                     Debug.WriteLine("class 1 : " + currentResidentSections[1]);
                     Debug.WriteLine("class 2 : " + currentResidentSections[2]);
                     Debug.WriteLine("class 3 : " + currentResidentSections[3]);
                     Debug.WriteLine("class 4 : " + currentResidentSections[4]);
+                    */
 
                     byte[] prevResidentSections = GetBasicHousesState(gameObjectBusinessDTO.gameObjectModelDTO.basicHouses);
 
@@ -254,100 +256,9 @@ namespace CityGame.Business
                             }
                         }
                     }
-
-
-/*
-                    for (int i = 0; i < 5; i++)
-                    {
-                        if (currentResidentSections[i] > 0)
-                        {
-                            for (int bx = 0; bx < 3; bx++)
-                            {
-                                for (int by = 0; by < 3; by++)
-                                {
-                                    if ((gameObjectBusinessDTO.gameObjectModelDTO.basicHouses[bx, by] == null)
-                                        ||
-                                        (gameObjectBusinessDTO.gameObjectModelDTO.basicHouses[bx, by].y != i - 1))
-                                    {
-                                        if (i > 0)
-                                        {
-                                            gameObjectBusinessDTO.gameObjectModelDTO.basicHouses[bx, by] = new PositionDTO()
-                                            {
-                                                x = (ushort)random.Next(3),
-                                                y = (ushort)(i - 1)
-                                            };
-                                        }
-                                        else
-                                        {
-                                            gameObjectBusinessDTO.gameObjectModelDTO.basicHouses[bx, by] = null;
-                                        }
-                                        currentResidentSections[i]--;
-                                    }
-                                    if (currentResidentSections[i] <= 0)
-                                    {
-                                        break;
-                                    }
-                                }
-                                if (currentResidentSections[i] <= 0)
-                                {
-                                    break;
-                                }
-                            }
-                        }
-                    }
-*/
-
-
-                            //int houseCount = 0;
-
-                            /*
-                            for (int bx = 0; bx < 3; bx++)
-                            {
-                                for (int by = 0; by < 3; by++)
-                                {
-                                    houseCount++;
-                                    if ((gameObjectBusinessDTO.gameObjectModelDTO.basicHouses[bx, by] == null)
-                                        ||
-                                        (gameObjectBusinessDTO.gameObjectModelDTO.basicHouses[bx, by].y != currentHouseCost))
-                                    {
-                                        gameObjectBusinessDTO.gameObjectModelDTO.basicHouses[bx, by] = new PositionDTO()
-                                        {
-                                            x = (ushort)random.Next(3),
-                                            y = (ushort)currentHouseCost,
-                                        };
-                                    }
-                                    if ((currentHouseCost ==0) && (houseCount >= gameObjectBusinessDTO.EcosystemItem.Population))
-                                    {
-                                        break;
-                                    }    
-                                }
-                            }
-                            */
-                        }
-                else
-                {
-                //    gameObjectBusinessDTO.gameObjectModelDTO.basicHouses[bx, by] = null;
                 }
-
-
-                gameObjectBusinessDTO.lastDay++;
-
             }
 
-
-            /*
-            gameObjectBusinessDTO.EcosystemItem.Population+=10;
-            if (gameObjectBusinessDTO.EcosystemItem.Population > 255)
-            {
-                gameObjectBusinessDTO.EcosystemItem.Population = 0;
-            }    
-            if (gameObjectBusinessDTO.EcosystemItem.Population > 2 * gameObjectBusinessDTO.gameObjectModelDTO.level)
-            {
-                gameObjectBusinessDTO.gameObjectModelDTO.level++;
-
-                //gameObjectBusinessDTO.gameObjectModelDTO.animationFrame++;
-            } 
-            */
         }
     }
 }

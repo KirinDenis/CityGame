@@ -3,7 +3,6 @@
 /* ----------------------------------------------------------------------------
 Simple City
 Copyright 2023 by:
-- ChatGPT, as a language model from OpenAI that provided guidance or suggestions.
 - Denis Kirin (deniskirinacs@gmail.com)
 
 This file is part of Simple City

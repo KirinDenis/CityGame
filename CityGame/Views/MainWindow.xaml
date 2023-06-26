@@ -38,7 +38,7 @@
 
 
             <ScrollViewer x:Name="TerrainScroll" Grid.Row="2" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" ScrollChanged="TerrainScroll_ScrollChanged">
-                <Grid x:Name="TerrainGrid" PreviewMouseDown="TerrainGrid_PreviewMouseDown" PreviewMouseMove="GameViewGrid_MouseMove" PreviewMouseWheel="TerrainGrid_PreviewMouseWheel">
+                <Grid x:Name="TerrainGrid" PreviewMouseDown="TerrainGrid_PreviewMouseDown" PreviewMouseMove="GameViewGrid_MouseMove" >
                     <Grid.LayoutTransform>
                         <ScaleTransform x:Name="scale"/>
                     </Grid.LayoutTransform>

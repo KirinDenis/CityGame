@@ -3,7 +3,7 @@ This repository contains **Readme Banners** (and some useful docs) that can be u
 [![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://vshymanskyy.github.io/StandWithUkraine/)
 
 ### [Updates from Ukrainian Open Source Community](/docs/CommunityUpdates.md)
-### [????????? ? ????????? ??????](/docs/ToRussianPeople.md)
+### [To russian](/docs/ToRussianPeople.md)
 
 ## For Maintainers and Authors
 
@@ -15,7 +15,13 @@ This repository contains **Readme Banners** (and some useful docs) that can be u
 
 # City Game
 
-I make this code for myself and my own desire to understand the algorithms of this game.
+I started developing during the constant bombing of Ukraine, living in Kyiv, when everything was plunged into a months-long blackout. In order to distract from stress and terrible thoughts, in a dark cold apartment by the light of a flashlight and candles - I had to come up with a hobby for myself. I could code on a laptop as long as there was energy in its batteries. When the energy ran out, I used a piece of paper and a pen to keep going.
+It turned out to be very suitable for the situation.
+This game has few cool graphics that require a lot of energy, and most importantly, such a game contains many complex and intricate algorithms. I have not dealt with some algorithms before.
+The experience that I want to share is try to write a similar game from scratch, in a programming language that is convenient for you, I guarantee you will find a lot of exciting things to think about.
+
+
+## God bless you, you will never be under many months of rocket and bomb attacks in your cities and villages.
 
 
 Below the list of sources that I use during development:

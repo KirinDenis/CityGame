@@ -9,6 +9,6 @@ namespace CityGame.Data.DTO
     public class DebugMessageDTO
     { 
         public PositionDTO? Position { get; set; }
-        public string Message { get; set; } = string.Empty;
+        public Dictionary<string, string> Properties { get; set; } = new Dictionary<string, string>();
     }
 }

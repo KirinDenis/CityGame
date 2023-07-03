@@ -1,7 +1,7 @@
 ﻿using CityGame.Data.DTO;
+using CityGame.DTOs.Const;
 using CityGame.Models;
 using System;
-using System.Collections.Generic;
 
 namespace CityGame.Business
 {
@@ -11,7 +11,7 @@ namespace CityGame.Business
         public CoalPowerPlantBusiness(GameBusiness gameBusiness, GameObjectModel gameObjectModel) : base(gameBusiness, gameObjectModel)
         {
             this.gameObjectModel = gameObjectModel;
-            cost = 3000;
+            cost = CostsConsts.CoalPower;
         }
 
         public override GameObjectBusinessDTO BuildDeligate(GameObjectBusinessDTO gameObjectBusinessDTO)
@@ -19,7 +19,7 @@ namespace CityGame.Business
 
             gameObjectBusinessDTO.electrified = true;
             gameObjectBusinessDTO.powerTarget = 0;
-            gameObjectBusinessDTO.powerSource = 500;
+            gameObjectBusinessDTO.powerSource = PowerConsts.CoalPower;
             gameObjectBusinessDTO.powerPlantId = DateTime.Now.Millisecond + DateTime.Now.Minute;
 
             return gameObjectBusinessDTO;

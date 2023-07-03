@@ -1,8 +1,10 @@
 ﻿using CityGame.Data.DTO;
+using CityGame.Data.Enum;
 using CityGame.Interfaces;
 using CityGame.Models;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 using System.Threading.Tasks;
 
 namespace CityGame.Business
@@ -86,16 +88,16 @@ namespace CityGame.Business
                         {
                             LifeCycle(gameObjectBusinessDTO);
 
-                            gameBusiness.OnDebugMessage(new DebugMessageDTO()
-                            {
-                                Position = gameObjectBusinessDTO?.gameObjectModelDTO?.positionDTO,
-                                Message = "Day: " + gameObjectBusinessDTO?.lastDay + "\n" +
-                                          "Ppl: " + gameObjectBusinessDTO?.EcosystemItem.Population + "\n" +
-                                          "Els: " + gameObjectBusinessDTO?.electrified + "\n" +
-                                          "PId: " + gameObjectBusinessDTO?.powerPlantId + "\n" +
-                                          "PwrT: " + gameObjectBusinessDTO?.powerTarget + "\n" +
-                                          "PwrS: " + gameObjectBusinessDTO?.powerSource + "\n"
-                            }); ;
+                            DebugMessageDTO debugMessage = new DebugMessageDTO();
+                            debugMessage.Position = gameObjectBusinessDTO?.gameObjectModelDTO?.positionDTO;
+                            debugMessage.Properties.Add(ObjectProperties.Day, gameObjectBusinessDTO?.lastDay.ToString());
+                            debugMessage.Properties.Add(ObjectProperties.Population, gameObjectBusinessDTO?.EcosystemItem.Population.ToString());
+                            debugMessage.Properties.Add(ObjectProperties.Electrified, gameObjectBusinessDTO?.electrified.ToString());
+                            debugMessage.Properties.Add(ObjectProperties.PowerPlantId, gameObjectBusinessDTO?.powerPlantId.ToString());
+                            debugMessage.Properties.Add(ObjectProperties.PowerTarget, gameObjectBusinessDTO?.powerTarget.ToString());
+                            debugMessage.Properties.Add(ObjectProperties.PowerSource, gameObjectBusinessDTO?.powerSource.ToString());
+
+                            gameBusiness.OnDebugMessage(debugMessage);
 
                         }
                         await Task.Delay(300);

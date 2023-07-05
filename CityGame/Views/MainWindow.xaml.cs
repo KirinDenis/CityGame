@@ -29,6 +29,7 @@ using CityGame.Data.DTO;
 using CityGame.DTOs.Const;
 using CityGame.DTOs.Enum;
 using CityGame.Graphics;
+using CityGame.Views;
 using System;
 using System.Threading;
 using System.Windows;
@@ -445,15 +446,15 @@ namespace CityGame
 
             (sender as MenuItem).IsChecked = DebugInfo;
 
-            foreach (var debugItem in debugTextBlocks)
+            foreach (var debugItem in debugOutControls)
             {
                 if (DebugInfo)
                 {
-                    (debugItem.Value as TextBlock).Visibility = Visibility.Visible;
+                    (debugItem.Value as DebugOutControl).Visibility = Visibility.Visible;
                 }
                 else
                 {
-                    (debugItem.Value as TextBlock).Visibility = Visibility.Hidden;
+                    (debugItem.Value as DebugOutControl).Visibility = Visibility.Hidden;
                 }
             }
         }

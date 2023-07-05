@@ -3,6 +3,7 @@ using CityGame.Data.DTO;
 using CityGame.DTOs.Const;
 using CityGame.DTOs.Enum;
 using CityGame.Graphics;
+using CityGame.Views;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -16,7 +17,7 @@ namespace CityGame
 {
     public partial class MainWindow: Window
     {
-        private Dictionary<PositionDTO, TextBlock> debugTextBlocks = new Dictionary<PositionDTO, TextBlock>();
+        private Dictionary<PositionDTO, DebugOutControl> debugOutControls = new Dictionary<PositionDTO, DebugOutControl>();
         private void GameBusiness_DebugMessage(object? sender, DebugMessageDTO e)
         {
             if (DebugInfo)
@@ -26,25 +27,20 @@ namespace CityGame
                     Application.Current.Dispatcher.Invoke(() =>
                     {
 
-                        TextBlock textBlock = debugTextBlocks.GetValueOrDefault(e.Position);
-                        if (textBlock == null)
+                        DebugOutControl debugOutControl = debugOutControls.GetValueOrDefault(e.Position);
+                        if (debugOutControl == null)
                         {
                             double actualSpriteSizeInPixels = TerrainImage.DesiredSize.Width / gameBusiness.GetTerrainSize();
-                            textBlock = new TextBlock();
-                            textBlock.HorizontalAlignment = HorizontalAlignment.Left;
-                            textBlock.VerticalAlignment = VerticalAlignment.Top;
-                            textBlock.Margin = new Thickness(e.Position.x * actualSpriteSizeInPixels, e.Position.y * actualSpriteSizeInPixels, 0, 0);
-                            textBlock.SetValue(Panel.ZIndexProperty, 0xFFFF);
-                            textBlock.FontSize = 12;
+                            debugOutControl = new DebugOutControl();
+                            debugOutControl.HorizontalAlignment = HorizontalAlignment.Left;
+                            debugOutControl.VerticalAlignment = VerticalAlignment.Top;
+                            debugOutControl.Margin = new Thickness(e.Position.x * actualSpriteSizeInPixels, e.Position.y * actualSpriteSizeInPixels, 0, 0);
+                            debugOutControl.SetValue(Panel.ZIndexProperty, 0xFFFF);
 
-                            textBlock.Foreground = Brushes.White;
-                            textBlock.Background = Brushes.Navy;
-                            textBlock.OpacityMask = new SolidColorBrush(Colors.LightGreen) { Opacity = 0.8 };
-
-                            TerrainGrid.Children.Add(textBlock);
-                            debugTextBlocks.Add(e.Position, textBlock);
+                            TerrainGrid.Children.Add(debugOutControl);
+                            debugOutControls.Add(e.Position, debugOutControl);
                         }
-                        textBlock.Text = e.Properties.Values.ToString();
+                        debugOutControl.SetDebug(e.Properties);                        
                     });
                 }
             }

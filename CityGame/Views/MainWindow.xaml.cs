@@ -64,7 +64,7 @@ namespace CityGame
         private readonly int zoom = 2;
 
 
-        private bool DebugInfo = true;
+        private bool DebugInfo = false;
 
         public MainWindow()
         {

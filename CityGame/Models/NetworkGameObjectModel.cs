@@ -1,4 +1,5 @@
 ﻿using CityGame.Data.DTO;
+using CityGame.Data.Enum;
 using CityGame.DTOs.Enum;
 using CityGame.Graphics;
 
@@ -90,20 +91,94 @@ namespace CityGame.Models
                         {
                             if (!string.IsNullOrEmpty(previosGroup.Name) && (!previosGroup.Name.Equals(startingGroup?.Name)))
                             {
-                                if (previosGroup.Name.Equals(SpritesGroupEnum.rail))
+                                //if it cross with other network object
+                                if (previosGroup.Name.Equals(SpritesGroupEnum.rail) || previosGroup.Name.Equals(SpritesGroupEnum.road) || previosGroup.Name.Equals(SpritesGroupEnum.wire))
                                 {
+                                    NetworkCrossType networkCrossType = NetworkCrossType.crossOnCross;
+                                    //if it cross with simple horisontal network object 
                                     if ((previosGroup?.Frames[0]?.Sprites?[3, 0]?.x == terrainModel?.terrain?[x, y]?.x)
                                         &&
                                         (previosGroup?.Frames[0]?.Sprites?[3, 0]?.y == terrainModel?.terrain?[x, y]?.y))
                                     {
-                                        spritePosition = new PositionDTO() { x = 3, y = 2 }; // startingGroup?.Frames[0].Sprites[3, 2];
+                                        networkCrossType = NetworkCrossType.horisontal;
                                     }
-                                    else
+                                    else //else if it cross with simple vertical rail 
+                                    if ((previosGroup?.Frames[0]?.Sprites?[4, 0]?.x == terrainModel?.terrain?[x, y]?.x)
+                                        &&
+                                        (previosGroup?.Frames[0]?.Sprites?[4, 0]?.y == terrainModel?.terrain?[x, y]?.y))
                                     {
-                                        //spritePosition = startingGroup?.Frames[0].Sprites[4, 2];
-                                        spritePosition = new PositionDTO() { x = 4, y = 2 };
+                                        networkCrossType = NetworkCrossType.vartical;
                                     }
-                                    //terrainModel.PutSprite(x, y, terrainModel.terrain[x, y].x, terrainModel.terrain[x, y].y);
+                                    else //if it is not horizontal or vertical cross - return, we can't cross with crosses of other network objects
+                                    {
+                                        return FS;
+                                    }    
+
+                                    switch(previosGroup?.Name)
+                                    {
+                                        case SpritesGroupEnum.rail: 
+                                            if (networkCrossType == NetworkCrossType.horisontal)
+                                            {
+                                                spritePosition = new PositionDTO() { x = 3, y = 2 };
+                                            }
+                                            else
+                                            {
+                                                spritePosition = new PositionDTO() { x = 4, y = 2 };
+                                            }
+                                            break;
+
+                                        case SpritesGroupEnum.road:
+                                            if (networkCrossType == NetworkCrossType.horisontal)
+                                            {
+                                                spritePosition = new PositionDTO() { x = 3, y = 1 };
+                                            }
+                                            else
+                                            {
+                                                spritePosition = new PositionDTO() { x = 4, y = 1 };
+                                            }
+                                            break;
+                                        case SpritesGroupEnum.wire:
+                                        default:  
+                                            if (networkCrossType == NetworkCrossType.horisontal)
+                                            {
+                                                spritePosition = new PositionDTO() { x = 3, y = 3 };
+                                            }
+                                            else
+                                            {
+                                                spritePosition = new PositionDTO() { x = 4, y = 3 };
+                                            }
+                                            break;
+                                    }
+                                    terrainModel?.PutSprite(x, y, startingGroup, spritePosition);
+                                    return FS;
+
+
+
+
+                                    /*
+                                    //if new network object cross with rail way
+                                    if (previosGroup.Name.Equals(SpritesGroupEnum.rail))
+                                {
+                                    //if it cross with simple horisontal rail 
+                                    if ((previosGroup?.Frames[0]?.Sprites?[3, 0]?.x == terrainModel?.terrain?[x, y]?.x)
+                                        &&
+                                        (previosGroup?.Frames[0]?.Sprites?[3, 0]?.y == terrainModel?.terrain?[x, y]?.y))
+                                    {
+                                        //set for new network object sprite what draw cross with horisontal rail
+                                        spritePosition = new PositionDTO() { x = 3, y = 2 }; 
+                                    }
+                                    else //else if it cross with simple vertical rail 
+                                    if ((previosGroup?.Frames[0]?.Sprites?[4, 0]?.x == terrainModel?.terrain?[x, y]?.x)
+                                        &&
+                                        (previosGroup?.Frames[0]?.Sprites?[4, 0]?.y == terrainModel?.terrain?[x, y]?.y))
+                                    {
+                                        //set for new network object sprite what draw cross with vertical rail
+                                        spritePosition = new PositionDTO() { x = 4, y = 2 };
+                                    }                                    
+                                    else //if it is not horizontal or vertical cross - return, we can't cross with crosses of other network objects
+                                    {
+                                        return FS;
+                                    }
                                     terrainModel?.PutSprite(x, y, startingGroup, spritePosition);
                                     return FS;
                                 }
@@ -146,6 +221,8 @@ namespace CityGame.Models
                                     //terrainModel.PutSprite(x, y, startingGroup, 0, terrainModel.terrain[x, y].x, terrainModel.terrain[x, y].y);
                                     terrainModel?.PutSprite(x, y, startingGroup, spritePosition);
                                     return FS;
+                                }
+                                */
                                 }
                                 else
                                 if (previosGroup.Name.Equals(SpritesGroupEnum.water))

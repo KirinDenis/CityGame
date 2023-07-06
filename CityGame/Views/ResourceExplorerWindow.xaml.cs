@@ -635,6 +635,7 @@ namespace CityGame
                 selectedGroup.CenterX = ushort.Parse(GroupCenterXTextBlock.Text);
                 selectedGroup.CenterY = ushort.Parse(GroupCenterYTextBlock.Text);
             }
+            spriteBusiness.SetGroups();
         }
 
         private void GroupCenterXDownButton_Click(object sender, RoutedEventArgs e)

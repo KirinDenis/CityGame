@@ -36,6 +36,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace CityGame
@@ -63,7 +64,7 @@ namespace CityGame
         private readonly int zoom = 2;
 
 
-        private bool DebugInfo = false;
+        private bool DebugInfo = true;
 
         public MainWindow()
         {
@@ -117,7 +118,6 @@ namespace CityGame
             DispatcherTimer timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(10000);
             timer.Tick += Timer_Tick;
-
             timer.Start();
         }
 
@@ -241,16 +241,19 @@ namespace CityGame
 
         private void TerrainGrid_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            PositionDTO p = GetTerrainPosition(e);
+            if (e.Source.GetType() != typeof(DebugOutControl))
+            {
+                PositionDTO p = GetTerrainPosition(e);
 
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                gameBusiness?.BuildObject(p, selectedGroup);
-            }
-            else
-            if (e.RightButton == MouseButtonState.Pressed)
-            {
-                gameBusiness?.DestroyObjectAtPosition(p);
+                if (e.LeftButton == MouseButtonState.Pressed)
+                {
+                    gameBusiness?.BuildObject(p, selectedGroup);
+                }
+                else
+                if (e.RightButton == MouseButtonState.Pressed)
+                {
+                    gameBusiness?.DestroyObjectAtPosition(p);
+                }
             }
         }
 
@@ -261,55 +264,67 @@ namespace CityGame
                 return;
             }
 
-            double actualSpriteSizeInPixels = TerrainImage.DesiredSize.Width / gameBusiness.GetTerrainSize();
-
-            double x = e.GetPosition(TerrainGrid).X - (e.GetPosition(TerrainGrid).X % actualSpriteSizeInPixels);
-            double y = e.GetPosition(TerrainGrid).Y - (e.GetPosition(TerrainGrid).Y % actualSpriteSizeInPixels);
-
-            TerrainSelector.Width = TerrainSelector.Height = actualSpriteSizeInPixels;
-
-            if ((x < TerrainImage.ActualWidth) && (y < TerrainImage.ActualHeight))
+            if (draggedControl != null)
             {
-                TerrainSelector.Margin = new Thickness(x, y, 0, 0);
+                var position = e.GetPosition(sender as IInputElement);
+                draggedControl.Margin = new Thickness(position.X - this.draggedOffset.X, position.Y - this.draggedOffset.Y, 0, 0);
+                Line debugConnectedLine = draggedControl.Tag as Line;
+                debugConnectedLine.X2 = position.X - this.draggedOffset.X;
+                debugConnectedLine.Y2 = position.Y - this.draggedOffset.Y;
+            }
+            else
+            {
 
-                PositionDTO position = GetTerrainPosition(e);
+                double actualSpriteSizeInPixels = TerrainImage.DesiredSize.Width / gameBusiness.GetTerrainSize();
 
-                ObjectType[,]? newPositionMap = gameBusiness?.TestPosition(selectedGroup, position)?.PositionArea;
+                double x = e.GetPosition(TerrainGrid).X - (e.GetPosition(TerrainGrid).X % actualSpriteSizeInPixels);
+                double y = e.GetPosition(TerrainGrid).Y - (e.GetPosition(TerrainGrid).Y % actualSpriteSizeInPixels);
 
-                for (int px = 0; px < GameConsts.GroupSize; px++)
+                TerrainSelector.Width = TerrainSelector.Height = actualSpriteSizeInPixels;
+
+                if ((x < TerrainImage.ActualWidth) && (y < TerrainImage.ActualHeight))
                 {
-                    for (int py = 0; py < GameConsts.GroupSize; py++)
+                    TerrainSelector.Margin = new Thickness(x, y, 0, 0);
+
+                    PositionDTO position = GetTerrainPosition(e);
+
+                    ObjectType[,]? newPositionMap = gameBusiness?.TestPosition(selectedGroup, position)?.PositionArea;
+
+                    for (int px = 0; px < GameConsts.GroupSize; px++)
                     {
-                        previewImages[px, py].Width = previewImages[px, py].Height = actualSpriteSizeInPixels;
-                        previewImages[px, py].Margin = new Thickness(x + px * actualSpriteSizeInPixels, y + py * actualSpriteSizeInPixels, 0, 0);
-
-                        if ((newPositionMap != null)
-                            && (px < newPositionMap.GetLength(0))
-                            && (py < newPositionMap.GetLength(1))
-                            &&
-                            (newPositionMap != null) && (newPositionMap?[px, py] != null))
-
+                        for (int py = 0; py < GameConsts.GroupSize; py++)
                         {
-                            switch (newPositionMap[px, py])
+                            previewImages[px, py].Width = previewImages[px, py].Height = actualSpriteSizeInPixels;
+                            previewImages[px, py].Margin = new Thickness(x + px * actualSpriteSizeInPixels, y + py * actualSpriteSizeInPixels, 0, 0);
+
+                            if ((newPositionMap != null)
+                                && (px < newPositionMap.GetLength(0))
+                                && (py < newPositionMap.GetLength(1))
+                                &&
+                                (newPositionMap != null) && (newPositionMap?[px, py] != null))
+
                             {
-                                case ObjectType.terrain:
-                                case ObjectType.forest:
-                                case ObjectType.network:
-                                    previewImages[px, py].Source = previewImages[px, py].Tag as ImageSource;
-                                    break;
-                                default:
-                                    previewImages[px, py].Source = SpriteRepository.GetSprite(spriteBusiness.GetGroupByName(SpritesGroupEnum.select)?.Frames?[0]?.Sprites?[0, 0]);
-                                    break;
+                                switch (newPositionMap[px, py])
+                                {
+                                    case ObjectType.terrain:
+                                    case ObjectType.forest:
+                                    case ObjectType.network:
+                                        previewImages[px, py].Source = previewImages[px, py].Tag as ImageSource;
+                                        break;
+                                    default:
+                                        previewImages[px, py].Source = SpriteRepository.GetSprite(spriteBusiness.GetGroupByName(SpritesGroupEnum.select)?.Frames?[0]?.Sprites?[0, 0]);
+                                        break;
+                                }
                             }
                         }
                     }
+                    if (e.LeftButton == MouseButtonState.Pressed)
+                    {
+                        gameBusiness?.BuildObject(position, selectedGroup);
+                    }
                 }
-                if (e.LeftButton == MouseButtonState.Pressed)
-                {
-                    gameBusiness?.BuildObject(position, selectedGroup);
-                }
+                MoveMapSelector();
             }
-            MoveMapSelector();
         }
 
         private void MoveMapSelector()
@@ -456,6 +471,16 @@ namespace CityGame
                 {
                     (debugItem.Value as DebugOutControl).Visibility = Visibility.Hidden;
                 }
+                ((debugItem.Value as DebugOutControl).Tag as Line).Visibility = (debugItem.Value as DebugOutControl).Visibility;
+            }
+        }
+
+        private void TerrainGrid_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (draggedControl != null)
+            {
+                draggedControl = null;
+                TerrainGrid.ReleaseMouseCapture();
             }
         }
     }

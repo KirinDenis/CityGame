@@ -89,7 +89,7 @@ namespace CityGame.Business
                             LifeCycle(gameObjectBusinessDTO);
 
                             DebugMessageDTO debugMessage = new DebugMessageDTO();
-                            debugMessage.Position = gameObjectBusinessDTO?.gameObjectModelDTO?.positionDTO;
+                            debugMessage.Position = gameObjectBusinessDTO?.gameObjectModelDTO?.positionDTO;                            
                             debugMessage.Properties.Add(ObjectProperties.Day, gameObjectBusinessDTO?.lastDay.ToString());
                             debugMessage.Properties.Add(ObjectProperties.Population, gameObjectBusinessDTO?.EcosystemItem.Population.ToString());
                             debugMessage.Properties.Add(ObjectProperties.Electrified, gameObjectBusinessDTO?.electrified.ToString());

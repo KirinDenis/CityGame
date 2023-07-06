@@ -4,12 +4,21 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CityGame.Views"
-             mc:Ignorable="d" 
-             
-             d:DesignHeight="200" d:DesignWidth="200" Background="#FFF6F6F6">
-    <Grid x:Name="MainGrid">
-        <StackPanel x:Name="DebugOutStackPanel">
-            
-        </StackPanel>
+             mc:Ignorable="d"
+             Width="200"
+             d:DesignHeight="200" d:DesignWidth="300">
+    <Grid>
+        <Border BorderBrush="#FFFEFEFE" BorderThickness="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,10,10">
+            <Border.Effect>
+                <DropShadowEffect Opacity="0.35" ShadowDepth="12" Color="#FF756A6A" />
+            </Border.Effect>
+
+            <StackPanel  Orientation="Horizontal"  VerticalAlignment="Top" Background="#FFA8A8A8" Margin="0,0">
+                
+                <StackPanel x:Name="DebugOutStackPanel" Margin="5,5, 3,3">
+
+                </StackPanel>
+            </StackPanel>
+        </Border>
     </Grid>
 </UserControl>

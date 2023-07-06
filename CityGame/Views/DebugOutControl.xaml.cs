@@ -23,6 +23,8 @@ namespace CityGame.Views
     public partial class DebugOutControl : UserControl
     {
         private Dictionary<string, TextBlock> debugTextBlocks = new Dictionary<string, TextBlock>();
+
+        Point offset;
         public DebugOutControl()
         {
             InitializeComponent();
@@ -39,17 +41,14 @@ namespace CityGame.Views
                     textBlock.HorizontalAlignment = HorizontalAlignment.Left;
                     textBlock.VerticalAlignment = VerticalAlignment.Top;
 
-                    textBlock.FontSize = 12;
-
-                    //textBlock.Foreground = Brushes.White;
-                    //textBlock.Background = Brushes.Navy;
                     textBlock.OpacityMask = new SolidColorBrush(Colors.LightGreen) { Opacity = 0.8 };
 
                     DebugOutStackPanel.Children.Add(textBlock);
                     debugTextBlocks.Add(property.Key, textBlock);
                 }
-                textBlock.Text = property.Value;
+                textBlock.Text = property.Key + ": " + property.Value;
             }
         }
+
     }
 }

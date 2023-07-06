@@ -3,7 +3,7 @@
 /* ----------------------------------------------------------------------------
 Simple City
 Copyright 2023 by:
-- Denis Kirin (deniskirinacs@gmail.com)
+- Denys Kirin (deniskirinacs@gmail.com)
 
 This file is part of Simple City
 

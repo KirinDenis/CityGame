@@ -240,7 +240,7 @@ namespace CityGame.Models
                 {
                     StoredFS[sx, sy] = FS[sx, sy];
                     //only WIRE connects to buildings
-                    if (startingGroup?.Name?.Equals(SpritesGroupEnum.wire) == ?true)
+                    if (startingGroup?.Name?.Equals(SpritesGroupEnum.wire) == true)
                     {
                         FS[sx, sy] = FS[sx, sy] | FB[sx, sy];
                     }

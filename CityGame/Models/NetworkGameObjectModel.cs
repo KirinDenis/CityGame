@@ -60,10 +60,10 @@ namespace CityGame.Models
         /// it means, if current network object is ROAD and it cross with vertical RAIL the sprite position is X=4, Y=2 at ROAD sprites group
         /// 
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="current"></param>
-        /// <returns></returns>
+        /// <param name="x">X position on game map</param>
+        /// <param name="y">Y position on game map</param>
+        /// <param name="current">if true it is new network object buildings, means not rebuild exists near objects</param>
+        /// <returns>returns near FS (F.riendly S.prites) what must be rebuilded to draw connections with new network object</returns>
         public bool[,] BuildNetworkItem(ushort x, ushort y, bool current = false)
         {
             bool[,] FS = new bool[3, 3]; //FS means friendly sprites, the sprites of selected network item type
@@ -72,17 +72,21 @@ namespace CityGame.Models
             {
                 return FS;
             }
+            //scan neighboring objects and collect data about their types
+            //scaning range 3x3 with center of new network object coords
             int ox = 0;
             for (ushort tx = CLeft(x); tx < CRight(x) + 1; tx++, ox++)
             {
                 int oy = 0;
                 for (ushort ty = CLeft(y); ty < CRight(y) + 1; ty++, oy++)
                 {
+                    //just check we not of out of game map range 
                     if (!terrainModel.TestRange(new PositionDTO() { x = tx, y = ty }))
                     {
                         continue;
                     }
 
+                    //by default the current scaned object it is not a friend
                     FS[ox, oy] = false;
 
                     if ((startingGroup.Frames != null) && (startingGroup.Frames[0] != null) && (startingGroup.Frames[0].Sprites != null))
@@ -96,6 +100,7 @@ namespace CityGame.Models
                                 {
                                     if (terrainModel.terrain?[tx, ty] == position)
                                     {
+                                        //friendly object found
                                         FS[ox, oy] = true;
                                         break;
                                     }
@@ -108,6 +113,7 @@ namespace CityGame.Models
                         {
                             if (spriteBusiness.GetObjectTypeByGrop(group) == ObjectType.building)                            
                             {
+                                //building object found
                                 FB[ox, oy] = true; 
                             }
                         }
@@ -167,16 +173,18 @@ namespace CityGame.Models
                                         return FS;
                                     }    
 
+                                    //Draw cross for current combination of new and exists network objects
+                                    //SEE: the method comment UP^ (description and sprite location inside group table)
                                     switch(previosGroup?.Name)
                                     {
                                         case SpritesGroupEnum.rail: 
                                             if (networkCrossType == NetworkCrossType.horisontal)
                                             {
-                                                spritePosition = new PositionDTO() { x = 3, y = 2 };
+                                                spritePosition = new PositionDTO() { x = 3, y = 2 }; //Horisontal railroad cross
                                             }
                                             else
                                             {
-                                                spritePosition = new PositionDTO() { x = 4, y = 2 };
+                                                spritePosition = new PositionDTO() { x = 4, y = 2 }; //Vertical railroad cross 
                                             }
                                             break;
 
@@ -322,9 +330,10 @@ namespace CityGame.Models
             ushort x = positionDTO.x;
             ushort y = positionDTO.y;
 
+            //build new network object
             bool[,] FS = BuildNetworkItem(x, y, true);
 
-            //Rebuild near network object            
+            //rebuild near network object with using collected FS (F.riendly S.prites)           
             ushort ox = 0;
             for (ushort tx = CLeft(x); tx < CRight(x) + 1; tx++, ox++)
             {
@@ -342,7 +351,6 @@ namespace CityGame.Models
                 positionDTO = positionDTO,
                 Group = this.startingGroup
             };
-
         }
     }
 }

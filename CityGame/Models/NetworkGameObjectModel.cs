@@ -47,15 +47,15 @@ namespace CityGame.Models
         /// SEE: menu File/Development/Resource Explorer
         /// 
         /// Network sprite group:
-        ///   |      0         |      1           |      2          |           3                |      4                     |
+        ///   |      0         |       1        |        2        |             3              |             4              |
         /// 
-        /// 0 | u.right turn   |    h.cross down  |   u.left turn   |  single horizontal         |  single vertical           |
-        /// 
-        /// 1 | v.cross right  |    4 cross       |   v.cross left  |  h.cross object with road  |  v.cross object with road  |
-        /// 
-        /// 2 | d.right turn   |   h.cross up     |   d.left turn   |  h.cross object with rail  |  v.cross object with rail  |
-        /// 
-        /// 3 |                                   |                 |  h.cross object with wire  | v.cross object with wire   |
+        /// 0 | u.right turn   |  h.cross down  |   u.left turn   |  single horizontal         |  single vertical           |
+        ///    ---------------------------------------------------------------------------------------------------------------
+        /// 1 | v.cross right  |  4 cross       |   v.cross left  |  h.cross object with road  |  v.cross object with road  |
+        ///    ---------------------------------------------------------------------------------------------------------------
+        /// 2 | d.right turn   |  h.cross up    |   d.left turn   |  h.cross object with rail  |  v.cross object with rail  |
+        ///    ---------------------------------------------------------------------------------------------------------------
+        /// 3 |                |                |                 |  h.cross object with wire  |  v.cross object with wire  |
         /// 
         /// it means, if current network object is ROAD and it cross with vertical RAIL the sprite position is X=4, Y=2 at ROAD sprites group
         /// 
@@ -123,6 +123,12 @@ namespace CityGame.Models
 
             PositionDTO? previosSptite = terrainModel.terrain?[x, y];
             PositionDTO spritePosition;
+
+            int l = 0; //left
+            int c = 1; //centre
+            int r = 2; //right
+            int t = 0; //top
+            int b = 2; //bottom
 
             //check previos sprite 
             GroupDTO? previosGroup = spriteBusiness.GetGroupBySpritePosition(previosSptite);
@@ -216,7 +222,15 @@ namespace CityGame.Models
                                 else
                                 if (previosGroup.Name.Equals(SpritesGroupEnum.water))
                                 {
-                                    spritePosition = new PositionDTO() { x = 3, y = 4 };
+                                    //horizontal
+                                    if (FS[r, c] | FS[l, c])
+                                    {
+                                        spritePosition = new PositionDTO() { x = 3, y = 4 };
+                                    }
+                                    else //Vertical                                     
+                                    {
+                                        spritePosition = new PositionDTO() { x = 4, y = 4 };
+                                    }
                                     terrainModel?.PutSprite(x, y, startingGroup, spritePosition);
                                     return FS;
                                 }
@@ -226,12 +240,6 @@ namespace CityGame.Models
                 }
             }            
             spritePosition = new PositionDTO() { x = 4, y = 0 };
-
-            int l = 0; //left
-            int c = 1; //centre
-            int r = 2; //right
-            int t = 0; //top
-            int b = 2; //bottom
 
             bool[,] StoredFS = new bool[3,3];
             for(int sx = 0; sx < 3; sx++)

@@ -228,9 +228,15 @@ namespace CityGame.Models
                                         spritePosition = new PositionDTO() { x = 3, y = 4 };
                                     }
                                     else //Vertical                                     
+                                    if (FS[c, t] | FS[c, b])
                                     {
                                         spritePosition = new PositionDTO() { x = 4, y = 4 };
                                     }
+                                    else
+                                    {
+                                        return FS;
+                                    } 
+                                        
                                     terrainModel?.PutSprite(x, y, startingGroup, spritePosition);
                                     return FS;
                                 }

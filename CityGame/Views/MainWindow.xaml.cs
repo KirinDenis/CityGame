@@ -75,6 +75,7 @@ namespace CityGame
                 return;
             }
 
+
             gameBusiness = new GameBusiness("new city", terrainSize);
             gameBusiness.TerrainRenderCompleted += CityGameEngine_TerrainRenderCompleted;
             gameBusiness.MapRenderCompleted += CityGameEngine_MapRenderCompleted;

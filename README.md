@@ -19,9 +19,7 @@ I started developing in order to distract from stress and terrible thoughts.
 This game has few cool graphics that require a lot of energy, and most importantly, such a game contains many complex and intricate algorithms. I have not dealt with some algorithms before.
 The experience that I want to share is try to write a similar game from scratch, in a programming language that is convenient for you, I guarantee you will find a lot of exciting things to think about.
 
-
-## God bless you, you will never be under many months of rocket and bomb attacks in your cities and villages.
-
+#Links
 
 Below the list of sources that I use during development:
 

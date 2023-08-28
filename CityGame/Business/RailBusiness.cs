@@ -17,12 +17,14 @@ namespace CityGame.Business
         public RailBusiness(GameBusiness gameBusiness, GameObjectModel gameObjectModel) : base(gameBusiness, gameObjectModel)
         {
             this.gameObjectModel = gameObjectModel;
+            
             cost = 20;
         }
 
         public override GameObjectBusinessDTO BuildDeligate(GameObjectBusinessDTO gameObjectBusinessDTO)
         {            
             gameObjectBusinessDTO.powerTarget = 0;
+            gameObjectBusinessDTO.noPowerConnect = true;
 
             return gameObjectBusinessDTO;
         }

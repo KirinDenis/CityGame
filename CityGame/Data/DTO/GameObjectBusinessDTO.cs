@@ -15,6 +15,8 @@
 
         public int powerPlantSession { get; set; } = 0;
 
+        public bool noPowerConnect { get; set; } = false;
+
         public GameObjectModelDTO gameObjectModelDTO { get; set; }
     }
 }

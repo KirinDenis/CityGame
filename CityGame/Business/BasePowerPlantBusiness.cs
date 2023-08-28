@@ -1,4 +1,5 @@
 ﻿using CityGame.Data.DTO;
+using CityGame.Graphics;
 using CityGame.Models;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ namespace CityGame.Business
         {
             gameObjectBusinessDTO.powerSource = 0;
             gameObjectBusinessDTO.electrified = false;
-            CalculetePower(gameObjectBusinessDTO);
+            CalculatePower(gameObjectBusinessDTO);
 
             base.Destroy(gameObjectBusinessDTO);
         }
@@ -35,6 +36,12 @@ namespace CityGame.Business
             List<GameObjectBusinessDTO> gameObjects = gameBusiness.GetNeighbours(selectedObject);
             foreach (GameObjectBusinessDTO gameObject in gameObjects)
             {
+                //Roads and rail
+                if (gameObject.noPowerConnect)
+                {
+                    continue;
+                }
+
                 if (currentList.IndexOf(gameObject) == -1)
                 {
                     currentList.Add(gameObject);
@@ -44,14 +51,19 @@ namespace CityGame.Business
             return currentList;
         }
 
-        private void CalculetePower(GameObjectBusinessDTO gameObjectBusinessDTO)
+        private void CalculatePower(GameObjectBusinessDTO gameObjectBusinessDTO)
         {
             int powerConsume = 0;
 
             List<GameObjectBusinessDTO> currentList = FindAllPowerNeighbours(null, gameObjectBusinessDTO);
 
             foreach (GameObjectBusinessDTO gameObject in currentList)
-            {
+            {                
+                //Roads and rail
+                if (gameObject.noPowerConnect)
+                {
+                    continue;
+                }
 
                 if (gameObject.powerSource == 0) //the target object is not power plant 
                 {
@@ -118,7 +130,7 @@ namespace CityGame.Business
 
         public override void LifeCycle(GameObjectBusinessDTO gameObjectBusinessDTO)
         {
-            CalculetePower(gameObjectBusinessDTO);
+            CalculatePower(gameObjectBusinessDTO);
 
 
         }

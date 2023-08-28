@@ -23,6 +23,7 @@ namespace CityGame.Business
         public override GameObjectBusinessDTO BuildDeligate(GameObjectBusinessDTO gameObjectBusinessDTO)
         {            
             gameObjectBusinessDTO.powerTarget = 0;
+            gameObjectBusinessDTO.noPowerConnect = true;
 
             return gameObjectBusinessDTO;
         }
